@@ -1,1 +1,1 @@
-# sol_lab
+# SOL Lab
