@@ -16,8 +16,15 @@ library(tidyverse)
 # Load Datasets
 
 ```{r}
-kidsCOVID <- readxl::read_excel('/Users/emicervantes/Desktop/CP-LEADS/SOL Lab/Data/KidsCOVID_Winter21_raw data.xlsx')
-affectOutcome <- read.csv('/Users/emicervantes/Desktop/CP-LEADS/SOL Lab/Data/affectoutcome_norm_predict_1102.csv')
+getwd()
+```
+
+
+```{r}
+# Row Data
+kidsCOVID <- readxl::read_excel('data/KidsCOVID_Winter21_raw data.xlsx')
+# Imputed Data
+affectOutcome <- read.csv('data/affectoutcome_norm_predict_1102.csv')
 ```
 
 ## Glancing at the data
