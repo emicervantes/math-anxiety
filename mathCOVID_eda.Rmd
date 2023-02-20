@@ -27,13 +27,14 @@ Students were tested on their mathematical knowledge before the study (pretest),
 
 ## Emotions Scores
 
-`Base-emotions_time_First Click`
+*   Pre Study Assessment: `Base_Enjoy`, `Base_Worry`
 
-`Base-emotions_time_Last Click`
+*   During Study Assessment: `During_OverallAcc`, `During_HOT`, `DurImm_OverallAcc`, 
+`DuringImm_HOT`
 
-`Base-emotions_time_Page Submit`
+*   Post Study Assessment: `Del_OverallAcc`, `Del_acc`, `Del_HOT`
 
-`Base-emotions_time_Click Count`
+*   Other important measurements: `Understand_avg`, `PaidAttn_avg`, `SI_avg`
 
 # Cleaning Data
 
@@ -46,6 +47,33 @@ df_nd <- mathCOVID %>%
           mutate("id"= row_number(), .before = drop )
 head(df_nd)
 ```
+
+Delete unnecessary columns: 
+
+```{r}
+df_nd %>% 
+  select(starts_with("Base"))
+df_nd %>% 
+  select(starts_with("Dur"))
+df_nd %>% 
+  select(starts_with("understand"))
+df_nd %>% 
+  select(starts_with("Paid"))
+df_nd %>% 
+  select(starts_with("SI"))
+df_nd %>% 
+  select(starts_with("Del"))
+```
+```{r}
+df_nd %>% 
+  select("id", "Base_Enjoy", "Base_Worry", 
+          "During_OverallAcc", "During_HOT", "DurImm_OverallAcc", "DurImm_HOT",
+          "Del_OverallAcc", "Del_acc", "Del_HOT",
+         "Understand_avg", "PaidAttn_avg", 
+         "SI_1","SI_2","SI_3","SI_4","SI_5","SI_6","SI_7","SI_8","SI_9","SI_10",
+         "SI_avg")
+```
+
 
 
 
