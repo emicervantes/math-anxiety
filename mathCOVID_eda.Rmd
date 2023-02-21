@@ -1,0 +1,80 @@
+---
+title: "Math/COVID Anxiety Row Data EDA"
+author: "Emi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(tidyverse)
+```
+
+
+# Loading Row Data
+```{r}
+mathCOVID <- readxl::read_excel('data/KidsCOVID_Winter21_raw data.xlsx')
+```
+# Dataset Summary
+
+The dataset was a study which investigated whether worked examples could be used to reduce cognitive loads on mathematics learners. They measured potential predictors of reduce in memory load such as mathematical anxiety and COVID learning anxiety. The results showed that mathematical anxiety was a significant negative factor in students' procedural and conceptual learning. 
+
+Students were tested on their mathematical knowledge before the study (pretest), during the two0day study (during the lesson - Day 1), and after the study (three days later - Day 2)
+
+## Emotions Scores
+
+*   Pre Study Assessment: `Base_Enjoy`, `Base_Worry`
+
+*   During Study Assessment: `During_OverallAcc`, `During_HOT`, `DurImm_OverallAcc`, 
+`DuringImm_HOT`
+
+*   Post Study Assessment: `Del_OverallAcc`, `Del_acc`, `Del_HOT`
+
+*   Other important measurements: `Understand_avg`, `PaidAttn_avg`, `SI_avg`
+
+# Cleaning Data
+
+Retreat duplicate students' data
+
+```{r}
+df_nd <- mathCOVID %>% 
+          mutate(drop = replace_na(drop, 0)) %>% 
+          filter(drop != 1) %>% 
+          mutate("id"= row_number(), .before = drop )
+head(df_nd)
+```
+
+Delete unnecessary columns: 
+
+```{r}
+df_nd %>% 
+  select(starts_with("Base"))
+df_nd %>% 
+  select(starts_with("Dur"))
+df_nd %>% 
+  select(starts_with("understand"))
+df_nd %>% 
+  select(starts_with("Paid"))
+df_nd %>% 
+  select(starts_with("SI"))
+df_nd %>% 
+  select(starts_with("Del"))
+```
+```{r}
+df_nd %>% 
+  select("id", "Base_Enjoy", "Base_Worry", 
+          "During_OverallAcc", "During_HOT", "DurImm_OverallAcc", "DurImm_HOT",
+          "Del_OverallAcc", "Del_acc", "Del_HOT",
+         "Understand_avg", "PaidAttn_avg", 
+         "SI_1","SI_2","SI_3","SI_4","SI_5","SI_6","SI_7","SI_8","SI_9","SI_10",
+         "SI_avg")
+```
+
+
+
+
+

@@ -14,27 +14,27 @@ library(dplyr)
 library(tidyverse)
 ```
 
-
 # Loading Row Data
+
 ```{r}
-mathCOVID <- readxl::read_excel('data/KidsCOVID_Winter21_raw data.xlsx')
+mathCOVID <- readxl::read_excel('../data/KidsCOVID_Winter21_raw data.xlsx')
 ```
+
 # Dataset Summary
 
-The dataset was a study which investigated whether worked examples could be used to reduce cognitive loads on mathematics learners. They measured potential predictors of reduce in memory load such as mathematical anxiety and COVID learning anxiety. The results showed that mathematical anxiety was a significant negative factor in students' procedural and conceptual learning. 
+The dataset was a study which investigated whether worked examples could be used to reduce cognitive loads on mathematics learners. They measured potential predictors of reduce in memory load such as mathematical anxiety and COVID learning anxiety. The results showed that mathematical anxiety was a significant negative factor in students' procedural and conceptual learning.
 
 Students were tested on their mathematical knowledge before the study (pretest), during the two0day study (during the lesson - Day 1), and after the study (three days later - Day 2)
 
 ## Emotions Scores
 
-*   Pre Study Assessment: `Base_Enjoy`, `Base_Worry`
+-   Pre Study Assessment: `Base_Enjoy`, `Base_Worry`
 
-*   During Study Assessment: `During_OverallAcc`, `During_HOT`, `DurImm_OverallAcc`, 
-`DuringImm_HOT`
+-   During Study Assessment: `During_OverallAcc`, `During_HOT`, `DurImm_OverallAcc`, `DuringImm_HOT`
 
-*   Post Study Assessment: `Del_OverallAcc`, `Del_acc`, `Del_HOT`
+-   Post Study Assessment: `Del_OverallAcc`, `Del_acc`, `Del_HOT`
 
-*   Other important measurements: `Understand_avg`, `PaidAttn_avg`, `SI_avg`
+-   Other important measurements: `Understand_avg`, `PaidAttn_avg`, `SI_avg`
 
 # Cleaning Data
 
@@ -48,7 +48,7 @@ df_nd <- mathCOVID %>%
 head(df_nd)
 ```
 
-Delete unnecessary columns: 
+Delete unnecessary columns:
 
 ```{r}
 df_nd %>% 
@@ -64,17 +64,44 @@ df_nd %>%
 df_nd %>% 
   select(starts_with("Del"))
 ```
+
 ```{r}
-df_nd %>% 
-  select("id", "Base_Enjoy", "Base_Worry", 
-          "During_OverallAcc", "During_HOT", "DurImm_OverallAcc", "DurImm_HOT",
-          "Del_OverallAcc", "Del_acc", "Del_HOT",
-         "Understand_avg", "PaidAttn_avg", 
-         "SI_1","SI_2","SI_3","SI_4","SI_5","SI_6","SI_7","SI_8","SI_9","SI_10",
-         "SI_avg")
+df <- df_nd %>% 
+    select("id", "Base_Enjoy", "Base_Worry", 
+            "During_OverallAcc", "During_HOT", "DurImm_OverallAcc", "DurImm_HOT",
+            "Del_OverallAcc", "Del_acc", "Del_HOT",
+           "Understand_avg", "PaidAttn_avg", 
+           "SI_1","SI_2","SI_3","SI_4","SI_5","SI_6","SI_7","SI_8","SI_9","SI_10",
+           "SI_avg")
+head(df)
 ```
 
+# Data Visualization
 
+```{r}
+pre_enjoy <- df %>% 
+               group_by("Score" = Base_Enjoy) %>% 
+               summarize(Freq=n()) %>% 
+               mutate("Status" = "Enjoy", .before = Score) %>% 
+               na.omit()
+pre_worry <- df %>% 
+               group_by("Score" = Base_Worry) %>% 
+               summarize(Freq=n()) %>% 
+               mutate("Status" = "Worry", .before = Score)
+rbind(pre_enjoy, pre_worry) %>% 
+  ggplot(aes(x = Score, y = Freq, fill = Status)) + 
+  geom_col(position = "dodge", color = "black") + 
+  theme_minimal() + scale_fill_brewer(palette="Pastel1") +
+  labs(title = "Pre-Score Distribution Enjoy and Worry", x = "Score", y = "Count")
 
+```
 
+```{r}
+df %>% 
+  select("id", starts_with("Dur") ) %>% 
+  ggplot(aes(x = During_OverallAcc, y = During_HOT)) + 
+  geom_point() +
+  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "Overall Accuracy", y = "HOT") +
+  theme_minimal()
+```
 
