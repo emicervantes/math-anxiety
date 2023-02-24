@@ -78,6 +78,8 @@ head(df)
 
 # Data Visualization
 
+## Pre-Test Visualizations
+
 ```{r}
 pre_enjoy <- df %>% 
                group_by("Score" = Base_Enjoy) %>% 
@@ -96,12 +98,106 @@ rbind(pre_enjoy, pre_worry) %>%
 
 ```
 
+## During-test Visualization
+
+```{r}
+# Overall accuracy vs HOT scores with pre-worry scores
+df %>% 
+  select("id", starts_with("Base"), starts_with("Dur") ) %>% 
+  ggplot(aes(x = During_OverallAcc, y = During_HOT, color = Base_Worry)) + 
+  geom_point(size = 2) + scale_colour_gradient(low = "deepskyblue2", high = "darkblue", na.value = NA) +
+  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "Overall Accuracy", y = "HOT", color = "Pre-Worry Score") +
+  theme_minimal()
+
+# Overall accuracy vs HOT scores with pre-enjoy scores
+df %>% 
+  select("id", starts_with("Base"), starts_with("Dur") ) %>% 
+  ggplot(aes(x = During_OverallAcc, y = During_HOT, color = Base_Enjoy)) + 
+  geom_point(size = 2) + scale_colour_gradient(low = "yellow", high = "red", na.value = NA)+
+  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "Overall Accuracy", y = "HOT", color = "Pre-Enjoy Score") +
+  theme_minimal()
+
+# Combining enjoy and worry scores
+df %>% 
+  select("id", starts_with("Base"), starts_with("Dur") ) %>% 
+  mutate("pre_emotion" = Base_Enjoy - Base_Worry) %>% 
+  ggplot(aes(x = During_OverallAcc, y = During_HOT, color = pre_emotion)) + 
+  geom_point(size = 2) + scale_colour_gradient(low = "deepskyblue2", high = "coral1", na.value = NA)+
+  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "Overall Accuracy", y = "HOT", color = "Pre-Emotion Score") +
+  theme_minimal()
+```
+
+During and During Immediate Scores
+
+```{r}
+dur <- select(df, pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry" ,acc = "During_OverallAcc", HOT = "During_HOT") %>%  mutate(status = "dur")
+durImm <- select(df,  pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry", acc = "DurImm_OverallAcc", HOT = "DurImm_HOT") %>% 
+  mutate(status = "durImm")
+
+rbind(dur, durImm) %>% 
+  mutate(pre_score = pre_enjoy - pre_worry) %>% 
+  ggplot(aes(x = acc, y = HOT, color = status)) +
+  geom_point() + 
+  scale_color_manual(labels=c('During', 'During Imm'), values = c("darkgreen", "orange")) +
+  theme_minimal() +
+  labs(title = "During vs During Immediate Accuracy and HOT Scores", color = "Status",
+       x = "Overall Accuracy", y = "HOT")
+
+rbind(dur, durImm) %>% 
+  filter(status == "durImm") %>% 
+  mutate(pre_score = pre_enjoy - pre_worry) %>% 
+  ggplot(aes(x = acc, y = HOT, color = pre_enjoy)) +
+  geom_point() + scale_colour_gradient(low = "yellow", high = "red", na.value = NA) +
+  theme_minimal() +
+  labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "Overall Accuracy",
+       y = "HOT", color = "Pre-Enjoy") 
+
+rbind(dur, durImm) %>% 
+  filter(status == "durImm") %>% 
+  mutate(pre_score = pre_enjoy - pre_worry) %>% 
+  ggplot(aes(x = acc, y = HOT, color = pre_worry)) +
+  geom_point() + scale_colour_gradient(low = "deepskyblue2", high = "darkblue", na.value = NA) +
+  theme_minimal() +
+  labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "Overall Accuracy",
+       y = "HOT", color = "Pre-Worry") 
+
+rbind(dur, durImm) %>% 
+  filter(status == "durImm") %>% 
+  mutate(pre_score = pre_enjoy - pre_worry) %>% 
+  ggplot(aes(x = acc, y = HOT, color = pre_score)) +
+  geom_point() + scale_colour_gradient(low = "deepskyblue2", high = "coral1", na.value = NA)+
+  theme_minimal() +
+  labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "Overall Accuracy",
+       y = "HOT", color = "Pre-Emotion") 
+```
+
+## Delayed Visualization
+
 ```{r}
 df %>% 
-  select("id", starts_with("Dur") ) %>% 
-  ggplot(aes(x = During_OverallAcc, y = During_HOT)) + 
-  geom_point() +
-  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "Overall Accuracy", y = "HOT") +
-  theme_minimal()
+  select(pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry", acc = "Del_acc", HOT = "Del_HOT") %>% mutate(pre_score = pre_enjoy - pre_worry) %>% 
+  ggplot(aes(x = acc, y = HOT, color = pre_score)) + geom_point() +
+  scale_colour_gradient(low = "deepskyblue2", high = "coral1", na.value = NA) +
+  theme_minimal() +
+  labs(title = "Delayed Accuracy vs HOT", x = "Overall Accuracy", y = "HOT", color = "Pre-Emotion") 
+```
+
+Comparing Dur, DurImm, Del Accuracy Scores
+ 
+```{r}
+duracc <- df %>%  
+  select(pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry",
+                          acc = "During_OverallAcc") %>% mutate(status = "During")
+durIacc <- df %>%  
+  select(pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry",
+                          acc = "DurImm_OverallAcc") %>% mutate(status = "Immediate")
+delacc <- df %>%  
+  select(pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry",
+                          acc = "Del_acc") %>% mutate(status = "Delayed")
+rbind(duracc, durIacc, delacc) %>%  mutate(pre_score = pre_enjoy - pre_worry) %>% 
+  ggplot(aes(x = acc)) + geom_histogram(bins=10, color = "black") + facet_grid(.~status, scales = "free", ) +
+    scale_color_brewer(palette = "Set1") +theme_minimal() + 
+  labs(title = "Accuracy Distributions at Different Times of Study", 
+                         x = "Overall Accuracy Score", y = "Count") 
 ```
 
