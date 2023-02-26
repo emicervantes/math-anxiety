@@ -195,9 +195,34 @@ delacc <- df %>%
   select(pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry",
                           acc = "Del_acc") %>% mutate(status = "Delayed")
 rbind(duracc, durIacc, delacc) %>%  mutate(pre_score = pre_enjoy - pre_worry) %>% 
-  ggplot(aes(x = acc)) + geom_histogram(bins=10, color = "black") + facet_grid(.~status, scales = "free", ) +
+  ggplot(aes(x = acc, fill = status)) + geom_histogram(bins=10, color = "black") + facet_grid(.~status, scales = "free", ) + 
     scale_color_brewer(palette = "Set1") +theme_minimal() + 
   labs(title = "Accuracy Distributions at Different Times of Study", 
                          x = "Overall Accuracy Score", y = "Count") 
 ```
+
+Spaghetti Plot of Situation Interest Scores
+
+
+```{r}
+x <- df  %>% select("id", starts_with("SI"))
+df2 <- data.frame(x[1], SI = unlist(x[-1])) 
+df2['day'] <- 1
+
+k <-  1
+for (i in 2:nrow(df2)) {
+  if (df2$id[i] != 1){
+    df2$day[i] <- k
+  } else {
+    k <- k + 1
+    df2$day[i] <- k
+  }
+}
+df2$day[1] <- 1
+
+df2 %>% group_by(id) %>% 
+  ggplot(aes(x = day, y = SI, group = id)) + geom_line() +
+  theme_minimal()
+```
+
 
