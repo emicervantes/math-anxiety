@@ -24,7 +24,7 @@ mathCOVID <- readxl::read_excel('../data/KidsCOVID_Winter21_raw data.xlsx')
 
 The dataset was a study which investigated whether worked examples could be used to reduce cognitive loads on mathematics learners. They measured potential predictors of reduce in memory load such as mathematical anxiety and COVID learning anxiety. The results showed that mathematical anxiety was a significant negative factor in students' procedural and conceptual learning.
 
-Students were tested on their mathematical knowledge before the study (pretest), during the two0day study (during the lesson - Day 1), and after the study (three days later - Day 2)
+Students were tested on their mathematical knowledge before the study (pretest), during the two-day study (during the lesson - Day 1), and after the study (three days later - Day 2)
 
 ## Emotions Scores
 
@@ -104,26 +104,26 @@ rbind(pre_enjoy, pre_worry) %>%
 # Overall accuracy vs HOT scores with pre-worry scores
 df %>% 
   select("id", starts_with("Base"), starts_with("Dur") ) %>% 
-  ggplot(aes(x = During_OverallAcc, y = During_HOT, color = Base_Worry)) + 
+  ggplot(aes(x = During_HOT, y = During_OverallAcc, color = Base_Worry)) + 
   geom_point(size = 2) + scale_colour_gradient(low = "deepskyblue2", high = "darkblue", na.value = NA) +
-  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "Overall Accuracy", y = "HOT", color = "Pre-Worry Score") +
+  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "HOT", y = "Overall Accuracy", color = "Pre-Worry Score") +
   theme_minimal()
 
 # Overall accuracy vs HOT scores with pre-enjoy scores
 df %>% 
   select("id", starts_with("Base"), starts_with("Dur") ) %>% 
-  ggplot(aes(x = During_OverallAcc, y = During_HOT, color = Base_Enjoy)) + 
+  ggplot(aes(x = During_HOT, y = During_OverallAcc, color = Base_Enjoy)) + 
   geom_point(size = 2) + scale_colour_gradient(low = "yellow", high = "red", na.value = NA)+
-  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "Overall Accuracy", y = "HOT", color = "Pre-Enjoy Score") +
+  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "HOT", y = "Overall Accuracy", color = "Pre-Enjoy Score") +
   theme_minimal()
 
 # Combining enjoy and worry scores
 df %>% 
   select("id", starts_with("Base"), starts_with("Dur") ) %>% 
   mutate("pre_emotion" = Base_Enjoy - Base_Worry) %>% 
-  ggplot(aes(x = During_OverallAcc, y = During_HOT, color = pre_emotion)) + 
+  ggplot(aes(x = During_HOT, y = During_OverallAcc, color = pre_emotion)) + 
   geom_point(size = 2) + scale_colour_gradient(low = "deepskyblue2", high = "coral1", na.value = NA)+
-  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "Overall Accuracy", y = "HOT", color = "Pre-Emotion Score") +
+  labs(title = "During Assessment: Overall Accuracy vs HOT Score", x = "HOT", y = "Overall Accuracy", color = "Pre-Emotion Score") +
   theme_minimal()
 ```
 
@@ -136,39 +136,39 @@ durImm <- select(df,  pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry", acc = 
 
 rbind(dur, durImm) %>% 
   mutate(pre_score = pre_enjoy - pre_worry) %>% 
-  ggplot(aes(x = acc, y = HOT, color = status)) +
+  ggplot(aes(x = HOT, y = acc, color = status)) +
   geom_point() + 
   scale_color_manual(labels=c('During', 'During Imm'), values = c("darkgreen", "orange")) +
   theme_minimal() +
   labs(title = "During vs During Immediate Accuracy and HOT Scores", color = "Status",
-       x = "Overall Accuracy", y = "HOT")
+       x = "HOT", y = "Overall Accuracy")
 
 rbind(dur, durImm) %>% 
   filter(status == "durImm") %>% 
   mutate(pre_score = pre_enjoy - pre_worry) %>% 
-  ggplot(aes(x = acc, y = HOT, color = pre_enjoy)) +
+  ggplot(aes(x = HOT, y = acc, color = pre_enjoy)) +
   geom_point() + scale_colour_gradient(low = "yellow", high = "red", na.value = NA) +
   theme_minimal() +
-  labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "Overall Accuracy",
-       y = "HOT", color = "Pre-Enjoy") 
+  labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "HOT",
+       y = "Overall Accuracy", color = "Pre-Enjoy") 
 
 rbind(dur, durImm) %>% 
   filter(status == "durImm") %>% 
   mutate(pre_score = pre_enjoy - pre_worry) %>% 
-  ggplot(aes(x = acc, y = HOT, color = pre_worry)) +
+  ggplot(aes(x = HOT, y = acc, color = pre_worry)) +
   geom_point() + scale_colour_gradient(low = "deepskyblue2", high = "darkblue", na.value = NA) +
   theme_minimal() +
-  labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "Overall Accuracy",
-       y = "HOT", color = "Pre-Worry") 
+  labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "HOT",
+       y = "Overall Accuracy", color = "Pre-Worry") 
 
 rbind(dur, durImm) %>% 
   filter(status == "durImm") %>% 
   mutate(pre_score = pre_enjoy - pre_worry) %>% 
-  ggplot(aes(x = acc, y = HOT, color = pre_score)) +
+  ggplot(aes(x = HOT, y = acc, color = pre_score)) +
   geom_point() + scale_colour_gradient(low = "deepskyblue2", high = "coral1", na.value = NA)+
   theme_minimal() +
-  labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "Overall Accuracy",
-       y = "HOT", color = "Pre-Emotion") 
+  labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "HOT",
+       y = "Overall Accuracy", color = "Pre-Emotion") 
 ```
 
 ## Delayed Visualization
@@ -219,10 +219,63 @@ for (i in 2:nrow(df2)) {
   }
 }
 df2$day[1] <- 1
+```
 
-df2 %>% group_by(id) %>% 
-  ggplot(aes(x = day, y = SI, group = id)) + geom_line() +
+```{r}
+
+tspag = ggplot(df2, aes(x=day, y=SI)) + 
+  geom_line() + guides(colour=FALSE) + xlab("Observation Time Point") +
+  ylab("SI")
+spag = tspag + aes(colour = factor(id))
+spag + scale_x_continuous(breaks = seq(0, 10, by = 1)) +
+  scale_y_continuous(breaks = seq(0, 10, by = 1)) +
   theme_minimal()
 ```
 
+# Looking Closely at the Emotion Scores
 
+```{r}
+enjoy_df <- df_nd %>% 
+  select("id", contains("Enjoy")) %>% 
+  mutate(status = "Enjoy")
+colnames(enjoy_df) <- 1:ncol(enjoy_df)
+worry_df <- df_nd %>% 
+  select("id", contains("Worry")) %>% 
+  mutate(status = "Worry")
+colnames(worry_df) <- 1:ncol(worry_df)
+emotion_df <- rbind(enjoy_df, worry_df)
+colnames(emotion_df) <- c("id", "base", "0", "1", "2", "3", "4","D1", "D2", "D3", "dur_avg", 
+     "imm_avg", "durimm_avg", "del_avg", "status")
+head(emotion_df)
+```
+
+Observing Distributions
+
+```{r}
+emotion_df %>% 
+  ggplot(aes(x = dur_avg, fill = status)) + geom_histogram(bins=10, color = "black") + facet_grid(.~status, scales = "free", ) +
+   scale_color_brewer(palette = "Set1") +theme_minimal() +
+  labs(title = "Overall Accuracy Score During Assessment", x = "Overall Accuraacy",
+       y = "Count")
+
+emotion_df %>% 
+  ggplot(aes(x = imm_avg, fill = status)) + geom_bar(color = "black") + facet_grid(.~status, scales = "free", ) +
+   scale_color_brewer(palette = "Set1") +theme_minimal() +
+  labs(title = "Overall Accuracy Score Immediate Assessment", x = "Overall Accuraacy",
+       y = "Count")
+
+emotion_df %>% 
+  ggplot(aes(x = durimm_avg, fill = status)) + geom_histogram(bins=10, color = "black") + facet_grid(.~status, scales = "free", ) +
+   scale_color_brewer(palette = "Set1") +theme_minimal() +
+  labs(title = "Overall Accuracy Score During Immediate Assessment", x = "Overall Accuraacy", y = "Count")
+
+emotion_df %>% 
+  ggplot(aes(x = del_avg, fill = status)) + geom_histogram(bins=10, color = "black") + facet_grid(.~status, scales = "free", ) +
+   scale_color_brewer(palette = "Set1") +theme_minimal() +
+  labs(title = "Overall Accuracy Score Delayed Assessment", x = "Overall Accuraacy", y = "Count")
+```
+
+
+Students who had low emotion scores -> what's their accuracy score?
+
+*   How does it change over time? Is the emotion correlated to student's achievements?
