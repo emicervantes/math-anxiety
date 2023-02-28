@@ -67,7 +67,7 @@ df_nd %>%
 
 ```{r}
 df <- df_nd %>% 
-    select("id", "Base_Enjoy", "Base_Worry", 
+    select("id", "Condition", "Sex", "Base_Enjoy", "Base_Worry", 
             "During_OverallAcc", "During_HOT", "DurImm_OverallAcc", "DurImm_HOT",
             "Del_OverallAcc", "Del_acc", "Del_HOT",
            "Understand_avg", "PaidAttn_avg", 
@@ -130,14 +130,14 @@ df %>%
 During and During Immediate Scores
 
 ```{r}
-dur <- select(df, pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry" ,acc = "During_OverallAcc", HOT = "During_HOT") %>%  mutate(status = "dur")
-durImm <- select(df,  pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry", acc = "DurImm_OverallAcc", HOT = "DurImm_HOT") %>% 
+dur <- select(df, "Condition", pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry" ,acc = "During_OverallAcc", HOT = "During_HOT") %>%  mutate(status = "dur")
+durImm <- select(df,  "Condition", pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry", acc = "DurImm_OverallAcc", HOT = "DurImm_HOT") %>% 
   mutate(status = "durImm")
 
 rbind(dur, durImm) %>% 
   mutate(pre_score = pre_enjoy - pre_worry) %>% 
   ggplot(aes(x = HOT, y = acc, color = status)) +
-  geom_point() + 
+  geom_point(aes(shape = Condition)) + 
   scale_color_manual(labels=c('During', 'During Imm'), values = c("darkgreen", "orange")) +
   theme_minimal() +
   labs(title = "During vs During Immediate Accuracy and HOT Scores", color = "Status",
@@ -147,7 +147,7 @@ rbind(dur, durImm) %>%
   filter(status == "durImm") %>% 
   mutate(pre_score = pre_enjoy - pre_worry) %>% 
   ggplot(aes(x = HOT, y = acc, color = pre_enjoy)) +
-  geom_point() + scale_colour_gradient(low = "yellow", high = "red", na.value = NA) +
+  geom_point(aes(shape = Condition)) + scale_colour_gradient(low = "yellow", high = "red", na.value = NA) +
   theme_minimal() +
   labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "HOT",
        y = "Overall Accuracy", color = "Pre-Enjoy") 
@@ -156,7 +156,7 @@ rbind(dur, durImm) %>%
   filter(status == "durImm") %>% 
   mutate(pre_score = pre_enjoy - pre_worry) %>% 
   ggplot(aes(x = HOT, y = acc, color = pre_worry)) +
-  geom_point() + scale_colour_gradient(low = "deepskyblue2", high = "darkblue", na.value = NA) +
+  geom_point(aes(shape = Condition)) + scale_colour_gradient(low = "deepskyblue2", high = "darkblue", na.value = NA) +
   theme_minimal() +
   labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "HOT",
        y = "Overall Accuracy", color = "Pre-Worry") 
@@ -165,7 +165,7 @@ rbind(dur, durImm) %>%
   filter(status == "durImm") %>% 
   mutate(pre_score = pre_enjoy - pre_worry) %>% 
   ggplot(aes(x = HOT, y = acc, color = pre_score)) +
-  geom_point() + scale_colour_gradient(low = "deepskyblue2", high = "coral1", na.value = NA)+
+  geom_point(aes(shape = Condition)) + scale_colour_gradient(low = "deepskyblue2", high = "coral1", na.value = NA)+
   theme_minimal() +
   labs(title = "During Immediate Overall Accuracy vs HOT Scores", x = "HOT",
        y = "Overall Accuracy", color = "Pre-Emotion") 
@@ -175,7 +175,7 @@ rbind(dur, durImm) %>%
 
 ```{r}
 df %>% 
-  select(pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry", acc = "Del_acc", HOT = "Del_HOT") %>% mutate(pre_score = pre_enjoy - pre_worry) %>% 
+  select("Condition", pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry", acc = "Del_acc", HOT = "Del_HOT") %>% mutate(pre_score = pre_enjoy - pre_worry) %>% 
   ggplot(aes(x = acc, y = HOT, color = pre_score)) + geom_point() +
   scale_colour_gradient(low = "deepskyblue2", high = "coral1", na.value = NA) +
   theme_minimal() +
@@ -186,13 +186,13 @@ Comparing Dur, DurImm, Del Accuracy Scores
  
 ```{r}
 duracc <- df %>%  
-  select(pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry",
+  select("Condition",pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry",
                           acc = "During_OverallAcc") %>% mutate(status = "During")
 durIacc <- df %>%  
-  select(pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry",
+  select("Condition",pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry",
                           acc = "DurImm_OverallAcc") %>% mutate(status = "Immediate")
 delacc <- df %>%  
-  select(pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry",
+  select("Condition",pre_enjoy = "Base_Enjoy", pre_worry = "Base_Worry",
                           acc = "Del_acc") %>% mutate(status = "Delayed")
 rbind(duracc, durIacc, delacc) %>%  mutate(pre_score = pre_enjoy - pre_worry) %>% 
   ggplot(aes(x = acc, fill = status)) + geom_histogram(bins=10, color = "black") + facet_grid(.~status, scales = "free", ) + 
@@ -275,7 +275,151 @@ emotion_df %>%
   labs(title = "Overall Accuracy Score Delayed Assessment", x = "Overall Accuraacy", y = "Count")
 ```
 
-
 Students who had low emotion scores -> what's their accuracy score?
 
 *   How does it change over time? Is the emotion correlated to student's achievements?
+
+```{r}
+# Setting up new df
+factors <- df_nd %>% select("Condition", "Sex") 
+accuracy <- df_nd %>% select(contains("acc"))
+emotion_df2 <- cbind(emotion_df, factors, accuracy)
+```
+
+Emotion Scores vs. Accuracy Scores
+
+```{r}
+df4 <- df_nd %>% select("id","Condition", "Sex", contains("Enjoy"), contains("Worry")) %>% mutate(pre  = Base_Enjoy - Base_Worry,
+              emotion0 = Enjoy_0 - Worry_0,
+              emotion1 = Enjoy_1 - Worry_1,
+              emotion2 = Enjoy_2 - Worry_2,
+              emotion3 = Enjoy_3 - Worry_3,
+              emotion4d = D_Enjoy_1 - D_Worry_1,
+              emotion5d = D_Enjoy_2 - D_Worry_2,
+              emotion6d = D_Enjoy_3 - D_Worry_3,
+              emotion_dur_avg = Enjoy_During_avg - Worry_During_avg,
+              emotion_imm_avg = Enjoy_Imm_avg - Worry_Imm_avg,
+              emotion_durI_avg = Enjoy_DurImm_avg - Worry_DurImm_avg,
+              emotion_del_avg = Enjoy_Del_avg - Worry_Del_avg)
+```
+
+```{r}
+df4 <- df4 %>% select("id","Condition", "Sex", contains("emotion"))
+cbind(df4, accuracy) %>% 
+  ggplot(aes(x = emotion_dur_avg, y = During_OverallAcc, color = as.factor(Condition))) + geom_point() + 
+  theme_minimal() +
+   scale_color_brewer(palette = "Set1") +theme_minimal() +
+  labs(title = "During-Assessment: Emotion Score vs Accuracy", x = "Emotion Scores",
+       y = "Overall Accuracy", color = "Condition") 
+cbind(df4, accuracy) %>% 
+  ggplot(aes(x = Imm_OverallAcc, y = emotion_imm_avg, color = as.factor(Condition))) + geom_point() + 
+  theme_minimal() +
+   scale_color_brewer(palette = "Set1") +theme_minimal() +
+  labs(title = "Immediate-Assessment: Emotion Score vs Accuracy", x = "Emotion Scores",
+       y = "Overall Accuracy", color = "Condition") 
+cbind(df4, accuracy) %>% 
+  ggplot(aes(x = Del_OverallAcc, y = emotion_del_avg, color = as.factor(Condition))) + geom_point() + 
+  theme_minimal() +
+   scale_color_brewer(palette = "Set1") +theme_minimal() +
+  labs(title = "Delayed-Assessment: Emotion Score vs Accuracy", x = "Emotion Scores",
+       y = "Overall Accuracy", color = "Condition") 
+```
+
+Base Emotion Scores
+
+```{r}
+cbind(df4, accuracy) %>% 
+  mutate(base = case_when(
+    emotion0 < 0 ~ "Low",
+    emotion0 >= 0 ~ "High")
+    ) %>% 
+  ggplot(aes(x = emotion_dur_avg)) + 
+  geom_histogram(bins=30, color = "black", aes(fill = as.factor(base))) +  
+  scale_color_brewer(palette = "pastel") +theme_minimal() +
+  labs(title = "During-Assessment: Emotion Score Distribution", x = "Emotion Score", 
+                      y = "Count", fill = "Base Emotion")
+cbind(df4, accuracy) %>% 
+  mutate(base = case_when(
+    emotion0 < 0 ~ "Low",
+    emotion0 >= 0 ~ "High")
+    ) %>% 
+  ggplot(aes(x = emotion_durI_avg)) + 
+  geom_histogram(bins=30, color = "black", aes(fill = as.factor(base))) +  
+  scale_color_brewer(palette = "pastel") +theme_minimal() +
+  labs(title = "Immediate-Assessment: Emotion Score Distribution", x = "Emotion Score", 
+                      y = "Count", fill = "Base Emotion")
+cbind(df4, accuracy) %>% 
+  mutate(base = case_when(
+    emotion0 < 0 ~ "Low",
+    emotion0 >= 0 ~ "High")
+    ) %>% 
+  ggplot(aes(x = emotion_del_avg)) + 
+  geom_histogram(bins=25, color = "black", aes(fill = as.factor(base))) +  
+  scale_color_brewer(palette = "pastel") +theme_minimal() + 
+  labs(title = "Delayed-Assessment: Emotion Score Distribution", x = "Emotion Score", 
+                      y = "Count", fill = "Base Emotion")
+```
+
+# Does showing worked-example help improve students' mathematical ability?
+
+* How does the students' initial attitudes towards math affect their learning ability?
+
+Factors/Questions to consider for:
+
+- How does emotion change over time as students receive worked-example or no worked-example?
+
+- How does mathematical anxiety affect student's learning achievements (understanding level and mind wondering)
+
+
+```{r}
+k <- 0
+df5 <- df4 %>% select("id","Condition", "Sex") 
+id <- data.frame(matrix(ncol=1,nrow=0, dimnames=list(NULL, c("id"))))
+cond <- data.frame(matrix(ncol=1,nrow=0, dimnames=list(NULL, c("cond"))))
+emotion <- data.frame(matrix(ncol=1,nrow=0, dimnames=list(NULL, c("emotion"))))
+status <- data.frame(matrix(ncol=1,nrow=0, dimnames=list(NULL, c("status"))))
+
+for ( i in 4:10) {
+  id <- rbind(id, setNames(df4[1], names(id)))
+  cond <- rbind(cond, setNames(df4[2], names(cond)))
+  emotion <- rbind(emotion, setNames(df4[i], names(emotion)))
+  temp_status <- data.frame(matrix(ncol=1,nrow=nrow(df4[i]), dimnames=list(NULL, c("status"))))
+  temp_status$status <- k
+  status <- rbind(status, temp_status[1])
+  k <- k + 1
+}
+
+df5 <- cbind(id, cond, emotion, status)
+tspag = ggplot(df5, aes(x=status, y=emotion)) + 
+  geom_line() + guides(colour=FALSE) + xlab("Observation Time Point") +
+  ylab("Emotion")
+spag = tspag + aes(colour = factor(id))
+spag
+```
+
+```{r}
+mw <- df_nd %>% select("MW_day1_avg", "MW_day2_avg")
+df4_mw <- cbind(df4, mw) %>% mutate(mw_avg = (MW_day1_avg+ MW_day2_avg) / 2) 
+df4_mw %>% ggplot(aes(x = emotion_dur_avg, y = mw_avg)) + geom_point(aes(color = as.factor(Condition))) +
+  labs(title = "During-Emotion Scores vs. Mind Wandering Avg",
+       x = "Emotion Scores", y = "Mind Wandering", color = "Condition") + theme_minimal() + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX")) 
+  
+df4_mw %>% ggplot(aes(x = emotion0, y = mw_avg)) + geom_point(aes(color = as.factor(Condition))) +
+  labs(title = "Pre-Emotion Scores vs. Mind Wandering Avg",
+       x = "Emotion Scores", y = "Mind Wandering", color = "Condition") + theme_minimal() + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))   
+```
+
+```{r}
+understand <- df_nd %>%  select(contains("under"))
+cbind(df4_mw, understand) %>% ggplot(aes(x = emotion_dur_avg, y = Understand_avg)) + geom_point(aes(color = as.factor(Condition))) +
+  labs(title = "During-Emotion Scores vs. Understanding Level",
+       x = "Emotion Scores", y = "Understanding", color = "Condition") + theme_minimal() + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))   
+cbind(df4_mw, understand) %>% ggplot(aes(x = emotion0, y = Understand_avg)) + geom_point(aes(color = as.factor(Condition))) +
+  labs(title = "Pre-Emotion Scores vs. Understanding Level",
+       x = "Emotion Scores", y = "Understanding", color = "Condition") + theme_minimal() + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))   
+```
+
