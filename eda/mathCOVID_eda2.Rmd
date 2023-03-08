@@ -1,0 +1,88 @@
+---
+title: "Math COVID EDA 2"
+author: "Emi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(tidyverse)
+```
+
+# Loading Datasets
+
+```{r}
+mathCOVID <- readxl::read_excel('../data/KidsCOVID_Winter21_raw data.xlsx')
+```
+
+# Cleaning Data
+
+```{r}
+# Omitting rows with NA values from data
+df_nd <- mathCOVID %>% 
+          mutate(drop = replace_na(drop, 0)) %>% 
+          filter(drop != 1) %>% 
+          mutate("id"= row_number(), .before = drop )
+head(df_nd)
+```
+
+```{r}
+df <- df_nd %>% 
+    select("id", "Condition", "Sex", "Base_Enjoy", "Base_Worry", 
+            "During_OverallAcc", "During_HOT", "DurImm_OverallAcc", "DurImm_HOT",
+            "Del_OverallAcc", "Del_acc", "Del_HOT",
+           "Understand_avg", "PaidAttn_avg", 
+           "SI_1","SI_2","SI_3","SI_4","SI_5","SI_6","SI_7","SI_8","SI_9","SI_10",
+           "SI_avg")
+head(df)
+```
+
+```{r}
+# Emotion dataset: Enjoy/Worry with Mind Wandering and Understanding Factors
+emotion_df <- df_nd %>% select("id","Condition", "Sex", contains("Enjoy"), contains("Worry")) %>% mutate(pre  = Base_Enjoy - Base_Worry,
+              emotion0 = Enjoy_0 - Worry_0,
+              emotion1 = Enjoy_1 - Worry_1,
+              emotion2 = Enjoy_2 - Worry_2,
+              emotion3 = Enjoy_3 - Worry_3,
+              emotion4d = D_Enjoy_1 - D_Worry_1,
+              emotion5d = D_Enjoy_2 - D_Worry_2,
+              emotion6d = D_Enjoy_3 - D_Worry_3,
+              emotion_dur_avg = Enjoy_During_avg - Worry_During_avg,
+              emotion_imm_avg = Enjoy_Imm_avg - Worry_Imm_avg,
+              emotion_durI_avg = Enjoy_DurImm_avg - Worry_DurImm_avg,
+              emotion_del_avg = Enjoy_Del_avg - Worry_Del_avg)
+mw_under <- df_nd %>% select("MW_day1_avg", "MW_day2_avg", contains("under"))
+emotion_df = cbind(emotion_df, mw_under)
+head(emotion_df)
+```
+
+# Observe Causal Effect of Worked Example vs No Worked Example
+
+Let $U_i$ denote understanding level of i-th student, $M_i$ denote mind wandering 
+level of i-th student, $z$ denotes the condition ($z = 1$ represents worked example
+group, and $z = 0$ represents no worked example)
+
+* On student's understanding level: $U\Delta_i = U_i(z = 1) - U_i(z = 0)$
+
+* On student's mind wandering level: $M\Delta_i = M_i(z = 1) - M_i(z = 0)$
+
+```{r}
+# Create a table with: id, condition z, Y(1), Y(0), and causal effect Y(1) - Y(0)
+mw_under_avg_cond <- emotion_df %>% select("id","Condition", "Sex", contains("MW"), contains("under")) %>% 
+  #filter(Condition == 1) #%>% 
+  group_by(Condition) %>% summarize(mw = mean(MW_day1_avg, na.rm = TRUE), 
+                                    understanding = mean(Understand_avg, na.rm = TRUE)) %>% mutate(Condition = c("Worked EX","No Worked EX"))
+mw_under_avg_cond
+```
+
+```{r}
+df_t <- data.frame(t(mw_under_avg_cond)) %>% slice(2:3)
+SPF <- df_t %>% mutate(SPF = as.numeric(X1) - as.numeric(X2)) %>% select("SPF")
+SPF
+```
+

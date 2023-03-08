@@ -140,7 +140,7 @@ rbind(dur, durImm) %>%
   geom_point(aes(shape = Condition)) + 
   scale_color_manual(labels=c('During', 'During Imm'), values = c("darkgreen", "orange")) +
   theme_minimal() +
-  labs(title = "During vs During Immediate Accuracy and HOT Scores", color = "Status",
+  labs(title = "During Immediate Accuracy vs HOT Scores", color = "Status",
        x = "HOT", y = "Overall Accuracy")
 
 rbind(dur, durImm) %>% 
