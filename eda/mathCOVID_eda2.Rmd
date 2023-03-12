@@ -197,11 +197,11 @@ $$\text{Percent Change} = \frac{\text{Base Score} - \text{New Score}}{\text{Base
 ```{r}
 pc_df <-  rbind(enjoy, worry) %>% mutate( 
             pc1 = case_when(pre != 0 ~ (pre - dur)/pre,
-                             pre == 0 ~ dur),
+                             pre == 0 ~ 0),
             pc2 = case_when(pre != 0 ~ (pre - durI)/pre,
-                             pre == 0 ~ durI),
+                             pre == 0 ~ 0),
             pc3 = case_when(pre != 0 ~ (pre - del)/pre,
-                             pre == 0 ~ del)
+                             pre == 0 ~ 0)
             ) %>% select(cond, emotion, contains("pc")) %>% 
             group_by(emotion, cond) %>% summarize(pc1_avg = mean(pc1, na.rm = TRUE), pc2_avg = mean(pc2, na.rm = TRUE), pc3_avg = mean(pc3, na.rm = TRUE)) 
 pc1 <- pc_df %>% select(1:3) %>% mutate(period = 1)
