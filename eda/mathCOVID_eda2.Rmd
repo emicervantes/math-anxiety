@@ -124,6 +124,24 @@ colnames(worry) <- col_names
 worry2 <- worry %>% mutate(pre = -pre, dur = -dur, durI = -durI, del = -del)  
 ```
 
+## Accuracy Scores
+
+### Pre-Emotion vs Overall Accuracy
+
+```{r}
+rbind(enjoy, worry2) %>% 
+  ggplot(aes(x = pre, y = under, color = cond)) + geom_point() + 
+  geom_vline(xintercept = 0) + theme_minimal() + 
+  labs(title = "Pre-Study: Emotion vs Accuracy", x = "Emotion Scores", y = "Accuracy", color = "Condition") + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX")) 
+rbind(worry, enjoy) %>% 
+  ggplot(aes(x = pre, y = under, color = cond)) + geom_point() +
+  facet_grid(.~emotion, scales = "free", labeller = labeller(enjoy = "Enjoy", worry = "Worry")) +
+  theme_minimal() + 
+  labs(title = "Pre-Study: Emotion vs Accuracy", x = "Emotion Scores", y = "Accuracy", color = "Condition") + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))
+```
+
 ### During Study Data
 
 ```{r}
@@ -172,19 +190,80 @@ rbind(worry, enjoy) %>%
   scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))
 ```
 
-### Pre-Emotion vs Overall Accuracy
+## Mind Wandering
+
+### Pre Study Data (Mind Wandering)
 
 ```{r}
 rbind(enjoy, worry2) %>% 
-  ggplot(aes(x = pre, y = under, color = cond)) + geom_point() + 
+   mutate(mw_avg = rowMeans(rbind(enjoy, worry2)[ , c(8,9)], na.rm=TRUE)) %>% 
+  ggplot(aes(x = pre, y = mw_avg, color = cond)) + 
+  geom_point() + 
   geom_vline(xintercept = 0) + theme_minimal() + 
-  labs(title = "Pre-Study: Emotion vs Accuracy", x = "Emotion Scores", y = "Accuracy", color = "Condition") + 
+  labs(title = "Pre-Study: Emotion vs Mind Wandering", x = "Emotion Scores", y = "Mind Wandering", color = "Condition") + 
   scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX")) 
-rbind(worry, enjoy) %>% 
-  ggplot(aes(x = pre, y = under, color = cond)) + geom_point() +
+rbind(enjoy, worry2) %>% 
+   mutate(mw_avg = rowMeans(rbind(enjoy, worry2)[ , c(8,9)], na.rm=TRUE)) %>% 
+  ggplot(aes(x = pre, y = mw_avg, color = cond)) + geom_point() +
   facet_grid(.~emotion, scales = "free", labeller = labeller(enjoy = "Enjoy", worry = "Worry")) +
   theme_minimal() + 
-  labs(title = "Pre-Study: Emotion vs Accuracy", x = "Emotion Scores", y = "Accuracy", color = "Condition") + 
+  labs(title = "Pre-Study: Emotion vs Mind Wandering", x = "Emotion Scores", y = "Mind Wandering", color = "Condition") + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))
+```
+
+### During Study Data (Mind Wandering)
+
+```{r}
+rbind(enjoy, worry2) %>% 
+   mutate(mw_avg = rowMeans(rbind(enjoy, worry2)[ , c(8,9)], na.rm=TRUE)) %>% 
+  ggplot(aes(x = dur, y = mw_avg, color = cond)) + geom_point() + 
+  geom_vline(xintercept = 0) + theme_minimal() + 
+  labs(title = "During Data: Emotion vs Mind Wandering", x = "Emotion Scores", y = "Mind Wandering", color = "Condition") + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))
+
+rbind(enjoy, worry2) %>% 
+   mutate(mw_avg = rowMeans(rbind(enjoy, worry2)[ , c(8,9)], na.rm=TRUE)) %>% 
+  ggplot(aes(x = dur, y = mw_avg, color = cond)) + geom_point() +
+  facet_grid(.~emotion, scales = "free", labeller = labeller(enjoy = "Enjoy", worry = "Worry")) +
+  theme_minimal() + 
+  labs(title = "During Data: Emotion vs Mind Wandering", x = "Emotion Scores", y = "Mind Wandering", color = "Condition") + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))
+```
+
+### Immediate Data (Mind Wandering):
+
+```{r}
+rbind(enjoy, worry2) %>% 
+   mutate(mw_avg = rowMeans(rbind(enjoy, worry2)[ , c(8,9)], na.rm=TRUE)) %>% 
+  ggplot(aes(x = durI, y = mw_avg, color = cond)) + geom_point() + 
+  geom_vline(xintercept = 0) + theme_minimal() + 
+  labs(title = "Immediate Data: Emotion vs Mind Wandering", x = "Emotion Scores", y = "Mind Wandering", color = "Condition") + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX")) 
+rbind(enjoy, worry2) %>% 
+   mutate(mw_avg = rowMeans(rbind(enjoy, worry2)[ , c(8,9)], na.rm=TRUE)) %>% 
+  ggplot(aes(x = durI, y = mw_avg, color = cond)) + geom_point() +
+  facet_grid(.~emotion, scales = "free", labeller = labeller(enjoy = "Enjoy", worry = "Worry")) +
+  theme_minimal() + 
+  labs(title = "Immediate Data: Emotion vs Mind Wandering", x = "Emotion Scores", y = "Accuracy", color = "Condition") + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))
+```
+
+### Delayed Data (Mind Wandering)
+
+```{r}
+rbind(enjoy, worry2) %>% 
+   mutate(mw_avg = rowMeans(rbind(enjoy, worry2)[ , c(8,9)], na.rm=TRUE)) %>% 
+  ggplot(aes(x = del, y = mw_avg, color = cond)) + geom_point() + 
+  geom_vline(xintercept = 0) + theme_minimal() + 
+  labs(title = "Delayed Data: Emotion vs Mind Wandering", x = "Emotion Scores", y = "Mind Wandering", color = "Condition") + 
+  scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX")) 
+
+rbind(enjoy, worry2) %>% 
+   mutate(mw_avg = rowMeans(rbind(enjoy, worry2)[ , c(8,9)], na.rm=TRUE)) %>% 
+  ggplot(aes(x = del, y = mw_avg, color = cond)) + geom_point() +
+  facet_grid(.~emotion, scales = "free", labeller = labeller(enjoy = "Enjoy", worry = "Worry")) +
+  theme_minimal() + 
+  labs(title = "Delayed Data: Emotion vs Mind Wandering", x = "Emotion Scores", y = "Mind Wandering", color = "Condition") + 
   scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))
 ```
 
