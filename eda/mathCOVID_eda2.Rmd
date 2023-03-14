@@ -244,7 +244,7 @@ rbind(enjoy, worry2) %>%
   ggplot(aes(x = durI, y = mw_avg, color = cond)) + geom_point() +
   facet_grid(.~emotion, scales = "free", labeller = labeller(enjoy = "Enjoy", worry = "Worry")) +
   theme_minimal() + 
-  labs(title = "Immediate Data: Emotion vs Mind Wandering", x = "Emotion Scores", y = "Accuracy", color = "Condition") + 
+  labs(title = "Immediate Data: Emotion vs Mind Wandering", x = "Emotion Scores", y = "Mind Wandering", color = "Condition") + 
   scale_color_brewer(palette="Set1", labels = c("Worked EX", "No Worked EX"))
 ```
 
