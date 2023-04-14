@@ -43,16 +43,21 @@ In a new dataset, contain: X, condition, race_rv, gender, chicago, tma_sum_rv, m
 
 ```{r}
 df <- mathCOVID %>% filter(is.na(drop)) %>% 
-        select(Condition, race_rv, TMA_sum_rv, SI_sum, MW_day1_avg, MW_day2_avg, 
+        select(9,Condition, race_rv, TMA_sum_rv, SI_sum, MW_day1_avg, MW_day2_avg, 
                Understand_avg, Base_Worry, Base_Enjoy, contains("durimm_avg"),
                contains("del_avg"), DurImm_HOT) 
 df$Condition[df$Condition == 2] <- 0
-col_names <- c("cond", "race", "tma", "si", "mw1", "mw2", "under_avg", 
+col_names <- c("subjectid", "cond", "race", "tma", "si", "mw1", "mw2", "under_avg", 
                "worry0", "enjoy0", "worry1", "enjoy1", "worry2",
                "enjoy2", "HOT")
 colnames(df) <- col_names
 head(df)
 ````
+
+```{r}
+df2 <- inner_join(df, clean, by = "subjectid")
+head(df2)
+```
 
 # Visualziations
 
@@ -120,5 +125,15 @@ df %>%
                       c("No Worked EX", "Worked EX")) +
   labs(title = "Mathematical Anxiety (TMA) vs HOT",
        x = "TMA", y = "HOT", color  = "Condition")
+```
+
+# Implementing Possible Factors
+
+## Possible Factors of Mathematical Anxiety
+
+*   Gender
+
+```{r}
+
 ```
 
