@@ -131,7 +131,20 @@ df %>%
 
 ## Possible Factors of Mathematical Anxiety
 
-*   Gender
+*   Student's background info: Gender, race, pre-worry and pre-enjoy scores
+
+*   Condition: Worked example group vs no worked example group
+
+*   Student's during/ability info: During and delayed worry/enjoy scores, mind wandeirng (day 1 and day 2), situational interest
+
+```{r}
+glimpse(df2)
+```
+
+```{r}
+df2 %>% 
+  ggplot(aes(x = mw_day1_sum, fill = cond)) + geom_histogram(pt())
+```
 
 ```{r}
 
