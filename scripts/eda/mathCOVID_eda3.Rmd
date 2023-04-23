@@ -139,14 +139,13 @@ df %>%
 
 ```{r}
 glimpse(df2)
+write.csv(df2, "../data/clean2.csv", row.names=FALSE)
 ```
 
 ```{r}
 df2 %>% 
-  ggplot(aes(x = mw_day1_sum, fill = cond)) + geom_histogram(pt())
+  ggplot(aes(x = tma, fill = as.factor(gender))) + 
+  geom_histogram(color = "black",bins = 23)
 ```
 
-```{r}
-
-```
 
