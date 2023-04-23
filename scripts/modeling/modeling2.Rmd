@@ -1,0 +1,42 @@
+---
+title: "Math Anxiety Initial Modeling"
+author: "Emi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load Tidyverse
+
+```{r}
+library(tidyverse) 
+```
+
+# Load clean data
+
+```{r}
+df <- read.csv("../../data/clean2.csv")
+head(df)
+glimpse(df)
+```
+
+# Modeling
+
+1.    Normal regression model: Simple regression model
+
+2.    Path Analysis
+
+For each model, we are using same dependent variable and list of independent variables:
+
+**Dependent variable: **Mathematical anxiety `tma`
+
+**Independent variables: **Gender (`gender`), worked example (`cond`), mind wandering (`mw1`, `mw2`), understanding (`under_avg`), high order thinking (`HOT`), situational interest (`si_sum`)
+
+# Path Analysis
+
+
+
+
