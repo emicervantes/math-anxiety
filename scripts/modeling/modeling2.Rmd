@@ -9,16 +9,24 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Load Tidyverse
+# Load Packages
 
 ```{r}
-library(tidyverse) 
+library(lavaan)
+library(semPlot)
+library(OpenMx)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(GGally)
 ```
 
 # Load clean data
 
 ```{r}
 df <- read.csv("../../data/clean2.csv")
+df <- df %>% 
+        mutate( mw_avg = rowMeans(df[6:7], na.rm = TRUE))
 head(df)
 glimpse(df)
 ```
@@ -37,6 +45,18 @@ For each model, we are using same dependent variable and list of independent var
 
 # Path Analysis
 
+```{r}
+# define model
+model <- 'tma ~ cond + mw_avg + si_sum + under_avg + HOT + gender'
+```
+```{r}
+# fit the model
+fit <- sem(model, data = df)
+summary(fit)
+```
 
+```{r}
+semPaths(fit, 'std', layout = 'circle')
+```
 
 
