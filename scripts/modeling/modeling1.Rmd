@@ -56,7 +56,7 @@ df <- df %>%
 
 ```{r}
 m1_2 <- df %>% 
-        lm(formula = tma ~ cond + mw_avg + under_avg + HOT + under_avg + si_sum)
+        lm(formula = tma ~ cond + mw_avg + under_avg + HOT  + si_sum)
 summary(m1_2)
 ```
 
@@ -152,4 +152,28 @@ df %>%
                       c("No Worked EX", "Worked EX")) + 
   theme_minimal()
 ```
+
+# Modeling Independent Variables
+
+```{r}
+# Mind wandering
+fit1 <- df %>% 
+        lm(formula = mw_avg ~ cond + si_sum + under_avg + HOT)
+summary(fit1)
+```
+```{r}
+# Mind wandering
+fit1 <- df %>% 
+        lm(formula = si_sum ~ cond + mw_avg + under_avg + HOT)
+summary(fit1)
+```
+
+## Findings
+
+*   Mind wandering model: Situational interests (`si_sum`) and understanding level (`under_avg`) have significant effects (positive)
+
+*   Situational interest model: Mind wandering (`mw_avg`) and understanding level (`under_avg`) have significant effects (positive)
+
+
+
 

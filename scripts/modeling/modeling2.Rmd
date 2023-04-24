@@ -45,18 +45,68 @@ For each model, we are using same dependent variable and list of independent var
 
 # Path Analysis
 
+## Model 1
+
 ```{r}
 # define model
-model <- 'tma ~ cond + mw_avg + si_sum + under_avg + HOT + gender'
+model1 <- 'tma ~ cond + mw_avg + si_sum + under_avg + HOT + gender'
 ```
 ```{r}
 # fit the model
-fit <- sem(model, data = df)
-summary(fit)
+fit1 <- cfa(model1, data = df)
+summary(fit1)
 ```
 
 ```{r}
-semPaths(fit, 'std', layout = 'circle')
+semPaths(fit1, 'std', layout = 'circle')
+title("SEM Model 1",line=2.5)
 ```
 
+## Model 2
+
+```{r}
+# define model
+model2 <- '
+tma ~ cond + mw_avg + si_sum + under_avg + HOT + gender
+mw_avg ~ si_sum + under_avg
+'
+```
+```{r}
+# fit the model
+fit2 <- cfa(model2, data = df)
+summary(fit2)
+```
+
+```{r}
+semPaths(fit2, 'std', layout = 'circle')
+title("SEM Model 2",line=2.5)
+```
+
+## Model 3
+
+```{r}
+# define model
+model3 <- '
+tma ~ cond + mw_avg + si_sum + under_avg + HOT + gender
+si_sum ~ mw_avg + under_avg
+'
+```
+```{r}
+# fit the model
+fit3 <- cfa(model3, data = df)
+summary(fit3)
+```
+
+```{r}
+semPaths(fit3, 'std', layout = 'circle')
+title("SEM Model 3",line=2.5)
+```
+
+# Findings
+
+*   Still not enough evidence to suggest that conditions have significant effects on students' mathematical anxiety level
+
+*   With SEM models, we can see the correlations between variables more clearly
+
+*   Mind wandering and situational interests have significant effects on mathematical anxiety
 
