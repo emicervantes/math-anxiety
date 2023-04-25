@@ -17,10 +17,10 @@ library(tidyverse)
 
 ```{r}
 # Raw data
-mathCOVID <- readxl::read_excel('../data/KidsCOVID_Winter21_raw data.xlsx')
+mathCOVID <- readxl::read_excel('../../data/KidsCOVID_Winter21_raw data.xlsx')
 head(mathCOVID)
 # Clean data
-clean <- read.csv("../data/affectoutcome_norm_predict_1102.csv")
+clean <- read.csv("../../data/affectoutcome_norm_predict_1102.csv")
 ```
 
 # Clean Data Analysis
@@ -139,7 +139,7 @@ df %>%
 
 ```{r}
 glimpse(df2)
-write.csv(df2, "../data/clean2.csv", row.names=FALSE)
+write.csv(df2, "../../data/clean2.csv", row.names=FALSE)
 ```
 
 ```{r}

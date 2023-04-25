@@ -110,3 +110,4 @@ title("SEM Model 3",line=2.5)
 
 *   Mind wandering and situational interests have significant effects on mathematical anxiety
 
+

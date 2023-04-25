@@ -41,7 +41,7 @@ For each model, we are using same dependent variable and list of independent var
 
 ```{r}
 m1_1 <- df %>% 
-        lm(formula = tma ~ cond + mw1 + mw2 + under_avg + HOT + under_avg + si_sum)
+        lm(formula = tma ~ cond + mw1 + mw2 + under_avg + HOT + under_avg + si_sum + gender)
 summary(m1_1)
 ```
 Features that have significant effects on math anxiety (p < 0.05): `mw1` (positive effect: 0.158) and `si_sum` (negative effect: -0.058)
@@ -56,11 +56,11 @@ df <- df %>%
 
 ```{r}
 m1_2 <- df %>% 
-        lm(formula = tma ~ cond + mw_avg + under_avg + HOT  + si_sum)
+        lm(formula = tma ~ cond + mw_avg + under_avg + HOT  + si_sum + gender)
 summary(m1_2)
 ```
 
-Features that have significant effects on math anxiety (p < 0.05): `mw_1_avg` (positive effect: 1.413) and `si_sum` (negative effect: -6.898e-02)
+Features that have significant effects on math anxiety (p < 0.05): `mw_avg` (positive effect: 1.413) and `si_sum` (negative effect: -6.898e-02)
 
 
 ### Model 1.3: Take the ratio of day 1 and day 2
@@ -76,7 +76,7 @@ df <- df %>%
 
 ```{r}
 m1_3 <- df %>% 
-        lm(formula = tma ~ cond + mw_ratio + under_avg + HOT + under_avg + si_sum)
+        lm(formula = tma ~ cond + mw_ratio + under_avg + HOT + under_avg + si_sum + gender)
 summary(m1_3)
 ```
 Features that have significant effects on math anxiety (p < 0.05):  `si_sum` (negative effect: -0.08654)
@@ -106,12 +106,36 @@ We will consider worked example group as our interaction effects on the independ
 
 Consider the following model:
 
-`tma ~ cond + mw_avg + si_sum + mw_avg * cond + si_sum * cond`
+`tma ~ cond + mw_avg + si_sum + mw_avg * cond + si_sum * cond + gender`
 
 ```{r}
-m1_5 <- df %>% 
-        lm(formula = tma ~ cond + mw_avg + si_sum + mw_avg * cond + si_sum * cond)
-summary(m1_5)
+m1_5a <- df %>% 
+        lm(formula = tma ~ cond + mw_avg + si_sum + mw_avg * cond + si_sum * cond + gender)
+summary(m1_5a)
+```
+
+`tma ~ cond + mw_avg + si_sum + mw_avg * gender + si_sum * gender + cond`
+
+```{r}
+m1_5b <- df %>% 
+        lm(formula = tma ~ cond + mw_avg + si_sum + mw_avg * gender + si_sum * gender + cond)
+summary(m1_5b)
+```
+
+`tma ~ cond + mw_avg + si_sum + mw_avg * cond + si_sum * cond + mw_avg * gender + si_sum * gender + mw_avg * gender * cond + si_sum * gender * cond`
+
+```{r}
+m1_5c <- df %>% 
+        lm(formula = tma ~ cond + mw_avg + si_sum + mw_avg * cond + si_sum * cond + mw_avg * gender + si_sum * gender + mw_avg * gender * cond + si_sum * gender * cond)
+summary(m1_5c)
+```
+
+`tma ~ cond + mw_avg + si_sum + mw_avg * cond + si_sum * cond + gender`
+
+```{r}
+m1_5bc <- df %>% 
+        lm(formula = tma ~ cond + mw_avg + si_sum + mw_avg * cond + si_sum * cond + mw_avg * gender + si_sum * gender + mw_avg * gender * cond + si_sum * gender * cond)
+summary(m1_5b)
 ```
 Features that have significant effects on math anxiety (p < 0.05):  `mw_avg` (positive effect: 1.36529) `si_sum` (Negative effect: -0.11611), and `cond:si_sum` (small positive effect: 0.09319)
 
@@ -124,6 +148,8 @@ Features that have significant effects on math anxiety (p < 0.05):  `mw_avg` (po
 *   Two features that had significant effects on math anxiety were: `mw_avg` and `si_sum`. Indicating that average mind wandering have positive impact on math anxiety and situational interest has negative impact on math anxiety
 
 *   Very small effect on math anxiety by `cond:si_sum`, the interaction effect of worked example with situational interests. Situational interests may differ in each study group (small chance).
+
+*   Switching to worked ex group from no-worked ex group had positive effect on students’ situational interests
 
 # Visualizations
 
