@@ -164,6 +164,17 @@ df %>%
   scale_color_brewer(palette="Set1", labels = 
                       c("No Worked EX", "Worked EX")) + 
   theme_minimal()
+
+df %>% 
+  ggplot(aes(x = mw_avg, y = tma, color = as.factor(cond), 
+             shape = as.factor(gender))) + 
+  geom_point() + geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Mind Wandering (MW) Avg vs Math Anxiety (TMA)", x = "MW Avg", y = "TMA",
+       color = "Condition", shape = "Gender") +
+  scale_color_brewer(palette="Set1", labels = 
+                      c("No Worked EX", "Worked EX")) + 
+  scale_shape_manual(values=c("Girl", "Boy")) + 
+  theme_minimal()
 ```
 
 ## SI sum vs math anxiety
