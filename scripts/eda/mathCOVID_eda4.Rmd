@@ -1,0 +1,69 @@
+---
+title: "COVID Math Anxiety EDA 4"
+author: "Emi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load Tidyverse
+
+```{r}
+library(tidyverse)
+```
+
+# Load Data
+
+```{r}
+dfr <- readxl::read_xlsx("../../data/KidsCOVID_Winter21_raw data.xlsx")
+df <- read.csv("../../data/clean2.csv")
+clean <- read.csv("../../data/affectoutcome_norm_predict_1102.csv")
+```
+
+```{r}
+head(dfr)
+glimpse(df)
+```
+
+# Get the average of SI from raw data
+
+```{r}
+dfr %>% 
+  select(contains("si_"))
+```
+
+# Investigate TMA
+
+```{r}
+dfr %>% 
+  select(contains("tma")) %>% select(7:9)
+```
+
+# Update Clean Data
+
+Add new columns: `TMA_avg` and `SI_avg`
+
+```{r}
+tma_si_avg <- dfr %>% select("Subject ID #...9", "TMA_avg","SI_avg")
+col_names <- c("subjectid", "tma_avg", "si_avg")
+colnames(tma_si_avg) <- col_names
+head(tma_si_avg)
+```
+
+```{r}
+clean <- clean %>% left_join(tma_si_avg, by = "subjectid") %>% 
+  # take the average of mind wandering
+  mutate( mw_avg = rowMeans(clean[15:16], na.rm = TRUE))
+head(clean)
+```
+
+# Save `clean` as CSV file
+
+```{r}
+write.csv(clean, "../../data/clean3.csv", row.names=FALSE)
+```
+
+
