@@ -1,0 +1,112 @@
+---
+title: "Math COVID Anxiety Modeling 3"
+author: "Emi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+# Load Dataset
+
+```{r}
+df <- read.csv("../../data/clean3.csv")
+head(df)
+```
+
+# Model 1 
+
+```{r}
+fit1 <- df %>% 
+        lm(formula = tma_avg ~ cond + mw_avg + understand_avg + si_avg + gender)
+summary(fit1)
+```
+Features that have significant effects on math anxiety (p < 0.05): `mw_avg` (positive effect: 0.060859) and `si_avg` (negative effect: -0.137749)
+
+# Model 2: Interaction Effects (Condition)
+
+```{r}
+fit2 <- df %>% 
+        lm(formula = tma_avg ~ cond + mw_avg + si_avg + mw_avg * cond + si_avg * cond + gender)
+summary(fit2)
+```
+Features that have significant effects on math anxiety (p < 0.05): No features were proven to be statistically significant
+
+# Model 3: Interaction Effects (gender)
+
+```{r}
+fit3 <- df %>% 
+        lm(formula = tma_avg ~ cond + mw_avg + si_avg + mw_avg * gender + si_avg * gender + cond)
+summary(fit3)
+```
+Features that have significant effects on math anxiety (p < 0.05): `mw_avg` (positive effect: 0.05264) and `si_avg` (negative effect: -0.20608)
+
+# Model 4: Interaction Effects (gender and condition)
+
+```{r}
+fit4 <- df %>% 
+        lm(formula = tma_avg ~ cond + mw_avg + si_avg + mw_avg * gender + si_avg * gender + mw_avg * cond + si_avg * cond + mw_avg * gender * cond 
+           + si_avg * gender * cond)
+summary(fit4)
+```
+Features that have significant effects on math anxiety (p < 0.05): `mw_avg` (positive effect: 0.124338) and `cond:mw_avg:gender` (positive effect: 0.098495)
+
+Not really a good idea to include interaction effect in model
+
+# Mind Wandering <-> Situational Interest
+
+```{r}
+df %>% ggplot(aes(x = si_avg, y = mw_avg, color = as.factor(cond))) + 
+  geom_point() + geom_smooth(method = "lm", se = FALSE) + 
+  theme_minimal() + 
+  scale_color_brewer(palette="Set1", labels = 
+                      c("No Worked EX", "Worked EX")) +
+  labs(title = "Situational Interest (SI) vs Mind Wandering (MW) by Condition",
+       x = "SI", y = "MW", color  = "Condition")
+
+df %>% ggplot(aes(x = si_avg, y = mw_avg, color = as.factor(gender))) + 
+  geom_point() + geom_smooth(method = "lm", se = FALSE) + 
+  theme_minimal() + 
+  scale_color_brewer(palette="Set1", labels = 
+                      c("Girl", "Boy")) +
+  labs(title = "Situational Interest (SI) vs Mind Wandering (MW) by Gender",
+       x = "SI", y = "MW", color  = "Gender")
+
+df %>% ggplot(aes(x = si_avg, y = mw_avg, color = tma_avg)) + 
+  geom_point() + geom_smooth(method = "lm", se = FALSE) + 
+  theme_minimal() + 
+  labs(title = "Situational Interest (SI) vs Mind Wandering (MW) by TMA",
+       x = "SI", y = "MW", color  = "TMA")
+```
+
+## Model 1: Situational Interest Model
+
+```{r}
+fit2_1 <- df %>% 
+        lm(formula = si_avg ~ gender + cond + tma_avg + understand_avg)
+summary(fit2_1)
+```
+Features that have significant effects on situational interest (p < 0.05): `tma_avg` (negative effect: -0.23919) and `understand_avg` (positive effect: 0.01069)
+
+## Model 2: Mind Wandering Model
+
+```{r}
+fit2_2 <- df %>% 
+        lm(formula = mw_avg ~ gender + cond + tma_avg + understand_avg)
+summary(fit2_2)
+```
+Features that have significant effects on situational interest (p < 0.05): `tma_avg` (positive effect: 1.65629) and `understand_avg` (negative effect: -0.07017)
+
+# Findings
+
+*   No evidence that showed condition had significant effect on neither `tma_avg`, `si_avg`, and `mw_avg`
+
+*   `tma_avg` had significant negative effect on `si_avg` and `understanding_avg` had positive effect on `si_avg` -> lower math anxiety results in higher situational interest and higher understanding level results in higher situational interest
+
+*   `tma_avg` had significant positive effect on `mw_avg` and `understanding_avg` had negative effect on `mw_avg` -> high math anxiety results in high mind wandering and high understanding results in low mind wandering
