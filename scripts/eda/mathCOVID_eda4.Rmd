@@ -42,16 +42,21 @@ dfr %>%
   select(contains("tma")) %>% select(7:9)
 ```
 
+```{r}
+dfr %>% 
+  select(DurImm_HOT)
+```
+
+
 # Update Clean Data
 
 Add new columns: `TMA_avg` and `SI_avg`
 
 ```{r}
-tma_si_avg <- dfr %>% select("Condition", "Subject ID #...9", "HOT", "TMA_avg","SI_avg")
-col_names <- c("cond", "subjectid", "hot", "tma_avg", "si_avg")
+tma_si_avg <- dfr %>% select("Condition", "Subject ID #...9", "TMA_avg","SI_avg", DurImm_HOT)
+col_names <- c("cond", "subjectid", "tma_avg", "si_avg", "hot")
 colnames(tma_si_avg) <- col_names
 head(tma_si_avg)
-dfr %>% select(contains("hot"))
 ```
 
 ```{r}
