@@ -80,6 +80,16 @@ df %>%
                       c("No Worked EX", "Worked EX")) +
   labs(title = "Mathematical Anxiety Distribution by Condition",
        x = "TMA", y = "Count", fill  = "Condition")
+
+
+df %>% 
+  ggplot(aes(x = tma_avg, fill = cond)) + 
+  geom_bar() + 
+  facet_grid(.~cond) +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("No Worked EX", "Worked EX")) +
+  labs(title = "Mathematical Anxiety Distribution by Condition",
+       x = "TMA", y = "Count", fill  = "Condition")
 ```
 
 ```{r}

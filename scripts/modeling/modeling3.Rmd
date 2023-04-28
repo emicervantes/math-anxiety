@@ -20,12 +20,21 @@ df <- read.csv("../../data/clean3.csv")
 head(df)
 ```
 
+
+```{r}
+df %>% 
+  ggplot(aes(x = tma_avg, fill = cond)) +
+  geom_histogram(bins = 25)
+```
+
+
 # Model 1 
 
 ```{r}
 fit1 <- df %>% 
         lm(formula = tma_avg ~ cond + mw_avg + understand_avg + si_avg + gender + hot)
 summary(fit1)
+
 ```
 Features that have significant effects on math anxiety (p < 0.05): `mw_avg` (positive effect: 0.060859) and `si_avg` (negative effect: -0.137749)
 
