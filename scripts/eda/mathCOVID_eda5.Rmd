@@ -1,0 +1,81 @@
+---
+title: "Math COVID eda 5"
+author: "Emi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(gridExtra)
+```
+
+# Load Data
+
+```{r}
+dfr <- readxl::read_xlsx("../../data/KidsCOVID_Winter21_raw data.xlsx")
+```
+
+# Data Visualizations: tma
+
+```{r}
+dfr <-dfr %>% filter(Condition == 1 | Condition == 2)
+```
+
+```{r}
+tma1_hist <- dfr %>% 
+  ggplot(aes(TMA_1, fill = Condition)) + geom_bar() +
+  facet_grid(vars(cols = Condition))
+
+tma2_hist <- dfr %>% 
+  ggplot(aes(TMA_2,  fill = Condition)) + geom_bar()  +
+  facet_grid(vars(cols = Condition))
+
+tma3_hist <- dfr %>% 
+  ggplot(aes(TMA_3,  fill = Condition)) + geom_bar()  +
+  facet_grid(vars(cols = Condition))
+
+tma4_hist <- dfr %>% 
+  ggplot(aes(TMA_4,  fill = Condition)) + geom_bar()  +
+  facet_grid(vars(cols = Condition))
+
+tma5_hist <- dfr %>% 
+  ggplot(aes(TMA_5,  fill = Condition)) + geom_bar() +
+  facet_grid(vars(cols = Condition))
+
+tma6_hist <- dfr %>% 
+  ggplot(aes(TMA_6,  fill = Condition)) + geom_bar() +
+  facet_grid(vars(cols = Condition))
+```
+
+```{r}
+grid.arrange(tma1_hist, tma2_hist, tma3_hist, tma4_hist, tma5_hist, tma6_hist,
+             ncol = 3)
+```
+
+# Accuracy
+
+```{r}
+dfr %>% select(contains("acc"))
+dfr %>% 
+  ggplot(aes(x = Del_OverallAcc ,y = TMA_avg, color  = Condition)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() + 
+  scale_color_brewer(palette="Set1", labels = 
+                      c("Worked Ex", "No Worked EX")) +
+  facet_grid(.~Condition) 
+```
+
+```{r}
+t.test(Del_OverallAcc ~ Condition, data = dfr)
+```
+
+```{r}
+dfr %>% mutate(change = () / )
+```
+

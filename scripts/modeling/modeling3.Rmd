@@ -24,7 +24,7 @@ head(df)
 
 ```{r}
 fit1 <- df %>% 
-        lm(formula = tma_avg ~ cond + mw_avg + understand_avg + si_avg + gender)
+        lm(formula = tma_avg ~ cond + mw_avg + understand_avg + si_avg + gender + hot)
 summary(fit1)
 ```
 Features that have significant effects on math anxiety (p < 0.05): `mw_avg` (positive effect: 0.060859) and `si_avg` (negative effect: -0.137749)
@@ -89,7 +89,7 @@ df %>% ggplot(aes(x = si_avg, y = mw_avg, color = tma_avg)) +
 
 ```{r}
 fit2_1 <- df %>% 
-        lm(formula = si_avg ~ gender + cond + tma_avg + understand_avg)
+        lm(formula = si_avg ~ gender + cond + tma_avg + understand_avg + hot)
 summary(fit2_1)
 ```
 Features that have significant effects on situational interest (p < 0.05): `tma_avg` (negative effect: -0.23919) and `understand_avg` (positive effect: 0.01069)
@@ -98,7 +98,7 @@ Features that have significant effects on situational interest (p < 0.05): `tma_
 
 ```{r}
 fit2_2 <- df %>% 
-        lm(formula = mw_avg ~ gender + cond + tma_avg + understand_avg)
+        lm(formula = mw_avg ~ gender + cond + tma_avg + understand_avg + si_avg + hot)
 summary(fit2_2)
 ```
 Features that have significant effects on situational interest (p < 0.05): `tma_avg` (positive effect: 1.65629) and `understand_avg` (negative effect: -0.07017)
@@ -110,3 +110,83 @@ Features that have significant effects on situational interest (p < 0.05): `tma_
 *   `tma_avg` had significant negative effect on `si_avg` and `understanding_avg` had positive effect on `si_avg` -> lower math anxiety results in higher situational interest and higher understanding level results in higher situational interest
 
 *   `tma_avg` had significant positive effect on `mw_avg` and `understanding_avg` had negative effect on `mw_avg` -> high math anxiety results in high mind wandering and high understanding results in low mind wandering
+
+# Modeling with Emotions
+
+```{r}
+df %>% select(contains("enjoy"), contains("worry"))
+```
+
+## Features of Enjoy and Worry
+
+Enjoy: `base_enjoy`, `enjoy_durimm_avg`,  `enjoy_del_avg`
+
+Worry: `base_worry`, `worry_durimm_avg`, `worry_del_avg`
+
+## Model 3: Percent change from base scores
+
+New variables:
+
+*  [**enjoy**] Change during the study: `enjoy_pc1` = (`enjoy_durimm_avg` - `base_enjoy`) / `base_enjoy`
+
+*  [**enjoy**] Change after the study: `enjoy_pc2` = (`enjoy_del_avg` - `base_enjoy`) / `base_enjoy`
+
+*  [**worry**] Change during the study: `worry_pc1` = (`worry_durimm_avg` - `base_worry`) / `base_worry`
+
+*  [**worry**] Change after the study: `worry_pc2` = (`worry_del_avg` - `base_worry`) / `base_worry`
+
+```{r}
+# Create the variables
+df <-  df %>% 
+              mutate(enjoy_pc1 = (enjoy_durimm_avg - base_enjoy) / base_enjoy,
+                     enjoy_pc2 = (enjoy_del_avg - base_enjoy) / base_enjoy,
+                     worry_pc1 = (worry_durimm_avg - base_worry) / base_worry,
+                     worry_pc2 = (worry_del_avg - base_worry) / base_worry)
+
+df$enjoy_pc1[df$enjoy_pc1 == "NaN" | df$enjoy_pc1 == "Inf"] <- 0
+df$enjoy_pc2[df$enjoy_pc2 == "NaN" | df$enjoy_pc2 == "Inf"] <- 0
+df$worry_pc1[df$worry_pc1 == "NaN" | df$worry_pc1 == "Inf"] <- 0
+df$worry_pc2[df$worry_pc2 == "NaN" | df$worry_pc2 == "Inf"] <- 0
+
+head(df)
+```
+
+```{r}
+# model with just percent change
+# 1. All the percent change measures
+fit3_1a <- df %>% 
+        lm(formula = tma_avg ~ enjoy_pc1 + enjoy_pc2 + worry_pc1 + worry_pc2)
+summary(fit3_1a)
+# 2. Just using percent change using durimm scores
+fit3_1b <- df %>% 
+        lm(formula = tma_avg ~ enjoy_pc1 + worry_pc1)
+summary(fit3_1b)
+# 3. Using raw scores
+fit3_1c <- df %>% 
+        lm(formula = tma_avg ~ enjoy_durimm_avg + worry_durimm_avg + mw_avg + si_avg)
+summary(fit3_1c)
+```
+
+```{r}
+# model with just percent change
+# mind wandering
+fit3_1a <- df %>% 
+  lm(formula = mw_avg~ enjoy_pc1 + worry_pc1 + tma_avg)
+summary(fit3_2)
+fit3_1b <- df %>% 
+  lm(formula = mw_avg ~ enjoy_durimm_avg + worry_durimm_avg + tma_avg + si_avg)
+summary(fit3_1b)
+```
+
+```{r}
+# model with just percent change
+# situational interest
+fit3_2a <- df %>% 
+  lm(formula = si_avg~ enjoy_pc1 + worry_pc1 + tma_avg)
+summary(fit3_2a)
+fit3_2b <- df %>% 
+  lm(formula = si_avg~ enjoy_durimm_avg + worry_durimm_avg + tma_avg)
+summary(fit3_2b)
+```
+
+
