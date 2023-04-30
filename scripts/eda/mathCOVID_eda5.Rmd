@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(tidyverse)
 library(gridExtra)
+library(ggpubr)
 ```
 
 # Load Data
@@ -29,53 +30,96 @@ dfr <-dfr %>% filter(Condition == 1 | Condition == 2)
 ```{r}
 tma1_hist <- dfr %>% 
   ggplot(aes(TMA_1, fill = Condition)) + geom_bar() +
+  theme_minimal() + 
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Worked Ex", "No Worked EX")) +
+  labs(x = "TMA 1", y = "Count") +
   facet_grid(vars(cols = Condition))
 
 tma2_hist <- dfr %>% 
   ggplot(aes(TMA_2,  fill = Condition)) + geom_bar()  +
+  theme_minimal() + 
+  labs(x = "TMA 2", y = "Count") +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Worked Ex", "No Worked EX")) +
   facet_grid(vars(cols = Condition))
 
 tma3_hist <- dfr %>% 
   ggplot(aes(TMA_3,  fill = Condition)) + geom_bar()  +
+  theme_minimal() + 
+  labs(x = "TMA 3", y = "Count") +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Worked Ex", "No Worked EX")) +
   facet_grid(vars(cols = Condition))
 
 tma4_hist <- dfr %>% 
   ggplot(aes(TMA_4,  fill = Condition)) + geom_bar()  +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Worked Ex", "No Worked EX")) +
+  labs(x = "TMA 4", y = "Count") +
+  theme_minimal() + 
   facet_grid(vars(cols = Condition))
 
 tma5_hist <- dfr %>% 
   ggplot(aes(TMA_5,  fill = Condition)) + geom_bar() +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Worked Ex", "No Worked EX")) +
+  labs(x = "TMA 5", y = "Count") +
+  theme_minimal() + 
   facet_grid(vars(cols = Condition))
 
 tma6_hist <- dfr %>% 
   ggplot(aes(TMA_6,  fill = Condition)) + geom_bar() +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Worked Ex", "No Worked EX")) +
+  labs(x = "TMA 6", y = "Count") +
+  theme_minimal() + 
   facet_grid(vars(cols = Condition))
 ```
 
 ```{r}
-grid.arrange(tma1_hist, tma2_hist, tma3_hist, tma4_hist, tma5_hist, tma6_hist,
-             ncol = 3)
+tma_hist <- ggarrange(tma1_hist, tma2_hist, tma3_hist, tma4_hist, tma5_hist, tma6_hist,
+                       common.legend = TRUE, legend="bottom", ncol = 3, nrow = 2)
+
+ggsave(tma_hist, file = "../../outputs/visualization/tma_hist.png")
 ```
 
 # Accuracy
 
 ```{r}
 dfr %>% select(contains("acc"))
-dfr %>% 
-  ggplot(aes(x = Del_OverallAcc ,y = TMA_avg, color  = Condition)) + 
+
+ tma_acc_splt1 <- dfr %>% 
+  ggplot(aes(x = Del_OverallAcc, y = TMA_avg ,color  = Condition)) + 
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   theme_minimal() + 
   scale_color_brewer(palette="Set1", labels = 
                       c("Worked Ex", "No Worked EX")) +
-  facet_grid(.~Condition) 
+  facet_grid(.~Condition) +
+  labs(title = "Effect of Math Anxiety on Overall Accuracy",
+        x = "Overall Accuracy", y = "TMA Average")
+
+ tma_acc_splt2 <- dfr %>% 
+              ggplot(aes(x = TMA_avg, y = Del_OverallAcc ,color  = Condition)) + 
+              geom_point() +
+              geom_smooth(method = "lm", se = FALSE) +
+              theme_minimal() + 
+              scale_color_brewer(palette="Set1", labels = 
+                                  c("Worked Ex", "No Worked EX")) +
+              facet_grid(.~Condition)  +
+              labs(title = "Effect of Math Anxiety on Overall Accuracy",
+                    x = "TMA Average", y = "Overall Accuracy")
+ 
+ggsave(plot = tma_acc_splt1, 
+       file = "../../outputs/visualization/tma_acc_splt1.png")
+ggsave(plot = tma_acc_splt2, 
+       file = "../../outputs/visualization/tma_acc_splt2.png")
 ```
 
 ```{r}
 t.test(Del_OverallAcc ~ Condition, data = dfr)
 ```
 
-```{r}
-dfr %>% mutate(change = () / )
-```
+
 

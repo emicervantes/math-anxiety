@@ -64,7 +64,7 @@ head(df2)
 ```{r}
 df %>% 
   ggplot(aes(x = tma, fill = cond)) + 
-  geom_bar(position = "dodge") +
+  geom_bar() +
   theme_minimal() + 
   labs(title = "Mathematical Anxiety Distribution by Condition", 
        x = "Mathematical Anxiety (TMA)", y = "Count",
@@ -74,16 +74,6 @@ df %>%
 
 df %>% 
   ggplot(aes(x = tma, fill = cond)) + 
-  geom_bar() + 
-  facet_grid(.~cond) +
-  scale_fill_brewer(palette="Set1", labels = 
-                      c("No Worked EX", "Worked EX")) +
-  labs(title = "Mathematical Anxiety Distribution by Condition",
-       x = "TMA", y = "Count", fill  = "Condition")
-
-
-df %>% 
-  ggplot(aes(x = tma_avg, fill = cond)) + 
   geom_bar() + 
   facet_grid(.~cond) +
   scale_fill_brewer(palette="Set1", labels = 
