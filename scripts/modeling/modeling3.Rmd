@@ -112,6 +112,17 @@ summary(fit2_2)
 ```
 Features that have significant effects on situational interest (p < 0.05): `tma_avg` (positive effect: 1.65629) and `understand_avg` (negative effect: -0.07017)
 
+```{r}
+fit2_3 <- df %>% 
+        lm(formula = understand_avg ~ tma_avg + cond + mw_avg + si_avg)
+summary(fit2_3)
+
+fit2_4 <- df %>% 
+        lm(formula = understand_avg ~ tma_avg + cond +  cond * tma_avg)
+summary(fit2_4)
+```
+
+
 # Findings
 
 *   No evidence that showed condition had significant effect on neither `tma_avg`, `si_avg`, and `mw_avg`
