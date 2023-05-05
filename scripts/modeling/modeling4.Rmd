@@ -1,0 +1,114 @@
+---
+title: "Math COVID Modeling 4"
+author: "Emi"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load libraries
+
+```{r}
+library(tidyverse)
+```
+
+# Load dataset
+
+```{r}
+dfr <- readxl::read_xlsx("../../data/KidsCOVID_Winter21_raw data.xlsx")
+dfr <-dfr %>% filter(Condition == 1 | Condition == 2)
+dfr <- dfr %>% mutate(mw_avg = rowMeans(dfr[346:347], na.rm = TRUE))
+```
+
+```{r}
+dfr$Condition[dfr$Condition == 2] = 0 
+```
+
+# Predict Student's Achievements (Delayed accuracy scores)
+
+`Del_OverallAcc`
+
+## TMA average, condition, and interaction term
+
+```{r}
+dfr %>% 
+  lm(formula = Del_OverallAcc ~ TMA_avg + Condition +  Condition * TMA_avg) %>% 
+  summary()
+```
+
+Significant factors for predicting students' accuracy:
+
+* `TMA_avg` ($\beta$ = -0.08624, p = 0.000918): Increased in math anxiety caused decrease in students' accuracy
+
+*   `Condition1` ($\beta$ = -0.18750, p = 0.021046): Worked example group had decrease in accuracy by 0.187 percent????? 
+
+*   `TMA_avg:Condition1`: The math anxiety scores of students in worked example group had change in accuracy by 0.100 percent??? -> Worked example group showed increase in learning gain with increase in math anxiety
+
+## TMA, condition, interaction term (TMA + condition), mw and si
+
+```{r}
+dfr %>% 
+  lm(formula = Del_OverallAcc ~ TMA_avg + Condition +  Condition * TMA_avg + mw_avg + SI_avg) %>% 
+  summary()
+```
+
+Significant factors for predicting students' accuracy:
+
+* `TMA_avg` ($\beta$ = -0.067673, p = 0.0177): Increased in math anxiety caused decrease in students' accuracy
+
+*   `Condition1` ($\beta$ = -0.171011, p = 0.0365): Worked example group had decrease in accuracy by 0.171011 percent?????
+
+*   `mw_avg`($\beta$ = -0.037099, p = 0.0446): Increase in mind wandering change students' learning gain by -0.037099 -> Mind wandering has negative effect on students' learning gains
+
+*   `TMA_avg:Condition1`($\beta$ = 0.0863622, p = 0.0227): The math anxiety scores of students in worked example group had change in accuracy by 0.086362 percent??? 
+
+## TMA, condition, interaction term (TMA + condition), mw, interaction term (mw + condition)
+
+```{r}
+dfr %>% 
+  lm(formula = Del_OverallAcc ~ TMA_avg + Condition +  Condition * TMA_avg + mw_avg + mw_avg * Condition) %>% 
+  summary()
+```
+
+Stronger model? But no effects by `mw_avg` and `Condition1`
+
+Factors that seem to be predicting students' post scores: `TMA_avg`, `Condition`, `mw_avg`,
+interaction term between condition and math anxiety(`Condition2:TMA_avg`)
+
+# Model Mind Wandering
+
+## TMA, condition, interaction term (TMA + condition)
+
+```{r}
+dfr %>% 
+  lm(formula = mw_avg ~ TMA_avg + Condition + TMA_avg * Condition) %>% 
+  summary()
+```
+Significant factors for predicting students' accuracy:
+
+*   `TMA_avg` ($\beta$ = 0.59640, p = 6.13e-10): Increase in math anxiety cause increase in mind wandering
+
+*   `TMA_avg:Condition1`($\beta$ = -0.35922, p = 0.00655): In worked example group, increase in math anxiety cause decrease in mind wandering
+
+## TMA, condition, interaction term (TMA + condition), SI_avg
+
+```{r}
+dfr %>% 
+  lm(formula = mw_avg ~ TMA_avg + Condition + TMA_avg * Condition + SI_avg) %>% 
+  summary()
+```
+
+Significant factors for predicting students' accuracy:
+
+*   `TMA_avg` ($\beta$ = 0.54954, p = 3.61e-08): Increase in math anxiety cause increase in mind wandering
+
+*   `TMA_avg:Condition2`($\beta$ = -0.28699, p = 0.03540): In worked example group, increase in math anxiety cause decrease in mind wandering
+
+*   `SI_avg` ($\beta$ = -0.14973, p = 0.01497):Increase in situational interest caused decrease in students' mind wandering
+
+Factors that seem to be predicting students' post scores: `TMA_avg`, `SI_avg`,
+interaction term between condition and math anxiety(`TMA_avg:Condition1`)
+

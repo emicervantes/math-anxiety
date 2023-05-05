@@ -1,0 +1,39 @@
+---
+title: "Math COVID Modeling 5"
+author: "Emi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load libraries
+
+```{r}
+library(tidyverse)
+```
+
+# Load dataset
+
+```{r}
+dfr <- readxl::read_xlsx("../../data/KidsCOVID_Winter21_raw data.xlsx")
+dfr <-dfr %>% filter(Condition == 1 | Condition == 2)
+dfr <- dfr %>% mutate(mw_avg = rowMeans(dfr[346:347], na.rm = TRUE))
+dfr$Condition[dfr$Condition == 2] = 0 
+```
+
+Creating new column that takes average of `TMA_4` and `TMA_5`
+
+```{r}
+dfr <- dfr %>% mutate(TMA_avg2 = rowMeans(dfr[237:238], na.rm = TRUE))
+```
+
+# Modeling Understanding
+
+```{r}
+dfr %>% 
+  lm(formula = Del_OverallAcc ~ TMA_avg2 + Condition +  Condition * TMA_avg2 + mw_avg + SI_avg) %>% 
+  summary()
+```
