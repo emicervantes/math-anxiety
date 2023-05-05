@@ -27,6 +27,11 @@ dfr <- dfr %>% mutate(mw_avg = rowMeans(dfr[346:347], na.rm = TRUE))
 dfr$Condition[dfr$Condition == 2] = 0 
 ```
 
+```{r}
+df <- dfr %>% select(Del_OverallAcc, TMA_avg, Condition, mw_avg, SI_avg) %>% 
+  drop_na()
+```
+
 # Predict Student's Achievements (Delayed accuracy scores)
 
 `Del_OverallAcc`
@@ -50,7 +55,7 @@ Significant factors for predicting students' accuracy:
 ## TMA, condition, interaction term (TMA + condition), mw and si
 
 ```{r}
-dfr %>% 
+df %>% 
   lm(formula = Del_OverallAcc ~ TMA_avg + Condition +  Condition * TMA_avg + mw_avg + SI_avg) %>% 
   summary()
 ```
@@ -111,4 +116,9 @@ Significant factors for predicting students' accuracy:
 
 Factors that seem to be predicting students' post scores: `TMA_avg`, `SI_avg`,
 interaction term between condition and math anxiety(`TMA_avg:Condition1`)
+
+
+```{r}
+
+```
 

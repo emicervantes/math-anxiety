@@ -26,10 +26,14 @@ clean <- read.csv("../../data/clean3.csv")
 
 ```{r}
 dfr <-dfr %>% filter(Condition == 1 | Condition == 2)
+dfr <- dfr %>% mutate(mw_avg = rowMeans(dfr[346:347], na.rm = TRUE))
+dfr$Condition[dfr$Condition == 2] = 0 
+df <- dfr %>% select(Del_OverallAcc, TMA_avg, Condition, mw_avg, SI_avg) %>% 
+  drop_na()
 ```
 
 ```{r}
-tma1_hist <- dfr %>% 
+tma1_hist <- df %>% 
   ggplot(aes(TMA_1, fill = Condition)) + geom_bar() +
   theme_minimal() + 
   scale_fill_brewer(palette="Set1", labels = 
@@ -37,7 +41,7 @@ tma1_hist <- dfr %>%
   labs(x = "TMA 1", y = "Count") +
   facet_grid(vars(cols = Condition))
 
-tma2_hist <- dfr %>% 
+tma2_hist <- df %>% 
   ggplot(aes(TMA_2,  fill = Condition)) + geom_bar()  +
   theme_minimal() + 
   labs(x = "TMA 2", y = "Count") +
@@ -45,7 +49,7 @@ tma2_hist <- dfr %>%
                       c("Worked Ex", "No Worked EX")) +
   facet_grid(vars(cols = Condition))
 
-tma3_hist <- dfr %>% 
+tma3_hist <- df %>% 
   ggplot(aes(TMA_3,  fill = Condition)) + geom_bar()  +
   theme_minimal() + 
   labs(x = "TMA 3", y = "Count") +
@@ -53,7 +57,7 @@ tma3_hist <- dfr %>%
                       c("Worked Ex", "No Worked EX")) +
   facet_grid(vars(cols = Condition))
 
-tma4_hist <- dfr %>% 
+tma4_hist <- df %>% 
   ggplot(aes(TMA_4,  fill = Condition)) + geom_bar()  +
   scale_fill_brewer(palette="Set1", labels = 
                       c("Worked Ex", "No Worked EX")) +
@@ -61,7 +65,7 @@ tma4_hist <- dfr %>%
   theme_minimal() + 
   facet_grid(vars(cols = Condition))
 
-tma5_hist <- dfr %>% 
+tma5_hist <- df %>% 
   ggplot(aes(TMA_5,  fill = Condition)) + geom_bar() +
   scale_fill_brewer(palette="Set1", labels = 
                       c("Worked Ex", "No Worked EX")) +
@@ -69,7 +73,7 @@ tma5_hist <- dfr %>%
   theme_minimal() + 
   facet_grid(vars(cols = Condition))
 
-tma6_hist <- dfr %>% 
+tma6_hist <- df %>% 
   ggplot(aes(TMA_6,  fill = Condition)) + geom_bar() +
   scale_fill_brewer(palette="Set1", labels = 
                       c("Worked Ex", "No Worked EX")) +
@@ -90,7 +94,7 @@ ggsave(tma_hist, file = "../../outputs/visualization/tma_hist.png")
 ```{r}
 dfr %>% select(contains("acc"))
 
- tma_acc_splt1 <- dfr %>% 
+ tma_acc_splt1 <- df %>% 
   ggplot(aes(x = Del_OverallAcc, y = TMA_avg ,color  = Condition)) + 
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
@@ -101,7 +105,7 @@ dfr %>% select(contains("acc"))
   labs(title = "Effect of Math Anxiety on Overall Accuracy",
         x = "Overall Accuracy", y = "TMA Average")
 
- tma_acc_splt2 <- dfr %>% 
+ tma_acc_splt2 <- df %>% 
               ggplot(aes(x = TMA_avg, y = Del_OverallAcc ,color  = Condition)) + 
               geom_point() +
               geom_smooth(method = "lm", se = FALSE) +
@@ -126,11 +130,11 @@ t.test(Del_OverallAcc ~ Condition, data = dfr)
 
 ```{r}
 # New facet label names for supp variable
-cond.labs <- c("Worked EX", "No Worked EX")
-names(cond.labs) <- c(1, 2)
+cond.labs <- c("No Worked EX", "Worked EX")
+names(cond.labs) <- c(0, 1)
 
 # side by side plot with borders
-tma_acc_splt3 <- dfr %>% 
+tma_acc_splt3 <- df %>% 
             ggplot(aes(x = TMA_avg, y = Del_OverallAcc ,color  = Condition)) + 
             geom_point() +
             geom_smooth(method = "lm", se = FALSE) +
@@ -141,6 +145,10 @@ tma_acc_splt3 <- dfr %>%
                        labeller = labeller(Condition = cond.labs))  +
             labs(title = "Effect of Math Anxiety on Overall Accuracy",
                               x = "TMA Average", y = "Overall Accuracy")
+
+tma_acc_splt3 <- tma_acc_splt3 + theme(legend.position = "none")
+ggsave(plot = tma_acc_splt3, 
+       file = "../../outputs/visualization/tma_acc_splt3.png", height = 5, width = 7)
 ```
 
 ```{r}
@@ -232,5 +240,34 @@ mw_si_plot2 <- ggarrange(mw_acc2, si_acc2,
 ```{r}
 mw_si_plot1
 mw_si_plot2
+```
+
+```{r}
+acc_avg_plt <- df %>% 
+  group_by(Condition) %>% 
+  summarize(acc_avg = mean(Del_OverallAcc)) %>% 
+  ggplot(aes(x = Condition, y = acc_avg, fill = Condition)) +
+  geom_bar(position="dodge", stat="identity") + theme_bw() + 
+  scale_x_discrete(breaks=c(0,1),
+        labels=c("No Worked EX","Worked EX")) +
+  scale_fill_brewer(palette="Set1", labels = 
+                                  c("No Worked EX", "Worked EX")) +
+  labs(x = "Condition", y = "Overall Accuracy") + theme(legend.position = "none")
+
+tma_avg_plt <- df %>% 
+  group_by(Condition) %>% 
+  summarize(tma_avg = mean(TMA_avg))  %>% 
+  ggplot(aes(x = Condition, y = tma_avg, fill = Condition)) +
+  geom_bar(position="dodge", stat="identity") + theme_bw() + 
+  scale_x_discrete(breaks=c(0,1),
+        labels=c("No Worked EX","Worked EX")) +
+  scale_fill_brewer(palette="Set1", labels = 
+                                  c("No Worked EX", "Worked EX")) +
+  labs(x = "Condition", y = "TMA")+ theme(legend.position = "none")
+```
+
+
+```{r}
+ggarrange(acc_avg_plt, tma_avg_plt, ncol = 2, nrow = 1)
 ```
 
