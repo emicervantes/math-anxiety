@@ -19,6 +19,7 @@ library(ggpubr)
 
 ```{r}
 dfr <- readxl::read_xlsx("../../data/KidsCOVID_Winter21_raw data.xlsx")
+clean <- read.csv("../../data/clean3.csv")
 ```
 
 # Data Visualizations: tma
@@ -121,5 +122,115 @@ ggsave(plot = tma_acc_splt2,
 t.test(Del_OverallAcc ~ Condition, data = dfr)
 ```
 
+# Editing Visualizations
 
+```{r}
+# New facet label names for supp variable
+cond.labs <- c("Worked EX", "No Worked EX")
+names(cond.labs) <- c(1, 2)
+
+# side by side plot with borders
+tma_acc_splt3 <- dfr %>% 
+            ggplot(aes(x = TMA_avg, y = Del_OverallAcc ,color  = Condition)) + 
+            geom_point() +
+            geom_smooth(method = "lm", se = FALSE) +
+            theme_bw() + 
+            scale_color_brewer(palette="Set1", labels = 
+                                            c("Worked Ex", "No Worked EX")) +
+            facet_grid(.~Condition,
+                       labeller = labeller(Condition = cond.labs))  +
+            labs(title = "Effect of Math Anxiety on Overall Accuracy",
+                              x = "TMA Average", y = "Overall Accuracy")
+```
+
+```{r}
+# TMA vs understanding with no facet grid
+tma_acc1 <- dfr %>% 
+  ggplot(aes(x = TMA_avg, y = Del_OverallAcc ,color  = Condition)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() + 
+  scale_color_brewer(palette="Set1", labels = 
+                                  c("Worked Ex", "No Worked EX")) +
+  labs(title = "Effect of Math Anxiety on Overall Accuracy",
+                    x = "TMA Average", y = "Overall Accuracy")
+
+# No points, just smooth lines for each group
+tma_acc2 <- dfr %>% 
+  ggplot(aes(x = TMA_avg, y = Del_OverallAcc ,color  = Condition)) + 
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() + 
+  scale_color_brewer(palette="Set1", labels = 
+                                  c("Worked Ex", "No Worked EX")) +
+  labs(title = "Effect of Math Anxiety on Overall Accuracy",
+                    x = "TMA Average", y = "Overall Accuracy")
+```
+
+# More Visualizations
+
+We want to visualize the mean of TMA for each TMA survey question
+
+```{r}
+tma_avg <- dfr %>% 
+                  group_by(Condition) %>% 
+                  summarize("TMA 1 Avg" = mean(TMA_1, na.rm = TRUE),
+                            "TMA 2 Avg" = mean(TMA_2, na.rm = TRUE),
+                            "TMA 3 Avg" = mean(TMA_3, na.rm = TRUE),
+                            "TMA 4 Avg" = mean(TMA_4, na.rm = TRUE),
+                            "TMA 5 Avg" = mean(TMA_5, na.rm = TRUE),
+                            "TMA 6 Avg" = mean(TMA_6, na.rm = TRUE))
+tma_avg
+  
+```
+
+# More Visualizations: Relationship between MW/SI with Understanding
+
+```{r}
+dfr <- dfr %>% mutate(mw_avg = rowMeans(dfr[346:347], na.rm = TRUE))
+# MW vs post-acc
+mw_acc1 <- dfr %>% 
+          ggplot(aes(x = mw_avg, y = Del_OverallAcc, color = Condition)) +
+          geom_point() + geom_smooth(method = "lm", se = FALSE) +
+          theme_bw() + 
+          scale_color_brewer(palette="Set1", labels = 
+                                          c("Worked Ex", "No Worked EX")) +
+          labs(x = "Mind Wandering", y = "Overall Accuracy")
+# MW vs post-acc (just smooth lines, no dots)
+mw_acc2 <- dfr %>% 
+          ggplot(aes(x = mw_avg, y = Del_OverallAcc, color = Condition)) +
+          geom_smooth(method = "lm", se = FALSE) +
+          theme_bw() + 
+          scale_color_brewer(palette="Set1", labels = 
+                                          c("Worked Ex", "No Worked EX")) +
+          labs(x = "Mind Wandering", y = "Overall Accuracy")
+#SI vs post-acc
+si_acc1 <- dfr %>% 
+  ggplot(aes(x = SI_avg, y = Del_OverallAcc, color = Condition)) +
+  geom_point() + geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() + 
+  scale_color_brewer(palette="Set1", labels = 
+                                  c("Worked Ex", "No Worked EX")) +
+  labs(x = "Situational Interest", y = "Overall Accuracy")
+# SI vs post-acc (just smooth lines)
+si_acc2 <- dfr %>% 
+  ggplot(aes(x = SI_avg, y = Del_OverallAcc, color = Condition)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() + 
+  scale_color_brewer(palette="Set1", labels = 
+                                  c("Worked Ex", "No Worked EX")) +
+  labs(x = "Situational Interest", y = "Overall Accuracy")
+```
+
+```{r}
+# Side-by-side plot mw and situational interests with understanding
+mw_si_plot1 <- ggarrange(mw_acc1, si_acc1,
+                       common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
+mw_si_plot2 <- ggarrange(mw_acc2, si_acc2,
+                       common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
+```
+
+```{r}
+mw_si_plot1
+mw_si_plot2
+```
 
