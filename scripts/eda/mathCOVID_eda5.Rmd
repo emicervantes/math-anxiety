@@ -99,8 +99,8 @@ dfr %>% select(contains("acc"))
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   theme_minimal() + 
-  scale_color_brewer(palette="Set1", labels = 
-                      c("Worked Ex", "No Worked EX")) +
+  scale_color_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
   facet_grid(.~Condition) +
   labs(title = "Effect of Math Anxiety on Overall Accuracy",
         x = "Overall Accuracy", y = "TMA Average")
@@ -110,8 +110,8 @@ dfr %>% select(contains("acc"))
               geom_point() +
               geom_smooth(method = "lm", se = FALSE) +
               theme_minimal() + 
-              scale_color_brewer(palette="Set1", labels = 
-                                  c("Worked Ex", "No Worked EX")) +
+              scale_color_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
               facet_grid(.~Condition)  +
               labs(title = "Effect of Math Anxiety on Overall Accuracy",
                     x = "TMA Average", y = "Overall Accuracy")
@@ -139,8 +139,8 @@ tma_acc_splt3 <- df %>%
             geom_point() +
             geom_smooth(method = "lm", se = FALSE) +
             theme_bw() + 
-            scale_color_brewer(palette="Set1", labels = 
-                                            c("Worked Ex", "No Worked EX")) +
+            scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
             facet_grid(.~Condition,
                        labeller = labeller(Condition = cond.labs))  +
             labs(title = "Effect of Math Anxiety on Overall Accuracy",
@@ -250,9 +250,9 @@ acc_avg_plt <- df %>%
   geom_bar(position="dodge", stat="identity") + theme_bw() + 
   scale_x_discrete(breaks=c(0,1),
         labels=c("No Worked EX","Worked EX")) +
-  scale_fill_brewer(palette="Set1", labels = 
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
                                   c("No Worked EX", "Worked EX")) +
-  labs(x = "Condition", y = "Overall Accuracy") + theme(legend.position = "none")
+  labs(x = "Condition", y = "Overall Accuracy", title = "Average Overall Accuracy Scores") + theme(legend.position = "none") + ylim(0,1)
 
 tma_avg_plt <- df %>% 
   group_by(Condition) %>% 
@@ -261,13 +261,17 @@ tma_avg_plt <- df %>%
   geom_bar(position="dodge", stat="identity") + theme_bw() + 
   scale_x_discrete(breaks=c(0,1),
         labels=c("No Worked EX","Worked EX")) +
-  scale_fill_brewer(palette="Set1", labels = 
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
                                   c("No Worked EX", "Worked EX")) +
-  labs(x = "Condition", y = "TMA")+ theme(legend.position = "none")
+  labs(x = "Condition", y = "TMA", title = "Average Math Anxiety Scores")+ theme(legend.position = "none") + ylim(0,5)
 ```
 
 
 ```{r}
 ggarrange(acc_avg_plt, tma_avg_plt, ncol = 2, nrow = 1)
+```
+
+```{r}
+summary(df$Del_OverallAcc)
 ```
 

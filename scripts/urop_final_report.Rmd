@@ -1,0 +1,26 @@
+---
+title: "UROP Final Report"
+author: "Emi + Sophia"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load Libraries
+
+```{r}
+library(tidyverse)
+```
+
+# Study Summary
+
+# Load Data
+
+# Data Cleaning
+
+# Visualizations
+
+# Modeling
