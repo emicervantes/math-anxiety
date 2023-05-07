@@ -9,18 +9,249 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Abstract
+
+Cognitive Load Theory (Sweller, 2011) suggests that worked examples, mathematical problems with written out solutions, can increase students’ available working memory resources - which are a limited set of cognitive attention resources that allow students to learn mathematics concepts and solve word problems. Worked examples may offload attention to written word problem solutions rather than requiring learners to hold them in mind, creating more efficient learning. At the same time, many students feel mathematical anxiety when faced with mathematics learning and problem solving, which can generate worries that engage the same limited set of working memory resources, reducing available resources for new learning and problem solving. To test whether worked examples could mitigate the deleterious effects of mathematical anxiety on performance, a pre-post design experiment was conducted on 280 fifth-graders from ten schools in Orange County and Chicago to see whether worked examples could reduce mathematical anxiety in students learning ratios - a challenging mathematical concept. The study also examined other potential relationships with mathematical anxiety such as mind wandering and situational interest. A multiple linear regression model was used to assess the relationships between these key features. Findings indicate that for those who were given worked examples during instruction, their mathematical anxiety was mitigated which allowed them to perform more accurately in the delayed assessment. Mathematical anxiety was a significant predictor of mind wandering, which is a factor in predicting students’ performance as well. 
+
+# Study Summary
+
+*   280 fifth-graders from 10 schools, 8 in Orange County, California and 2 in Chicago, Illinois 
+
+*   **Pre-post design experiment:** students were given a 20-minute video lesson on ratios on day 1
+
+    *   Experimental group: worked examples present
+    
+    *   Control group: no worked examples provided
+
+*   **Post-study** (3 days after day 1): Students completed math anxiety questionnaire (TMA) and post-test assessing their ratio knowledge 
+
+
 # Load Libraries
 
 ```{r}
 library(tidyverse)
+library(gridExtra)
+library(ggpubr)
 ```
-
-# Study Summary
 
 # Load Data
 
+```{r}
+dfr <- readxl::read_xlsx("../data/KidsCOVID_Winter21_raw data.xlsx")
+# Number of rows in dfr
+nrow(dfr)
+# Number of columns in dfr
+ncol(dfr)
+```
+
+The raw data contains 299 students' data and 410 vairables
+
 # Data Cleaning
+
+We first noticed that some students from the data were not assigned to any group (NA):
+
+```{r}
+dfr %>% ggplot(aes(x = Condition, fill = Condition)) + 
+  geom_bar(color = "black") + theme_minimal() +
+  labs(title = "Study Conditions")
+```
+
+We want to look at *no worked example* and *worked example* group, so we removed all the data without condition. The raw data assigned `Condition` = 1 is for students in *worked example* group, and `Condition` = 2 for students in *no worked example* group. For clear readability, we assigned 0 to all students in *no worked example* group:
+
+```{r}
+# removing NA condition data
+dfr <-dfr %>% filter(Condition == 1 | Condition == 2)
+# assigning 0 to no worked example group data
+dfr$Condition[dfr$Condition == 2] = 0 
+```
+
+For our UROP project, we are interested in comparing the effects of math anxiety (`TMA_avg`) on students' accuracy scores (`Del_OverallAcc`) between the worked example and no worked example groups. Furthermore, we are interested in observing the impacts of other factors from data such as mind wandering scores (`mw_avg`) and situational interest (`SI_avg`).
+
+```{r}
+# Get the average of mw_1 and mw_2
+dfr <- dfr %>% mutate(mw_avg = rowMeans(dfr[346:347], na.rm = TRUE))
+# Select columns and remove any row with missing data
+df <- dfr %>% select(Del_OverallAcc, TMA_avg, Condition, mw_avg, SI_avg) %>% 
+  drop_na()
+glimpse(df)
+```
+
+
+The new data contains 229 students' data and 5 variables
 
 # Visualizations
 
+## Math Anxiety Distributions
+
+```{r}
+# New facet label names for supp variable
+cond.labs <- c("No Worked EX", "Worked EX")
+names(cond.labs) <- c(0, 1)
+# Histogram of tma_avg 
+df %>% 
+  ggplot(aes(x = TMA_avg, fill = Condition)) + 
+  geom_histogram(color = "black", bins = 20) +
+  theme_minimal()+ 
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = c("No Worked EX", "Worked EX")) +
+  facet_grid(.~Condition, labeller = labeller(Condition = cond.labs))  +
+  labs(title = "Math Anxiety Distributions", x = "TMA Average")
+```
+
+For both groups, the distributions seemed to be right-skewed, indicating that the average math anxiety was low for both groups:
+
+```{r}
+# table summary of math anxiety
+df %>% 
+  group_by(Condition) %>% 
+  summarize("Average TMA" = mean(TMA_avg), "Standard deviation" = sd(TMA_avg))
+
+# Math anxiety average bar plot
+df %>% 
+  group_by(Condition) %>% 
+  summarize(tma_avg = mean(TMA_avg))  %>% 
+  ggplot(aes(x = Condition, y = tma_avg, fill = Condition)) +
+  geom_bar(position="dodge", stat="identity") + theme_bw() + 
+  scale_x_discrete(breaks=c(0,1),
+        labels=c("No Worked EX","Worked EX")) +
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
+  labs(x = "Condition", y = "TMA", title = "Average Math Anxiety Scores")+ ylim(0,5)
+```
+
+## Post-test accuracy score distributions
+
+```{r}
+# histogram of post-assessment accuracy score
+df %>% 
+  ggplot(aes(x = Del_OverallAcc, fill = Condition)) +
+  geom_histogram(color = "black", bins = 20) +
+  theme_minimal()+ 
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = c("No Worked EX", "Worked EX")) +
+  facet_grid(.~Condition, labeller = labeller(Condition = cond.labs))  +
+  labs(title = "Post-Test Accuracy Distributions", x = "Overall Accuracy")
+```
+
+The averages of post-test accuracy seem to be close for both groups: 
+
+```{r}
+# table summary of accuracy
+df %>% 
+  group_by(Condition) %>% 
+  summarize("Average Accuracy" = mean(Del_OverallAcc), "Standard deviation" = sd(Del_OverallAcc))
+
+# test accuracy average bar plot
+df %>% 
+  group_by(Condition) %>% 
+  summarize(acc_avg = mean(Del_OverallAcc))  %>% 
+  ggplot(aes(x = Condition, y = acc_avg, fill = Condition)) +
+  geom_bar(position="dodge", stat="identity") + theme_bw() + 
+  scale_x_discrete(breaks=c(0,1),
+        labels=c("No Worked EX","Worked EX")) +
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
+  labs(x = "Condition", y = "TMA", title = "Post-Test Overall Accuracy Scores") + ylim(0,1)
+```
+
+## Relationship between math anxiety and overall accuracy 
+
+```{r}
+# Scatterplot: tma vs accuracy
+df %>% 
+  ggplot(aes(x = TMA_avg, y = Del_OverallAcc ,color  = Condition)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() + 
+  scale_color_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
+  facet_grid(.~Condition, labeller = labeller(Condition = cond.labs))  +
+  labs(title = "Effect of Math Anxiety on Overall Accuracy",
+                              x = "TMA Average", y = "Overall Accuracy")
+```
+Based on the regression lines, we see a decrease in students' accuracy score as their math anxiety scores increase in the no worked example group (left), and we don't seem much of a change in students' accuracy scores in the worked example group (right). 
+
+## Relationship between mind wandering / situational interest and math anxiety
+
+```{r}
+# MW vs tma
+mw_acc1 <- dfr %>% 
+          ggplot(aes(x = mw_avg, y = TMA_avg, color = Condition)) +
+          geom_point() + geom_smooth(method = "lm", se = FALSE) +
+          theme_bw() +
+          scale_color_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
+          scale_fill_brewer(labels = c("No Worked EX", "Worked EX")) +
+          labs(x = "Mind Wandering", y = "TMA")
+#SI vs tma
+si_acc1 <- dfr %>% 
+  ggplot(aes(x = SI_avg, y = TMA_avg, color = Condition)) +
+  geom_point() + geom_smooth(method = "lm", se = FALSE) +
+  theme_bw() +
+  scale_color_manual(values = c("#ef476f","#1b9aaa"), labels = c("No Worked EX", "Worked EX")) +
+  labs(x = "Situational Interest", y = "TMA")
+# Side-by-side plot mw and situational interests with understanding
+ggarrange(mw_acc1, si_acc1, common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
+```
+
+Based on the regression lines, we see a positive relationship between mind wandering and math anxiety (left) and a negative relationship between situational interest and math anxiety (right).
+ 
 # Modeling
+
+## Predicting student's achievements (delayed accuracy scores)
+
+**Dependent variable:** Post-study accuracy scores (`Del_OverallAcc`)
+
+**Independent variables:** Math anxiety (`TMA_avg`), condition (`Condition`), interaction term between math anxiety and condition (`Condition * TMA_avg`), mind wandering avg (`mw_avg`), situational interest (`SI_avg`)
+
+```{r}
+acc_fit <- df %>% 
+  lm(formula = Del_OverallAcc ~ TMA_avg + Condition +  Condition * TMA_avg + mw_avg + SI_avg) 
+summary(acc_fit)
+```
+
+Significant factors for predicting students' accuracy:
+
+* `TMA_avg` ($\beta$ = -0.067673, p = 0.0177): Increased in math anxiety caused decrease in students' accuracy
+
+*   `Condition1` ($\beta$ = -0.171011, p = 0.0365): Worked example group had decrease in accuracy by 0.187 percent
+
+*   `mw_avg` ($\beta$ = -0.037099, p = 00.0446): Mind wandering had negative effect on student's accuracy score. (decrease by 0.037099)
+
+*   `TMA_avg:Condition1` ($\beta$ = 0.086362, p = 0.0227): The math anxiety scores of students in worked example group had change in accuracy by 0.100 percent -> There is a statistical evidence that indicates that effects of math anxiety on accuracy scores differ among the study groups
+
+Model for worked example group:
+$$DelOverallAcc = 0.680331 + 0.018689 * TMAavg - 0.037099 * MWavg - 0.005468 * SIavg$$
+Model for no-worked example group:
+$$DelOverallAcc = 0.851342 - 0.067673 * TMAavg- 0.037099 * MWavg - 0.005468 * SIavg$$
+
+Math anxiety has different impacts on students' achievements among the study groups. In worked example group, there is a positive effect on students' accuracy scores by math anxiety and in no-worked example group, there is a negative effect on students' accuracy scores by math anxiety. 
+
+## Predicting student's math anxiety
+
+**Dependent variable:** Mind wandering avg (`mw_avg`)
+
+**Independent variables:** Math anxiety (`TMA_avg`), condition (`Condition`), interaction term between math anxiety and condition (`Condition * TMA_avg`), situational interest (`SI_avg`)
+
+```{r}
+mw_fit <- dfr %>% 
+  lm(formula = mw_avg ~ TMA_avg + Condition + TMA_avg * Condition + SI_avg)
+summary(mw_fit)
+```
+
+*   `TMA_avg` ($\beta$ = 0.54954, p = 3.61e-08): Increase in math anxiety cause increase in mind wandering
+
+*   `TMA_avg:Condition1`($\beta$ = -0.28699, p = 0.03540): In worked example group, increase in math anxiety cause decrease in mind wandering -> There is a statistical evidence indicating that effects of math anxiety on mind wandering differ among the study groups
+
+*   `SI_avg` ($\beta$ = -0.14973, p = 0.0150): Increase in situational interest caused decrease in students' mind wandering
+
+Model for worked example group:
+$$MWavg = 1.93524 + 0.26255 * TMA - 0.14973 * SIavg$$
+
+Model for no-worked example group:
+$$MWavg = 1.55264 + 0.54954 * TMA - 0.14973 * SIavg$$
+
+
+Math anxiety has different impacts on mind wandering among study groups. Although both groups showed positive effects of math anxiety on mind wandeirng, in the worked example group, the effect of math anxiety on mind wandering is smaller than the no worked example group. 
+
+
+
+
