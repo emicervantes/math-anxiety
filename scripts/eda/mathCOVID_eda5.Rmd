@@ -139,7 +139,7 @@ tma_acc_splt3 <- df %>%
             geom_point() +
             geom_smooth(method = "lm", se = FALSE) +
             theme_bw() + 
-            scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
+            scale_color_manual(values = c("#ef476f","#1b9aaa"), labels = 
                                   c("No Worked EX", "Worked EX")) +
             facet_grid(.~Condition,
                        labeller = labeller(Condition = cond.labs))  +
@@ -247,7 +247,7 @@ acc_avg_plt <- df %>%
   group_by(Condition) %>% 
   summarize(acc_avg = mean(Del_OverallAcc)) %>% 
   ggplot(aes(x = Condition, y = acc_avg, fill = Condition)) +
-  geom_bar(position="dodge", stat="identity") + theme_bw() + 
+  geom_bar(position="dodge", stat="identity", color = "black") + theme_bw() + 
   scale_x_discrete(breaks=c(0,1),
         labels=c("No Worked EX","Worked EX")) +
   scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
@@ -258,7 +258,7 @@ tma_avg_plt <- df %>%
   group_by(Condition) %>% 
   summarize(tma_avg = mean(TMA_avg))  %>% 
   ggplot(aes(x = Condition, y = tma_avg, fill = Condition)) +
-  geom_bar(position="dodge", stat="identity") + theme_bw() + 
+  geom_bar(position="dodge", stat="identity", color = "black") + theme_bw() + 
   scale_x_discrete(breaks=c(0,1),
         labels=c("No Worked EX","Worked EX")) +
   scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
@@ -268,10 +268,15 @@ tma_avg_plt <- df %>%
 
 
 ```{r}
-ggarrange(acc_avg_plt, tma_avg_plt, ncol = 2, nrow = 1)
+avg_bar <- ggarrange(acc_avg_plt, tma_avg_plt, ncol = 2, nrow = 1)
+ggsave(avg_bar, file = "../../outputs/visualization/avg_bar.png", height = 5, width = 7)
 ```
 
 ```{r}
 summary(df$Del_OverallAcc)
+```
+
+```{r}
+df %>% filter(Condition == 0)
 ```
 

@@ -13,6 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
 ```
 
 # Load dataset
@@ -55,9 +58,10 @@ Significant factors for predicting students' accuracy:
 ## TMA, condition, interaction term (TMA + condition), mw and si
 
 ```{r}
-df %>% 
-  lm(formula = Del_OverallAcc ~ TMA_avg + Condition +  Condition * TMA_avg + mw_avg + SI_avg) %>% 
-  summary()
+acc_fit <- df %>% 
+  lm(formula = Del_OverallAcc ~ TMA_avg + Condition +  Condition * TMA_avg + mw_avg + SI_avg) 
+summary(acc_fit)
+tab_model(acc_fit)
 ```
 
 Significant factors for predicting students' accuracy:
