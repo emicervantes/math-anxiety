@@ -144,7 +144,8 @@ tma_acc_splt3 <- df %>%
             facet_grid(.~Condition,
                        labeller = labeller(Condition = cond.labs))  +
             labs(title = "Effect of Math Anxiety on Overall Accuracy",
-                              x = "TMA Average", y = "Overall Accuracy")
+                              x = "TMA Average", y = "Overall Accuracy")  +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5))
 
 tma_acc_splt3 <- tma_acc_splt3 + theme(legend.position = "none")
 ggsave(plot = tma_acc_splt3, 
@@ -252,7 +253,8 @@ acc_avg_plt <- df %>%
         labels=c("No Worked EX","Worked EX")) +
   scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
                                   c("No Worked EX", "Worked EX")) +
-  labs(x = "Condition", y = "Overall Accuracy", title = "Average Overall Accuracy Scores") + theme(legend.position = "none") + ylim(0,1)
+  labs(x = "Condition", y = "Overall Accuracy", title = "Average Overall Accuracy Scores") + theme(legend.position = "none") + ylim(0,1) +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5))
 
 tma_avg_plt <- df %>% 
   group_by(Condition) %>% 
@@ -263,7 +265,8 @@ tma_avg_plt <- df %>%
         labels=c("No Worked EX","Worked EX")) +
   scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
                                   c("No Worked EX", "Worked EX")) +
-  labs(x = "Condition", y = "TMA", title = "Average Math Anxiety Scores")+ theme(legend.position = "none") + ylim(0,5)
+  labs(x = "Condition", y = "TMA", title = "Average Math Anxiety Scores")+ theme(legend.position = "none") + ylim(0,5) +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5))
 ```
 
 
@@ -279,4 +282,23 @@ summary(df$Del_OverallAcc)
 ```{r}
 df %>% filter(Condition == 0)
 ```
+
+# Find the average of students' math anxiety
+
+```{r}
+df %>% 
+  group_by(Condition) %>% 
+  summarize(tma_avg = mean(TMA_avg)) 
+
+df %>% 
+  group_by(Condition) %>% 
+  summarize(tma_avg = mean(Del_OverallAcc)) 
+```
+
+```{r}
+n_high_tma <- df %>% filter(TMA_avg >= 3) %>% nrow()
+n_high_tma / nrow(df)
+```
+
+
 
