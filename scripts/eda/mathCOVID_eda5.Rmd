@@ -143,8 +143,8 @@ tma_acc_splt3 <- df %>%
                                   c("No Worked EX", "Worked EX")) +
             facet_grid(.~Condition,
                        labeller = labeller(Condition = cond.labs))  +
-            labs(title = "Effect of Math Anxiety on Overall Accuracy",
-                              x = "TMA Average", y = "Overall Accuracy")  +
+            labs(title = "Effect of Trait Math Anxiety on Overall Accuracy",
+                              x = "Average Trait Math Anxiety", y = "Overall Accuracy")  +
   theme(plot.title = element_text(face = "bold", hjust = 0.5))
 
 tma_acc_splt3 <- tma_acc_splt3 + theme(legend.position = "none")
@@ -246,26 +246,29 @@ mw_si_plot2
 ```{r}
 acc_avg_plt <- df %>% 
   group_by(Condition) %>% 
-  summarize(acc_avg = mean(Del_OverallAcc)) %>% 
+  summarize(acc_avg = mean(Del_OverallAcc), acc_sd = sd(Del_OverallAcc)) %>% 
   ggplot(aes(x = Condition, y = acc_avg, fill = Condition)) +
-  geom_bar(position="dodge", stat="identity", color = "black") + theme_bw() + 
+  geom_bar(position="dodge", stat="identity", color = "black") + 
+  geom_errorbar(aes(ymin = acc_avg - acc_sd, ymax = acc_avg + acc_sd), width = 0.5) +
+  theme_bw() + 
   scale_x_discrete(breaks=c(0,1),
         labels=c("No Worked EX","Worked EX")) +
   scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
                                   c("No Worked EX", "Worked EX")) +
-  labs(x = "Condition", y = "Overall Accuracy", title = "Average Overall Accuracy Scores") + theme(legend.position = "none") + ylim(0,1) +
-  theme(plot.title = element_text(face = "bold", hjust = 0.5))
+  labs(x = "Condition", y = "Overall Accuracy", title = "Average Overall Accuracy Scores") + theme(legend.position = "none", plot.title = element_text(face = "bold", hjust = 0.5)) + ylim(0,1) 
 
 tma_avg_plt <- df %>% 
   group_by(Condition) %>% 
-  summarize(tma_avg = mean(TMA_avg))  %>% 
+  summarize(tma_avg = mean(TMA_avg), tma_sd = sd(TMA_avg))  %>% 
   ggplot(aes(x = Condition, y = tma_avg, fill = Condition)) +
-  geom_bar(position="dodge", stat="identity", color = "black") + theme_bw() + 
+  geom_bar(position="dodge", stat="identity", color = "black") + 
+  geom_errorbar(aes(ymin = tma_avg - tma_sd, ymax = tma_avg + tma_sd), width = 0.5) + 
+  theme_bw() + 
   scale_x_discrete(breaks=c(0,1),
         labels=c("No Worked EX","Worked EX")) +
   scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
                                   c("No Worked EX", "Worked EX")) +
-  labs(x = "Condition", y = "TMA", title = "Average Math Anxiety Scores")+ theme(legend.position = "none") + ylim(0,5) +
+  labs(x = "Condition", y = "Trait Math Anxiety", title = "Average Trait Math Anxiety Scores")+ theme(legend.position = "none") + ylim(0,5) +
   theme(plot.title = element_text(face = "bold", hjust = 0.5))
 ```
 
