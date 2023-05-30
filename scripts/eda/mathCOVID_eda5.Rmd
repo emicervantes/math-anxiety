@@ -27,64 +27,65 @@ clean <- read.csv("../../data/clean3.csv")
 ```{r}
 dfr <-dfr %>% filter(Condition == 1 | Condition == 2)
 dfr <- dfr %>% mutate(mw_avg = rowMeans(dfr[346:347], na.rm = TRUE))
-dfr$Condition[dfr$Condition == 2] = 0 
+dfr$Condition[dfr$Condition == 1] = 0 
+dfr$Condition[dfr$Condition == 2] = 1 
 df <- dfr %>% select(Del_OverallAcc, TMA_avg, Condition, mw_avg, SI_avg) %>% 
   drop_na()
+
+dfr %>% filter(Condition == 0)
 ```
 
 ```{r}
-tma1_hist <- df %>% 
+tma1_hist <- dfr %>% 
   ggplot(aes(TMA_1, fill = Condition)) + geom_bar() +
-  theme_minimal() + 
-  scale_fill_brewer(palette="Set1", labels = 
-                      c("Worked Ex", "No Worked EX")) +
+  theme_minimal()  + 
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
   labs(x = "TMA 1", y = "Count") +
   facet_grid(vars(cols = Condition))
 
-tma2_hist <- df %>% 
+tma2_hist <- dfr %>% 
   ggplot(aes(TMA_2,  fill = Condition)) + geom_bar()  +
-  theme_minimal() + 
+  theme_minimal()  +
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) + 
   labs(x = "TMA 2", y = "Count") +
-  scale_fill_brewer(palette="Set1", labels = 
-                      c("Worked Ex", "No Worked EX")) +
   facet_grid(vars(cols = Condition))
 
-tma3_hist <- df %>% 
+tma3_hist <- dfr %>% 
   ggplot(aes(TMA_3,  fill = Condition)) + geom_bar()  +
-  theme_minimal() + 
-  labs(x = "TMA 3", y = "Count") +
-  scale_fill_brewer(palette="Set1", labels = 
-                      c("Worked Ex", "No Worked EX")) +
+  theme_minimal()  +
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
   facet_grid(vars(cols = Condition))
 
-tma4_hist <- df %>% 
-  ggplot(aes(TMA_4,  fill = Condition)) + geom_bar()  +
-  scale_fill_brewer(palette="Set1", labels = 
-                      c("Worked Ex", "No Worked EX")) +
+tma4_hist <- dfr %>% 
+  ggplot(aes(TMA_4,  fill = Condition)) + geom_bar()   + theme_minimal() + 
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
   labs(x = "TMA 4", y = "Count") +
   theme_minimal() + 
   facet_grid(vars(cols = Condition))
 
-tma5_hist <- df %>% 
+tma5_hist <- dfr %>% 
   ggplot(aes(TMA_5,  fill = Condition)) + geom_bar() +
-  scale_fill_brewer(palette="Set1", labels = 
-                      c("Worked Ex", "No Worked EX")) +
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
   labs(x = "TMA 5", y = "Count") +
   theme_minimal() + 
   facet_grid(vars(cols = Condition))
 
-tma6_hist <- df %>% 
-  ggplot(aes(TMA_6,  fill = Condition)) + geom_bar() +
-  scale_fill_brewer(palette="Set1", labels = 
-                      c("Worked Ex", "No Worked EX")) +
+tma6_hist <- dfr %>% 
+  ggplot(aes(TMA_6,  fill = Condition)) + geom_bar()  +
+  scale_fill_manual(values = c("#ef476f","#1b9aaa"), labels = 
+                                  c("No Worked EX", "Worked EX")) +
   labs(x = "TMA 6", y = "Count") +
   theme_minimal() + 
   facet_grid(vars(cols = Condition))
 ```
 
 ```{r}
-tma_hist <- ggarrange(tma1_hist, tma2_hist, tma3_hist, tma4_hist, tma5_hist, tma6_hist,
-                       common.legend = TRUE, legend="bottom", ncol = 3, nrow = 2)
+tma_hist <- ggarrange(tma1_hist, tma2_hist, tma3_hist, tma4_hist, tma5_hist, tma6_hist,common.legend = TRUE, legend="bottom", ncol = 3, nrow = 2)
 
 ggsave(tma_hist, file = "../../outputs/visualization/tma_hist.png")
 ```

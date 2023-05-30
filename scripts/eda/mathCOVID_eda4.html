@@ -11,7 +11,7 @@
 
 <meta name="author" content="Emi" />
 
-<meta name="date" content="2023-04-25" />
+<meta name="date" content="2023-05-30" />
 
 <title>COVID Math Anxiety EDA 4</title>
 
@@ -358,7 +358,7 @@ display: none;
 
 <h1 class="title toc-ignore">COVID Math Anxiety EDA 4</h1>
 <h4 class="author">Emi</h4>
-<h4 class="date">2023-04-25</h4>
+<h4 class="date">2023-05-30</h4>
 
 </div>
 
@@ -366,14 +366,16 @@ display: none;
 <div id="load-tidyverse" class="section level1">
 <h1>Load Tidyverse</h1>
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
-<pre><code>## ✔ ggplot2 3.4.0     ✔ purrr   0.3.4
-## ✔ tibble  3.1.7     ✔ dplyr   1.0.9
-## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
-## ✔ readr   2.1.2     ✔ forcats 0.5.1</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.2     ✔ readr     2.1.4
+## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+## ✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+## ✔ purrr     1.0.1     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
 </div>
 <div id="load-data" class="section level1">
 <h1>Load Data</h1>
@@ -422,15 +424,15 @@ display: none;
 clean &lt;- read.csv(&quot;../../data/affectoutcome_norm_predict_1102.csv&quot;)</code></pre>
 <pre class="r"><code>head(dfr)</code></pre>
 <pre><code>## # A tibble: 6 × 409
-##    drop dropwhy  incomplete_pt1 incomplete_pt2 `did not do_pt2` `Scratch paper…`
-##   &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt;          &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
-## 1    NA &lt;NA&gt;                 NA              1               NA               NA
-## 2    NA &lt;NA&gt;                 NA             NA               NA                1
-## 3     1 duplica…             NA             NA               NA                1
-## 4    NA &lt;NA&gt;                 NA             NA               NA                1
-## 5    NA &lt;NA&gt;                 NA             NA               NA                1
-## 6    NA &lt;NA&gt;                 NA             NA               NA                1
-## # … with 403 more variables: `Scratch paper_pt2` &lt;dbl&gt;,
+##    drop dropwhy        incomplete_pt1 incomplete_pt2 `did not do_pt2`
+##   &lt;dbl&gt; &lt;chr&gt;                   &lt;dbl&gt;          &lt;dbl&gt;            &lt;dbl&gt;
+## 1    NA &lt;NA&gt;                       NA              1               NA
+## 2    NA &lt;NA&gt;                       NA             NA               NA
+## 3     1 duplicate pt 1             NA             NA               NA
+## 4    NA &lt;NA&gt;                       NA             NA               NA
+## 5    NA &lt;NA&gt;                       NA             NA               NA
+## 6    NA &lt;NA&gt;                       NA             NA               NA
+## # ℹ 404 more variables: `Scratch paper_pt1` &lt;dbl&gt;, `Scratch paper_pt2` &lt;dbl&gt;,
 ## #   `Subject ID #...8` &lt;chr&gt;, `Subject ID #...9` &lt;chr&gt;, Notes &lt;chr&gt;,
 ## #   StartDate...11 &lt;dttm&gt;, EndDate...12 &lt;dttm&gt;, Progress...13 &lt;dbl&gt;,
 ## #   Condition &lt;chr&gt;, `UPDATED_Opt-in-out` &lt;dbl&gt;, Opt_Out &lt;chr&gt;,
@@ -489,8 +491,8 @@ clean &lt;- read.csv(&quot;../../data/affectoutcome_norm_predict_1102.csv&quot;)
 ##  8    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
 ##  9     5     5     4     5     4     5     5     5     5     5     5     4     5
 ## 10     5     5     5     5     5     5     5     4     4     4     4     4     4
-## # … with 293 more rows, and 3 more variables: SI_14 &lt;dbl&gt;, SI_sum &lt;dbl&gt;,
-## #   SI_avg &lt;dbl&gt;</code></pre>
+## # ℹ 293 more rows
+## # ℹ 3 more variables: SI_14 &lt;dbl&gt;, SI_sum &lt;dbl&gt;, SI_avg &lt;dbl&gt;</code></pre>
 </div>
 <div id="investigate-tma" class="section level1">
 <h1>Investigate TMA</h1>
@@ -509,24 +511,40 @@ clean &lt;- read.csv(&quot;../../data/affectoutcome_norm_predict_1102.csv&quot;)
 ##  8      NA   NA            NA
 ##  9      12    2             9
 ## 10      10    1.67          9
-## # … with 293 more rows</code></pre>
+## # ℹ 293 more rows</code></pre>
+<pre class="r"><code>dfr %&gt;% 
+  select(DurImm_HOT)</code></pre>
+<pre><code>## # A tibble: 303 × 1
+##    DurImm_HOT
+##         &lt;dbl&gt;
+##  1      0.375
+##  2      0.5  
+##  3     NA    
+##  4      0.875
+##  5      0    
+##  6      0.75 
+##  7     NA    
+##  8      0.5  
+##  9      0.125
+## 10      0.25 
+## # ℹ 293 more rows</code></pre>
 </div>
 <div id="update-clean-data" class="section level1">
 <h1>Update Clean Data</h1>
 <p>Add new columns: <code>TMA_avg</code> and <code>SI_avg</code></p>
-<pre class="r"><code>tma_si_avg &lt;- dfr %&gt;% select(&quot;Subject ID #...9&quot;, &quot;TMA_avg&quot;,&quot;SI_avg&quot;)
-col_names &lt;- c(&quot;subjectid&quot;, &quot;tma_avg&quot;, &quot;si_avg&quot;)
+<pre class="r"><code>tma_si_avg &lt;- dfr %&gt;% select(&quot;Condition&quot;, &quot;Subject ID #...9&quot;, &quot;TMA_avg&quot;,&quot;SI_avg&quot;, DurImm_HOT)
+col_names &lt;- c(&quot;cond&quot;, &quot;subjectid&quot;, &quot;tma_avg&quot;, &quot;si_avg&quot;, &quot;hot&quot;)
 colnames(tma_si_avg) &lt;- col_names
 head(tma_si_avg)</code></pre>
-<pre><code>## # A tibble: 6 × 3
-##   subjectid tma_avg si_avg
-##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;
-## 1 Aq001        2     NA   
-## 2 Aq002a       1.83   4.5 
-## 3 Aq002b      NA     NA   
-## 4 Aq003        2      3   
-## 5 Aq004        2.17   3.25
-## 6 Aq005a       1.67   4.5</code></pre>
+<pre><code>## # A tibble: 6 × 5
+##   cond  subjectid tma_avg si_avg    hot
+##   &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 2     Aq001        2     NA     0.375
+## 2 1     Aq002a       1.83   4.5   0.5  
+## 3 1     Aq002b      NA     NA    NA    
+## 4 1     Aq003        2      3     0.875
+## 5 1     Aq004        2.17   3.25  0    
+## 6 1     Aq005a       1.67   4.5   0.75</code></pre>
 <pre class="r"><code>clean &lt;- clean %&gt;% left_join(tma_si_avg, by = &quot;subjectid&quot;) %&gt;% 
   # take the average of mind wandering
   mutate( mw_avg = rowMeans(clean[15:16], na.rm = TRUE))
@@ -545,13 +563,20 @@ head(clean)</code></pre>
 ## 4            6         0.333333     1.0000000      1.333330          1.50000
 ## 5            5         1.166670     0.0000000      3.666670          3.33333
 ## 6            5         0.333333     0.3728205      2.778308          3.16667
-##   understand_avg mw_day1_sum mw_day2_sum   si_sum  tma_avg si_avg    mw_avg
-## 1        78.5714          15   13.418452 39.92667 2.000000     NA 14.209226
-## 2        81.4286          11    8.000000 54.00000 1.833333   4.50  9.500000
-## 3        83.8571          10    9.000000 36.00000 2.000000   3.00  9.500000
-## 4        84.2857          15    8.000000 39.00000 2.166667   3.25 11.500000
-## 5        66.0000          10   10.000000 54.00000 1.666667   4.50 10.000000
-## 6        27.4286           7    8.708517 47.03650       NA     NA  7.854259</code></pre>
+##   understand_avg mw_day1_sum mw_day2_sum   si_sum cond  tma_avg si_avg   hot
+## 1        78.5714          15   13.418452 39.92667    2 2.000000     NA 0.375
+## 2        81.4286          11    8.000000 54.00000    1 1.833333   4.50 0.500
+## 3        83.8571          10    9.000000 36.00000    1 2.000000   3.00 0.875
+## 4        84.2857          15    8.000000 39.00000    1 2.166667   3.25 0.000
+## 5        66.0000          10   10.000000 54.00000    1 1.666667   4.50 0.750
+## 6        27.4286           7    8.708517 47.03650    2       NA     NA 0.500
+##      mw_avg
+## 1 14.209226
+## 2  9.500000
+## 3  9.500000
+## 4 11.500000
+## 5 10.000000
+## 6  7.854259</code></pre>
 </div>
 <div id="save-clean-as-csv-file" class="section level1">
 <h1>Save <code>clean</code> as CSV file</h1>

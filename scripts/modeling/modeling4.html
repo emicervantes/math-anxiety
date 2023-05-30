@@ -11,7 +11,7 @@
 
 <meta name="author" content="Emi" />
 
-<meta name="date" content="2023-05-04" />
+<meta name="date" content="2023-05-30" />
 
 <title>Math COVID Modeling 4</title>
 
@@ -358,7 +358,7 @@ display: none;
 
 <h1 class="title toc-ignore">Math COVID Modeling 4</h1>
 <h4 class="author">Emi</h4>
-<h4 class="date">2023-05-04</h4>
+<h4 class="date">2023-05-30</h4>
 
 </div>
 
@@ -366,14 +366,48 @@ display: none;
 <div id="load-libraries" class="section level1">
 <h1>Load libraries</h1>
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
-<pre><code>## ✔ ggplot2 3.4.0     ✔ purrr   0.3.4
-## ✔ tibble  3.1.7     ✔ dplyr   1.0.9
-## ✔ tidyr   1.2.0     ✔ stringr 1.4.0
-## ✔ readr   2.1.2     ✔ forcats 0.5.1</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.2     ✔ readr     2.1.4
+## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+## ✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+## ✔ purrr     1.0.1     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(sjPlot)</code></pre>
+<pre><code>## Learn more about sjPlot with &#39;browseVignettes(&quot;sjPlot&quot;)&#39;.</code></pre>
+<pre class="r"><code>library(sjmisc)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;sjmisc&#39;
+## 
+## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     is_empty
+## 
+## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     replace_na
+## 
+## The following object is masked from &#39;package:tibble&#39;:
+## 
+##     add_case</code></pre>
+<pre class="r"><code>library(sjlabelled)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;sjlabelled&#39;
+## 
+## The following object is masked from &#39;package:forcats&#39;:
+## 
+##     as_factor
+## 
+## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     as_label
+## 
+## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     as_label</code></pre>
 </div>
 <div id="load-dataset" class="section level1">
 <h1>Load dataset</h1>
@@ -421,6 +455,8 @@ display: none;
 <pre class="r"><code>dfr &lt;-dfr %&gt;% filter(Condition == 1 | Condition == 2)
 dfr &lt;- dfr %&gt;% mutate(mw_avg = rowMeans(dfr[346:347], na.rm = TRUE))</code></pre>
 <pre class="r"><code>dfr$Condition[dfr$Condition == 2] = 0 </code></pre>
+<pre class="r"><code>df &lt;- dfr %&gt;% select(Del_OverallAcc, TMA_avg, Condition, mw_avg, SI_avg) %&gt;% 
+  drop_na()</code></pre>
 </div>
 <div id="predict-students-achievements-delayed-accuracy-scores" class="section level1">
 <h1>Predict Student’s Achievements (Delayed accuracy scores)</h1>
@@ -467,9 +503,9 @@ with increase in math anxiety</p></li>
 </div>
 <div id="tma-condition-interaction-term-tma-condition-mw-and-si" class="section level2">
 <h2>TMA, condition, interaction term (TMA + condition), mw and si</h2>
-<pre class="r"><code>dfr %&gt;% 
-  lm(formula = Del_OverallAcc ~ TMA_avg + Condition +  Condition * TMA_avg + mw_avg + SI_avg) %&gt;% 
-  summary()</code></pre>
+<pre class="r"><code>acc_fit &lt;- df %&gt;% 
+  lm(formula = Del_OverallAcc ~ TMA_avg + Condition +  Condition * TMA_avg + mw_avg + SI_avg) 
+summary(acc_fit)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = Del_OverallAcc ~ TMA_avg + Condition + Condition * 
@@ -491,9 +527,133 @@ with increase in math anxiety</p></li>
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Residual standard error: 0.2209 on 223 degrees of freedom
-##   (70 observations deleted due to missingness)
 ## Multiple R-squared:  0.06932,    Adjusted R-squared:  0.04845 
 ## F-statistic: 3.322 on 5 and 223 DF,  p-value: 0.006491</code></pre>
+<pre class="r"><code>tab_model(acc_fit)</code></pre>
+<table style="border-collapse:collapse; border:none;">
+<tr>
+<th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">
+ 
+</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
+Del Overall Acc
+</th>
+</tr>
+<tr>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">
+Predictors
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+Estimates
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+CI
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+p
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+(Intercept)
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.85
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.66 – 1.04
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>&lt;0.001</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+TMA avg
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.07
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.12 – -0.01
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>0.018</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+Condition [1]
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.17
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.33 – -0.01
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>0.037</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+mw avg
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.04
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.07 – -0.00
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>0.045</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+SI avg
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.01
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.04 – 0.03
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.748
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+TMA avg * Condition [1]
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.09
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.01 – 0.16
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>0.023</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
+Observations
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
+229
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+R<sup>2</sup> / R<sup>2</sup> adjusted
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.069 / 0.048
+</td>
+</tr>
+</table>
 <p>Significant factors for predicting students’ accuracy:</p>
 <ul>
 <li><p><code>TMA_avg</code> (<span class="math inline">\(\beta\)</span>
@@ -513,7 +673,7 @@ accuracy by 0.086362 percent???</p></li>
 <div id="tma-condition-interaction-term-tma-condition-mw-interaction-term-mw-condition" class="section level2">
 <h2>TMA, condition, interaction term (TMA + condition), mw, interaction
 term (mw + condition)</h2>
-<pre class="r"><code>dfr %&gt;% 
+<pre class="r"><code>df %&gt;% 
   lm(formula = Del_OverallAcc ~ TMA_avg + Condition +  Condition * TMA_avg + mw_avg + mw_avg * Condition) %&gt;% 
   summary()</code></pre>
 <pre><code>## 
@@ -523,23 +683,22 @@ term (mw + condition)</h2>
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.57063 -0.15383  0.00778  0.16854  0.44604 
+## -0.52814 -0.14837  0.00963  0.16795  0.42209 
 ## 
 ## Coefficients:
 ##                    Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)         0.83627    0.06093  13.725   &lt;2e-16 ***
-## TMA_avg            -0.05550    0.02890  -1.921   0.0560 .  
-## Condition1         -0.21409    0.09276  -2.308   0.0219 *  
-## mw_avg             -0.05155    0.02279  -2.262   0.0246 *  
-## TMA_avg:Condition1  0.07349    0.03944   1.864   0.0637 .  
-## Condition1:mw_avg   0.03586    0.03733   0.961   0.3378    
+## (Intercept)         0.83407    0.06046  13.796   &lt;2e-16 ***
+## TMA_avg            -0.06065    0.02900  -2.091   0.0376 *  
+## Condition1         -0.19498    0.09233  -2.112   0.0358 *  
+## mw_avg             -0.04438    0.02290  -1.938   0.0539 .  
+## TMA_avg:Condition1  0.07591    0.04036   1.881   0.0613 .  
+## Condition1:mw_avg   0.02203    0.03744   0.588   0.5569    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.2248 on 232 degrees of freedom
-##   (61 observations deleted due to missingness)
-## Multiple R-squared:  0.07061,    Adjusted R-squared:  0.05058 
-## F-statistic: 3.525 on 5 and 232 DF,  p-value: 0.004318</code></pre>
+## Residual standard error: 0.2208 on 223 degrees of freedom
+## Multiple R-squared:  0.07033,    Adjusted R-squared:  0.04948 
+## F-statistic: 3.374 on 5 and 223 DF,  p-value: 0.005862</code></pre>
 <p>Stronger model? But no effects by <code>mw_avg</code> and
 <code>Condition1</code></p>
 <p>Factors that seem to be predicting students’ post scores:
