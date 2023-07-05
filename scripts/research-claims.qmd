@@ -1,0 +1,32 @@
+---
+title: "Research Claims"
+format: html
+editor: visual
+---
+
+## Introduction
+
+### List of Research Claims
+
+Goal is to organize your list by a specific topic
+
+**Topic:** Effects of Worked Examples in Reducing the Effects of Mathematical Anxiety
+
+**Claim 1:** High mathematical anxiety causes less motivation for learning.
+
+-   Evidence from article by Ashcraft and Krause (Working memory, math performance, and math anxiety)
+
+**Claim 2:** Cognitive resources play important roles in mathematical learning, and learning can be maximized particularly during relational reasoning such as comparison, making inferences, etc.
+
+-   Evidence from article by Begel et al (2018) and Richland et al (the Roles of Comparison and Cognitive Load)
+
+**Claim 3:** Having mathematical anxiety can take up the limited resources of working memory that are crucial in completing tasks in mathematics.
+
+**Claim 4:** Reducing the cognitive load will mitigate the effect of students' mathematical anxiety.
+
+-   *Cognitive load theory* states that working memory has a limited capacity and suggests in order to enhance students' learning achievements, any instructional methods that may overload their working memory should be avoided (Sweller 1988).
+-   *Mathematical anxiety* is an anxiety and worry that interfere with learning and solving mathematical concepts or problems (Richardson & Suinn 1972: Ashcraft & Ridley 2005).
+
+**Claim 5:** One such way to reduce cognitive load is by providing worked examples in the classroom.
+
+-   Evidence from article by Schnotz and Kurschner (A Reconsideration of Cognitive Load Theory)
