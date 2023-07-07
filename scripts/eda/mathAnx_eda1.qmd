@@ -133,6 +133,55 @@ pretest_sex_plt
 
 ```{r}
 pretest_plt <- ggarrange(pretest_school_plt, pretest_sex_plt, ncol = 2, nrow = 1)
-ggsave(pretest_plt, file = "../../data/visualization/pretest.png")
+ggsave(pretest_plt, file = "../../outputs/visualization/pretest.png")
 ```
+
+**Summary**: Irvine schools had higher pretest scores than Chicago, which 
+indicate that more students from Irvine knew how to approach ratio problem at the 
+start of the experiment than the students from Chicago. On the other hand, there
+was not that much of a difference in pretest scores between girls an boys. Now,
+we look at the pretest score in the worked example group vs no worked example group.
+
+```{r}
+pretest_sex_cond <- df1 %>% group_by(Condition, Sex) %>% 
+  summarize(pretest_avg = mean(pretest)) %>% 
+  ggplot(aes(x = Condition, y = pretest_avg, fill = Sex)) +
+  geom_bar(position="dodge", stat="identity", color = "black") +
+  geom_text(aes(label=pretest_avg), position=position_dodge(width=0.9), 
+            vjust=-0.25) +
+  labs(title = "Average Pretest Score by Gender and Condition",
+       x = "Condition", y = "Pretest Avg") +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Girl", "Boy")) +
+  ylim(0,1) + theme(plot.title = element_text(face = "bold", hjust = 0.5)) +
+  scale_x_discrete(labels=c("No Worked EX", "Worked EX")) +
+  theme_minimal()
+pretest_sex_cond
+```
+
+```{r}
+pretest_cond <- df1 %>% group_by(Condition) %>% 
+  summarize(pretest_avg = mean(pretest)) %>% 
+  ggplot(aes(x = Condition, y = pretest_avg)) +
+  geom_bar(position="dodge", stat="identity", color = "black", fill = "cyan4")+
+  geom_text(aes(label=pretest_avg), position=position_dodge(width=0.9), 
+            vjust=-0.25) +
+  ylim(0,1) + scale_x_discrete(labels=c("No Worked EX", "Worked EX")) +
+  labs(title = "Average Pretest Score by Condition",
+       x = "Condition", y = "Pretest Avg") +
+  theme_minimal()
+pretest_cond
+```
+
+```{r}
+ggsave(pretest_cond, file = "../../outputs/visualization/pretest_cond.png")
+ggsave(pretest_sex_cond, file = "../../outputs/visualization/pretest_sex_cond.png")
+```
+
+
+
+
+
+
+
 
