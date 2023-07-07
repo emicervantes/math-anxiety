@@ -1,0 +1,138 @@
+---
+title: "Math Anxiety EDA"
+format: html
+editor: visual
+---
+
+## Worked Example and Math Anxiety
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+df <- readxl::read_xlsx('../../data/math-anxiety-raw-data.xlsx')
+```
+
+# Look at the math anxiety for different gender
+
+```{r}
+df$Sex <- as.factor(df$Sex)
+df %>% select(contains("sex"), contains("tma")) %>% 
+  filter(!is.na(Sex)) %>% 
+  ggplot(aes(x = TMA_avg, fill = Sex)) +
+  geom_histogram(bins = 20, color = "black") +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Boy", "Girl")) +
+  labs(x = "TMA Avg", y = "Count") +
+  theme_minimal() 
+```
+
+```{r}
+df %>%  filter(is.na(drop)) %>% 
+  select(contains("sex"), contains("tma"), Condition) %>% 
+  filter(!is.na(Sex) ) %>% 
+  ggplot(aes(x = TMA_avg, fill = Sex)) +
+  facet_grid(.~Condition) +
+  geom_histogram(bins = 20, color = "black") +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Boy", "Girl")) +
+  labs(x = "TMA Avg", y = "Count") +
+  theme_minimal() 
+```
+
+```{r}
+df %>%  filter(is.na(drop)) %>% 
+  select(contains("sex"), contains("tma"), Condition) %>% 
+  filter(!is.na(Sex) ) %>% 
+  ggplot(aes(x = TMA_5, fill = Sex)) +
+  facet_grid(.~Condition) +
+  geom_bar(bins = 20, color = "black",
+           position = "dodge") +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Boy", "Girl")) +
+  labs(x = "TMA Avg", y = "Count") +
+  labs(title = "Distribution of TMA 5 by Gender and Condition") +
+  theme_minimal() 
+```
+
+```{r}
+df %>%  filter(is.na(drop)) %>% 
+  select(contains("sex"), contains("tma"), Condition) %>% 
+  filter(!is.na(Sex) ) %>% 
+  ggplot(aes(x = TMA_6, fill = Sex)) +
+  facet_grid(.~Condition) +
+  geom_bar(bins = 20, color = "black",
+           position = "dodge") +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Boy", "Girl")) +
+  labs(x = "TMA Avg", y = "Count") +
+  theme_minimal() 
+```
+
+# Looking Closely at Participants' Background
+
+Pre-test measured students' prior knowledge of ratio and proportional reasoning. If the students attempted any type of proportional strategy on the pretest item (one question), they received 1. Otherwise, they received 0. We will be comparing pre-test scores between different groups:
+
+1.  Chicago schools vs. Irvine schools
+
+2.  Boys vs. Girls
+
+```{r}
+df1 <- df %>% select(pretest, chicago, Sex, Condition) %>% 
+  na.omit() 
+df1$Condition[df1$Condition == 2] <- 0
+df1$chicago <- as.factor(df1$chicago)
+df1$Sex <- as.factor(df1$Sex)
+```
+
+## Looking at difference between Chicago and Irvine
+
+```{r}
+df1 %>% ggplot(aes(x = pretest, fill = chicago)) +
+  geom_bar(position = "dodge") +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Irvine", "Chicago")) +
+  labs(title = "Pretest Scores by Schools", x = "Pretest Score", y = "Count", fill = "School") +
+  theme_minimal()
+```
+
+```{r}
+# Looking at the average pretest scores
+pretest_school_plt <- df1 %>% group_by(chicago) %>% 
+  summarize(pretest_avg = mean(pretest)) %>% 
+  ggplot(aes(x = chicago, y = pretest_avg)) +
+  geom_bar(position="dodge", stat="identity", 
+           fill = "deepskyblue1", color = "black") +
+  geom_text(aes(label=pretest_avg), position=position_dodge(width=0.9), 
+            vjust=-0.25) +
+  scale_x_discrete(labels=c("Irvine", "Chicago")) +
+  labs(title = "Average Pretest Score by School", x = "School",
+       y = "Pretest Avg") +
+  ylim(0,1) +
+  theme_minimal() + theme(plot.title = element_text(face = "bold", hjust = 0.5))
+pretest_school_plt
+```
+
+```{r}
+# Looking at the average pretest scores
+pretest_sex_plt <- df1 %>% group_by(Sex) %>% 
+  summarize(pretest_avg = mean(pretest)) %>% 
+  ggplot(aes(x = Sex, y = pretest_avg)) +
+  geom_bar(position="dodge", stat="identity", 
+           fill = "cyan4", color = "black") +
+  geom_text(aes(label=pretest_avg), position=position_dodge(width=0.9), 
+            vjust=-0.25) +
+  scale_x_discrete(labels=c("Girl", "Boy")) +
+  labs(title = "Average Pretest Score by Gender", x = "Gender",
+       y = "Pretest Avg") +
+  ylim(0,1) +
+  theme_minimal() + theme(plot.title = element_text(face = "bold", hjust = 0.5))
+pretest_sex_plt
+```
+
+```{r}
+pretest_plt <- ggarrange(pretest_school_plt, pretest_sex_plt, ncol = 2, nrow = 1)
+ggsave(pretest_plt, file = "../../data/visualization/pretest.png")
+```
+
