@@ -11,35 +11,14 @@ library(tidyverse)
 ```
 
 ```{r}
-df <- readxl::read_xlsx('../../data/math-anxiety-raw-data.xlsx')
+df <- readxl::read_xlsx('../../../../data/math-anxiety-raw-data.xlsx')
 ```
 
 # Look at the math anxiety for different gender
 
-```{r}
-df$Sex <- as.factor(df$Sex)
-df %>% select(contains("sex"), contains("tma")) %>% 
-  filter(!is.na(Sex)) %>% 
-  ggplot(aes(x = TMA_avg, fill = Sex)) +
-  geom_histogram(bins = 20, color = "black") +
-  scale_fill_brewer(palette="Set1", labels = 
-                      c("Boy", "Girl")) +
-  labs(x = "TMA Avg", y = "Count") +
-  theme_minimal() 
-```
+TMA Questionnaires:
 
-```{r}
-df %>%  filter(is.na(drop)) %>% 
-  select(contains("sex"), contains("tma"), Condition) %>% 
-  filter(!is.na(Sex) ) %>% 
-  ggplot(aes(x = TMA_avg, fill = Sex)) +
-  facet_grid(.~Condition) +
-  geom_histogram(bins = 20, color = "black") +
-  scale_fill_brewer(palette="Set1", labels = 
-                      c("Boy", "Girl")) +
-  labs(x = "TMA Avg", y = "Count") +
-  theme_minimal() 
-```
+1.  
 
 ```{r}
 df %>%  filter(is.na(drop)) %>% 
@@ -136,11 +115,7 @@ pretest_plt <- ggarrange(pretest_school_plt, pretest_sex_plt, ncol = 2, nrow = 1
 ggsave(pretest_plt, file = "../../outputs/visualization/pretest.png")
 ```
 
-**Summary**: Irvine schools had higher pretest scores than Chicago, which 
-indicate that more students from Irvine knew how to approach ratio problem at the 
-start of the experiment than the students from Chicago. On the other hand, there
-was not that much of a difference in pretest scores between girls an boys. Now,
-we look at the pretest score in the worked example group vs no worked example group.
+**Summary**: Irvine schools had higher pretest scores than Chicago, which indicate that more students from Irvine knew how to approach ratio problem at the start of the experiment than the students from Chicago. On the other hand, there was not that much of a difference in pretest scores between girls an boys. Now, we look at the pretest score in the worked example group vs no worked example group.
 
 ```{r}
 pretest_sex_cond <- df1 %>% group_by(Condition, Sex) %>% 
@@ -174,14 +149,6 @@ pretest_cond
 ```
 
 ```{r}
-ggsave(pretest_cond, file = "../../outputs/visualization/pretest_cond.png")
-ggsave(pretest_sex_cond, file = "../../outputs/visualization/pretest_sex_cond.png")
+ggsave(pretest_cond, file = "../../../../outputs/visualization/pretest_cond.png")
+ggsave(pretest_sex_cond, file = "../../../../outputs/visualization/pretest_sex_cond.png")
 ```
-
-
-
-
-
-
-
-

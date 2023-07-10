@@ -1,0 +1,222 @@
+---
+title: "Math Anxiety EDA 2"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(gridExtra)
+library(ggpubr)
+library(corrplot)
+```
+
+```{r}
+df <- readxl::read_xlsx('../../../../data/math-anxiety-raw-data.xlsx')
+```
+
+## Look at the math anxiety for different gender
+
+```{r}
+df1 <- df %>% select(contains("tma"), chicago, Sex, Condition) %>% 
+  na.omit() %>% filter(Condition == 1 | Condition == 2)
+df1$Condition[df1$Condition == 2] <- 0
+df1$Sex[df1$Sex == 1] <- "boy"
+df1$Sex[df1$Sex == 2] <- "girl"
+df1$chicago <- as.factor(df1$chicago)
+df1$Sex <- as.factor(df1$Sex)
+```
+
+```{r}
+df1 %>% group_by(Sex, Condition) %>% 
+  summarize(tma_avg = mean(TMA_avg)) %>% 
+  ggplot(aes(x = Condition, y = tma_avg, fill = Sex)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black") +
+  geom_text(aes(label=round(tma_avg, 3)), position=position_dodge(width=0.9), 
+            vjust=-0.25) +
+  scale_x_discrete(labels=c("No Worked EX", "Worked EX")) +
+  scale_fill_brewer(palette="Set1", labels = c("Boy", "Girl")) +
+  theme_minimal() +
+  labs("Average Comparison by Gender and Condition", x = "Condition",
+       y = "TMA Avg") +
+  ylim(0,5)
+```
+
+```{r}
+df1 %>% group_by(Sex) %>% 
+  summarize(tma_avg = mean(TMA_avg)) %>% 
+  ggplot(aes(x = Sex, y = tma_avg)) +
+  geom_bar(position = "dodge", stat = "identity",
+           fill = "darkgreen", color = "black") +
+  geom_text(aes(label=round(tma_avg, 3)), position=position_dodge(width=0.9), 
+            vjust=-0.25) +
+  scale_x_discrete(labels=c("Boy", "Girl")) +
+  theme_minimal() +
+  labs("Average Comparison by Gender", x = "Gender",
+       y = "TMA Avg") +
+  ylim(0,5)
+```
+
+**Summary: ** Girls have higher TMA average than boys overall and in both condition.
+
+## Looking Closely at the TMA Question
+
+Each question had score $\{ 1, 2, 3, 4, 5 \}$ where 1 being low stress and 5 being high stress. The survey measured students' **trait math anxiety**. Trait math anxiety refers to a trait of personality moment whereas state math anxiety refers to anxiety related to adverse situations in a specific moment.
+
+1.  Having to complete a math worksheet by yourself
+2.  Watching the teacher work out a math problem on the board
+3.  Listening to the teacher talk for a long time in math
+4.  Listening to another student in your class explain a math problem
+5.  Starting a new topic in math
+6.  Learning math online
+
+```{r}
+# Facet names for Condition and Gender
+cond <- c("No Worked EX", "Worked EX")
+names(cond) <- c(0, 1)
+gender <- c("Boy", "Girl")
+names(gender) <- c("boy", "girl")
+```
+
+```{r}
+tma1 <- df1 %>% 
+  ggplot(aes(x = TMA_1, fill = Sex)) +
+  geom_bar(color = "black",position = "dodge") +
+  facet_grid(.~Condition,
+             labeller = labeller(Condition = cond)) +
+  scale_fill_brewer(palette="Set1", labels = c("Boy", "Girl")) +
+  labs(title = "TMA Question 1", x = "TMA Avg", y = "Count") +
+  theme_minimal() 
+tma2 <- df1 %>% 
+  ggplot(aes(x = TMA_2, fill = Sex)) +
+  geom_bar(color = "black",position = "dodge") +
+  facet_grid(.~Condition,
+             labeller = labeller(Condition = cond)) +
+  scale_fill_brewer(palette="Set1", labels = c("Boy", "Girl")) +
+  labs(title = "TMA Question 2", x = "TMA Avg", y = "Count") +
+  theme_minimal() 
+tma3 <- df1 %>% 
+  ggplot(aes(x = TMA_3, fill = Sex)) +
+  geom_bar(color = "black",position = "dodge") +
+  facet_grid(.~Condition,
+             labeller = labeller(Condition = cond)) +
+  scale_fill_brewer(palette="Set1", labels = c("Boy", "Girl")) +
+  labs(title = "TMA Question 3", x = "TMA Avg", y = "Count") +
+  theme_minimal() 
+tma4 <- df1 %>% 
+  ggplot(aes(x = TMA_4, fill = Sex)) +
+  geom_bar(color = "black",position = "dodge") +
+  facet_grid(.~Condition,
+             labeller = labeller(Condition = cond)) +
+  scale_fill_brewer(palette="Set1", labels = c("Boy", "Girl")) +
+  labs(title = "TMA Question 4", x = "TMA Avg", y = "Count") +
+  theme_minimal() 
+tma5 <- df1 %>% 
+  ggplot(aes(x = TMA_5, fill = Sex)) +
+  geom_bar(color = "black",position = "dodge") +
+  facet_grid(.~Condition,
+             labeller = labeller(Condition = cond)) +
+  scale_fill_brewer(palette="Set1", labels = c("Boy", "Girl")) +
+  labs(title = "TMA Question 5", x = "TMA Avg", y = "Count") +
+  theme_minimal() 
+tma6 <- df1 %>% 
+  ggplot(aes(x = TMA_6, fill = Sex)) +
+  facet_grid(.~Condition,
+             labeller = labeller(Condition = cond)) +
+  geom_bar(bins = 20, color = "black",
+           position = "dodge") +
+  scale_fill_brewer(palette="Set1", labels = 
+                      c("Boy", "Girl")) +
+  labs(title = "TMA Question 6", x = "TMA Avg", y = "Count") +
+  theme_minimal() 
+```
+
+```{r}
+tma_dist <- ggarrange(tma1, tma2, tma3, tma4, tma5, tma6, 
+          common.legend = TRUE, legend="bottom", ncol = 3, nrow = 2)
+tma_dist
+```
+
+```{r}
+df1 %>% filter(TMA_2 > 3 & Condition == 1) %>% 
+  count(Sex)
+```
+
+For TMA question 2, only boys in the worked example group showed anxiety scores 4 and 5. 
+
+## Overall Distribution of TMA by Gender and Condition
+
+```{r}
+df1 %>% 
+  ggplot(aes(TMA_avg, fill = Sex)) +
+  geom_histogram(bins = 13, color = "black") +
+  facet_grid(Condition ~ Sex,
+             labeller = labeller(Condition = cond,
+                                 Sex = gender)) +
+  theme_minimal() +
+  labs(title = "TMA Avg Distribution by Gender and Condition", 
+       x = "TMA Avg", y = "Count", fill = "Gender") +
+   scale_fill_brewer(palette="Set1", labels = 
+                      c("Boy", "Girl")) 
+```
+
+**Summary: **Girls have higher average in TMA compared to boys in both condition.
+
+## Looking Closely at the Learning Achievements
+
+```{r}
+df2 <- df %>% select(Sex, Condition, pretest, chicago, contains("tma"),
+                      DurImm_OverallAcc, Understand_avg) %>% 
+        na.omit()
+df2$Condition[df2$Condition == 2] <- 0
+df2$Sex[df2$Sex == 1] <- "boy"
+df2$Sex[df2$Sex == 2] <- "girl"
+df2$Sex <- as.factor(df2$Sex)
+df2$chicago <- as.factor(df2$chicago)
+```
+
+```{r}
+df2 %>% ggplot(aes(x = DurImm_OverallAcc, fill = Sex)) +
+  geom_histogram(bins = 13, color = "black") +
+  facet_grid(Condition ~ Sex,
+             labeller = labeller(Condition = cond,
+                                 Sex = gender)) +
+   theme_minimal() +
+  labs(title = "Post Accuracy Avg by Gender and Condition", 
+       x = "Accuracy Avg", y = "Count", fill = "Gender") +
+   scale_fill_brewer(palette="Set1", labels = 
+                      c("Boy", "Girl")) 
+```
+
+```{r}
+df2 %>% ggplot(aes(x =  Understand_avg, fill = Sex)) +
+  geom_histogram(bins = 17, color = "black") +
+  facet_grid(Condition ~ Sex,
+             labeller = labeller(Condition = cond,
+                                 Sex = gender)) +
+   theme_minimal() +
+  labs(title = "Post Understanding Avg by Gender and Condition", 
+       x = "Understanding Avg", y = "Count", fill = "Gender") +
+   scale_fill_brewer(palette="Set1", labels = 
+                      c("Boy", "Girl")) 
+```
+
+**Summary**: Not much of differences were observed in the distributions of understanding and accuracy scores of post-test between gender and condition. 
+
+
+## Correlation Plot
+
+```{r}
+glimpse(df2)
+```
+
+```{r}
+res <- df2 %>% select(pretest, contains("TMA"), DurImm_OverallAcc, Understand_avg) %>% cor() %>% round(3)
+```
+
+```{r}
+corrplot(res, type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 45)
+```
+
+**Summary**: Different TMA measures are strongly correlated to each other. Students' understanding level was negatively correlated with some of the TMA measures including `TMA_1`,`TMA_6` , and `TMA_avg`. 
