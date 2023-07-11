@@ -39,7 +39,7 @@ df1 %>% group_by(Sex, Condition) %>%
   theme_minimal() +
   labs("Average Comparison by Gender and Condition", x = "Condition",
        y = "TMA Avg") +
-  ylim(0,5)
+  ylim(0,5) 
 ```
 
 ```{r}
@@ -57,7 +57,7 @@ df1 %>% group_by(Sex) %>%
   ylim(0,5)
 ```
 
-**Summary: ** Girls have higher TMA average than boys overall and in both condition.
+**Summary:** Girls have higher TMA average than boys overall and in both condition.
 
 ## Looking Closely at the TMA Question
 
@@ -142,7 +142,7 @@ df1 %>% filter(TMA_2 > 3 & Condition == 1) %>%
   count(Sex)
 ```
 
-For TMA question 2, only boys in the worked example group showed anxiety scores 4 and 5. 
+For TMA question 2, only boys in the worked example group showed anxiety scores 4 and 5.
 
 ## Overall Distribution of TMA by Gender and Condition
 
@@ -160,7 +160,7 @@ df1 %>%
                       c("Boy", "Girl")) 
 ```
 
-**Summary: **Girls have higher average in TMA compared to boys in both condition.
+**Summary:** Girls have higher average in TMA compared to boys in both condition.
 
 ## Looking Closely at the Learning Achievements
 
@@ -201,8 +201,7 @@ df2 %>% ggplot(aes(x =  Understand_avg, fill = Sex)) +
                       c("Boy", "Girl")) 
 ```
 
-**Summary**: Not much of differences were observed in the distributions of understanding and accuracy scores of post-test between gender and condition. 
-
+**Summary**: Not much of differences were observed in the distributions of understanding and accuracy scores of post-test between gender and condition.
 
 ## Correlation Plot
 
@@ -219,4 +218,4 @@ corrplot(res, type = "upper", order = "hclust",
          tl.col = "black", tl.srt = 45)
 ```
 
-**Summary**: Different TMA measures are strongly correlated to each other. Students' understanding level was negatively correlated with some of the TMA measures including `TMA_1`,`TMA_6` , and `TMA_avg`. 
+**Summary**: Different TMA measures are strongly correlated to each other. Students' understanding level was negatively correlated with some of the TMA measures including `TMA_1`,`TMA_6` , and `TMA_avg`.

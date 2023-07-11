@@ -1,0 +1,157 @@
+---
+title: "Math Anxiety EDA 3"
+format: html
+editor: visual
+---
+
+# Load Libraries
+
+```{r}
+library(tidyverse)
+```
+
+# Load and Clean Dataset
+
+```{r}
+df <- readxl::read_xlsx('../../../../data/math-anxiety-raw-data.xlsx')
+df <- df %>% filter(Condition == 1 | Condition == 2) %>% 
+  drop_na(Sex)
+df$Condition[df$Condition == 2] <- 0
+df$Sex[df$Sex == 1] <- "boy"
+df$Sex[df$Sex == 2] <- "girl"
+df$chicago <- as.factor(df$chicago)
+df$Sex <- as.factor(df$Sex)
+```
+
+# Reconsidering the Sampling of Data
+
+What to look for:
+
+1.  Number of students from Chicago/Irvine and Gender
+2.  Students' prior knowledge about ratio before the study
+
+## Number of Students from Chicago/Irvine
+
+```{r}
+df %>% group_by(chicago) %>% count()
+```
+
+Number of samples from Irvine: $n_i = 178$
+
+Number of samples from Chicago: $n_c = 51$
+
+```{r}
+df %>% group_by(Sex) %>% count()
+```
+
+Number of girls in data: $n_g = 100$
+
+Number of boys in data: $n_b = 129$
+
+```{r}
+df %>% group_by(Sex, chicago) %>% count()
+```
+
+Number of boys in Chicago: $n_{c,b} = 28$
+
+Number of girls in Chicago: $n_{c,g} = 23$
+
+Number of boys in Irvine: $n_{i,b} = 72$
+
+Number of girls in Irvine: $n_{i,g} = 106$
+
+
+## Students' prior knowledge about ratio before the study
+
+```{r}
+location <- c("Irvine", "Chicago")
+names(location) <- c(0, 1)
+gender <- c("Boy", "Girl")
+names(gender) <- c("boy", "girl")
+```
+
+```{r}
+df %>% group_by(chicago, Sex) %>% 
+  summarize(avg_pretest = mean(pretest, na.rm = TRUE)) %>% 
+  ggplot(aes(x =Sex, y = avg_pretest, fill = Sex)) + 
+  geom_text(aes(label=round(avg_pretest, 3)),  position=position_dodge(width=0.9), 
+            vjust=-0.25) +
+  facet_grid(.~ chicago, 
+             labeller = labeller(chicago = location)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black") +
+  labs(title = "Avg Pretest Score by Gender and Location",
+       x = "Gender", y = "Avg Pretest", fill = "Gener") +
+  theme_minimal() + ylim(0,1)
+```
+
+Students in Irvine, both girls and boys, had higher pretest score average than the students in Chicago. In Chicago, boys had higher pretest score average than girls. 
+
+```{r}
+df %>% ggplot(aes(x = pretest, fill = Sex)) + 
+  geom_bar(color = "black") +
+  facet_grid(chicago ~ Sex,
+             labeller = labeller(chicago = location,
+                                 Sex = gender)) +
+  theme_minimal() +
+  labs(title = "Distribution of Pretest Score by Gender and Location",
+       x = "Pretest", y = "Count")
+```
+
+Percentage of students who used ratio tactics during the pretest
+
+```{r}
+# Overall
+prop.table(table(df$pretest))
+```
+
+
+```{r}
+# Irvine
+prop.table(table(df$pretest[df$chicago == 0]))
+```
+
+```{r}
+# Chicago
+prop.table(table(df$pretest[df$chicago == 1]))
+```
+
+68% of students in Irvine used ratio tactic during the pretest while 51% of students in Chicago used ratio tactic during the pretest. Overall, majority of students in Irvine already knew how to use the ratio tactic before the test.
+
+**Question**: Did students who scored 1 in the `pretest` showed higher math anxiety than students who scored 0?
+
+```{r}
+df %>% filter(!is.na(pretest)) %>% 
+  group_by(pretest, Sex) %>% summarize(mean(TMA_avg))
+```
+
+Not much of a difference in average math anxiety between students scored 0 and 1, and between different gender.
+
+```{r}
+# No worked example
+df %>% filter(!is.na(pretest) & Condition == 0) %>% 
+  group_by(pretest, Sex) %>% summarize(mean(TMA_avg))
+```
+In no worked example, there seems to be no difference in the average math anxiety between different pretest group and genders.
+
+```{r}
+# worked example
+df %>% filter(!is.na(pretest) & Condition == 1) %>% 
+  group_by(pretest, Sex) %>% summarize(mean(TMA_avg))
+```
+In worked example group, there seems to be no difference in the average math anxiety between different pretest group and genders, except for students who scored 0 in the pretest. Grils who scored 0 for the pretest had slightly higher average math anxiety than boys who scored 0.
+
+### TMA question 5 average
+
+```{r}
+# No worked example
+df %>% filter(!is.na(pretest) & Condition == 0) %>% 
+  group_by(pretest, Sex) %>% summarize(mean(TMA_5))
+```
+
+```{r}
+# Worked example
+df %>% filter(!is.na(pretest) & Condition == 1) %>% 
+  group_by(pretest, Sex) %>% summarize(mean(TMA_5))
+```
+
+Girls who scored 0 in pretest had higher average of math anxiety (quetion 5) than boys who scored 0 in pretest in the worked example group. The difference between girls and boys are higher for `TMA_5`

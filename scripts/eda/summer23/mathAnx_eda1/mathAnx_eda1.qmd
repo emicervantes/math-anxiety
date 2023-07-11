@@ -152,3 +152,8 @@ pretest_cond
 ggsave(pretest_cond, file = "../../../../outputs/visualization/pretest_cond.png")
 ggsave(pretest_sex_cond, file = "../../../../outputs/visualization/pretest_sex_cond.png")
 ```
+
+```{r}
+df %>% group_by(chicago) %>% 
+  count()
+```
