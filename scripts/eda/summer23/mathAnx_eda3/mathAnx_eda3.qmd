@@ -60,7 +60,6 @@ Number of boys in Irvine: $n_{i,b} = 72$
 
 Number of girls in Irvine: $n_{i,g} = 106$
 
-
 ## Students' prior knowledge about ratio before the study
 
 ```{r}
@@ -84,7 +83,7 @@ df %>% group_by(chicago, Sex) %>%
   theme_minimal() + ylim(0,1)
 ```
 
-Students in Irvine, both girls and boys, had higher pretest score average than the students in Chicago. In Chicago, boys had higher pretest score average than girls. 
+Students in Irvine, both girls and boys, had higher pretest score average than the students in Chicago. In Chicago, boys had higher pretest score average than girls.
 
 ```{r}
 df %>% ggplot(aes(x = pretest, fill = Sex)) + 
@@ -103,7 +102,6 @@ Percentage of students who used ratio tactics during the pretest
 # Overall
 prop.table(table(df$pretest))
 ```
-
 
 ```{r}
 # Irvine
@@ -131,6 +129,7 @@ Not much of a difference in average math anxiety between students scored 0 and 1
 df %>% filter(!is.na(pretest) & Condition == 0) %>% 
   group_by(pretest, Sex) %>% summarize(mean(TMA_avg))
 ```
+
 In no worked example, there seems to be no difference in the average math anxiety between different pretest group and genders.
 
 ```{r}
@@ -138,6 +137,7 @@ In no worked example, there seems to be no difference in the average math anxiet
 df %>% filter(!is.na(pretest) & Condition == 1) %>% 
   group_by(pretest, Sex) %>% summarize(mean(TMA_avg))
 ```
+
 In worked example group, there seems to be no difference in the average math anxiety between different pretest group and genders, except for students who scored 0 in the pretest. Grils who scored 0 for the pretest had slightly higher average math anxiety than boys who scored 0.
 
 ### TMA question 5 average
