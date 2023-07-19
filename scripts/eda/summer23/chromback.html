@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Chromback’s Alpha</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="chromback_files/libs/clipboard/clipboard.min.js"></script>
+<script src="chromback_files/libs/quarto-html/quarto.js"></script>
+<script src="chromback_files/libs/quarto-html/popper.min.js"></script>
+<script src="chromback_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="chromback_files/libs/quarto-html/anchor.min.js"></script>
+<link href="chromback_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="chromback_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="chromback_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="chromback_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="chromback_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Chromback’s Alpha</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="internal-consistency-reliability-of-data" class="level1">
+<h1>Internal Consistency Reliability of Data</h1>
+<p>We are interested in looking at internal consistency reliability using Chromback’s alpha for following variables:</p>
+<ul>
+<li>Math anxiety scores (<code>TMA_1</code>, <code>TMA_2</code>, <code>TMA_3</code>, <code>TMA_4</code>, <code>TMA_5</code>, <code>TMA_6</code>)</li>
+<li>Mind wandering scores (Day 1: <code>MW1_control_1</code>, <code>MW1_control_2</code>, <code>MW1_control_3</code>, <code>MW1_control_4</code>, <code>MW1_control_5</code>, <code>MW1_control_6</code>, <code>MW1_control_7</code>, Day 2: <code>MW2_control_1</code>, <code>MW2_control_2</code>, <code>MW2_control_3</code>, <code>MW2_control_4</code>, <code>MW2_control_5</code> )</li>
+<li>Situational interest scores</li>
+</ul>
+<section id="load-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="load-libraries">Load libraries</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.2     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'psych'
+
+The following objects are masked from 'package:ggplot2':
+
+    %+%, alpha</code></pre>
+</div>
+</div>
+</section>
+<section id="load-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-data">Load data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_xlsx</span>(<span class="st">'../../../data/math-anxiety-raw-data.xlsx'</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+• `Subject ID #` -&gt; `Subject ID #...8`
+• `Subject ID #` -&gt; `Subject ID #...9`
+• `StartDate` -&gt; `StartDate...11`
+• `EndDate` -&gt; `EndDate...12`
+• `Progress` -&gt; `Progress...13`
+• `Duration (in seconds)` -&gt; `Duration (in seconds)...17`
+• `Finished` -&gt; `Finished...18`
+• `RecordedDate` -&gt; `RecordedDate...19`
+• `Browser_info_Browser` -&gt; `Browser_info_Browser...20`
+• `Browser_info_Version` -&gt; `Browser_info_Version...21`
+• `Browser_info_Operating System` -&gt; `Browser_info_Operating System...22`
+• `Browser_info_Resolution` -&gt; `Browser_info_Resolution...23`
+• `Misc_0` -&gt; `Misc_0...36`
+• `Misc_1` -&gt; `Misc_1...100`
+• `Misc_2` -&gt; `Misc_2...145`
+• `MW_control_1` -&gt; `MW_control_1...210`
+• `MW_control_2` -&gt; `MW_control_2...211`
+• `MW_control_3` -&gt; `MW_control_3...212`
+• `MW_control_4` -&gt; `MW_control_4...213`
+• `MW_control_5` -&gt; `MW_control_5...214`
+• `` -&gt; `...219`
+• `StartDate` -&gt; `StartDate...221`
+• `EndDate` -&gt; `EndDate...222`
+• `Progress` -&gt; `Progress...223`
+• `Duration (in seconds)` -&gt; `Duration (in seconds)...224`
+• `Finished` -&gt; `Finished...225`
+• `RecordedDate` -&gt; `RecordedDate...226`
+• `Browser_info_Browser` -&gt; `Browser_info_Browser...227`
+• `Browser_info_Version` -&gt; `Browser_info_Version...228`
+• `Browser_info_Operating System` -&gt; `Browser_info_Operating System...229`
+• `Browser_info_Resolution` -&gt; `Browser_info_Resolution...230`
+• `Misc_0` -&gt; `Misc_0...232`
+• `Misc_1` -&gt; `Misc_1...239`
+• `Misc_2` -&gt; `Misc_2...290`
+• `MW_control_1` -&gt; `MW_control_1...295`
+• `MW_control_2` -&gt; `MW_control_2...296`
+• `MW_control_3` -&gt; `MW_control_3...297`
+• `MW_control_4` -&gt; `MW_control_4...298`
+• `MW_control_5` -&gt; `MW_control_5...299`</code></pre>
+</div>
+</div>
+</section>
+<section id="select-variables-of-interest" class="level2">
+<h2 class="anchored" data-anchor-id="select-variables-of-interest">Select variables of interest</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove rows that had no condition assignment or gender</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Condition <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> Condition <span class="sc">==</span> <span class="dv">2</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> df1 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Sex))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select variables</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>tma <span class="ot">&lt;-</span> df1 <span class="sc">%&gt;%</span> <span class="fu">select</span>(TMA_1, TMA_2, TMA_3, TMA_4, TMA_5, TMA_6) <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>mw <span class="ot">&lt;-</span> df1 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"mw_control"</span>)) <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>si <span class="ot">&lt;-</span> df1 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"si_"</span>)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">14</span>) <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># change col names of mw</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>col_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"MW1_control_1"</span>, <span class="st">"MW1_control_2"</span>, <span class="st">"MW1_control_3"</span>, <span class="st">"MW1_control_4"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"MW1_control_5"</span>, <span class="st">"MW1_control_6"</span>,<span class="st">"MW1_control_7"</span>, <span class="st">"MW2_control_1"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>               <span class="st">"MW2_control_2"</span>, <span class="st">"MW2_control_3"</span>, <span class="st">"MW2_control_4"</span>, <span class="st">"MW2_control_5"</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mw) <span class="ot">&lt;-</span> col_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="crombacks-alpha" class="level2">
+<h2 class="anchored" data-anchor-id="crombacks-alpha">Cromback’s Alpha</h2>
+<p>Adequate internal consistency reliability <span class="math inline">\(\geq .70\)</span></p>
+<p>Qualitative Descriptors of Cronbach’s alpha</p>
+<p>0.95 - 1.00 Excellent</p>
+<p>.90 - .94 Great</p>
+<p>.80 - .89 Good</p>
+<p>.70 - .79 Acceptable</p>
+<p>.60 - .69 Questionable</p>
+<p>.00 - .59 Unacceptable</p>
+<section id="tma" class="level3">
+<h3 class="anchored" data-anchor-id="tma">TMA</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 229
+Columns: 6
+$ TMA_1 &lt;dbl&gt; 2, 1, 1, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 2, 2, 1, 1, 1, 1, 1, 5…
+$ TMA_2 &lt;dbl&gt; 1, 2, 1, 2, 1, 3, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2…
+$ TMA_3 &lt;dbl&gt; 3, 3, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 3…
+$ TMA_4 &lt;dbl&gt; 2, 1, 2, 1, 3, 1, 1, 2, 3, 1, 2, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2…
+$ TMA_5 &lt;dbl&gt; 2, 2, 3, 2, 2, 2, 1, 2, 4, 1, 5, 2, 1, 1, 3, 1, 1, 3, 3, 2, 2, 4…
+$ TMA_6 &lt;dbl&gt; 1, 3, 5, 2, 3, 1, 2, 2, 4, 3, 3, 2, 1, 1, 3, 1, 1, 2, 1, 2, 1, 5…</code></pre>
+</div>
+</div>
+<p>Total observation of TMA: 229</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(tma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Reliability analysis   
+Call: alpha(x = tma)
+
+  raw_alpha std.alpha G6(smc) average_r S/N  ase mean  sd median_r
+       0.8      0.81    0.79      0.41 4.2 0.02    2 0.8     0.41
+
+    95% confidence boundaries 
+         lower alpha upper
+Feldt     0.76   0.8  0.84
+Duhachek  0.76   0.8  0.84
+
+ Reliability if an item is dropped:
+      raw_alpha std.alpha G6(smc) average_r S/N alpha se  var.r med.r
+TMA_1      0.75      0.75    0.72      0.38 3.0    0.027 0.0064  0.37
+TMA_2      0.77      0.78    0.74      0.41 3.4    0.024 0.0067  0.41
+TMA_3      0.77      0.77    0.74      0.41 3.4    0.024 0.0061  0.41
+TMA_4      0.78      0.79    0.77      0.43 3.8    0.023 0.0093  0.43
+TMA_5      0.77      0.78    0.76      0.42 3.6    0.024 0.0085  0.42
+TMA_6      0.79      0.79    0.77      0.43 3.8    0.022 0.0057  0.42
+
+ Item statistics 
+        n raw.r std.r r.cor r.drop mean   sd
+TMA_1 229  0.79  0.79  0.76   0.68  1.9 0.99
+TMA_2 229  0.71  0.72  0.66   0.58  1.6 0.97
+TMA_3 229  0.72  0.73  0.66   0.57  2.1 1.18
+TMA_4 229  0.66  0.68  0.57   0.51  1.7 1.04
+TMA_5 229  0.71  0.70  0.61   0.55  2.4 1.21
+TMA_6 229  0.69  0.66  0.56   0.50  2.4 1.31
+
+Non missing response frequency for each item
+         1    2    3    4    5 miss
+TMA_1 0.41 0.35 0.15 0.07 0.02    0
+TMA_2 0.63 0.22 0.09 0.03 0.03    0
+TMA_3 0.39 0.31 0.17 0.07 0.07    0
+TMA_4 0.59 0.23 0.12 0.03 0.04    0
+TMA_5 0.26 0.29 0.28 0.08 0.09    0
+TMA_6 0.28 0.31 0.20 0.09 0.12    0</code></pre>
+</div>
+</div>
+</section>
+<section id="mind-wandering" class="level3">
+<h3 class="anchored" data-anchor-id="mind-wandering">Mind wandering</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(mw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 220
+Columns: 12
+$ MW1_control_1 &lt;dbl&gt; 2, 2, 4, 2, 2, 2, 4, 1, 1, 1, 1, 2, 1, 1, 2, 2, 4, 2, 6,…
+$ MW1_control_2 &lt;dbl&gt; 2, 3, 5, 4, 3, 1, 2, 1, 2, 1, 1, 1, 1, 2, 3, 2, 6, 3, 3,…
+$ MW1_control_3 &lt;dbl&gt; 2, 1, 3, 1, 2, 1, 1, 1, 3, 1, 1, 3, 6, 1, 2, 3, 5, 5, 6,…
+$ MW1_control_4 &lt;dbl&gt; 2, 2, 1, 2, 1, 1, 1, 1, 3, 1, 2, 1, 1, 1, 2, 1, 4, 2, 4,…
+$ MW1_control_5 &lt;dbl&gt; 3, 2, 2, 1, 1, 1, 5, 1, 2, 1, 1, 1, 1, 1, 2, 3, 5, 2, 4,…
+$ MW1_control_6 &lt;dbl&gt; 5, 5, 4, 6, 6, 6, 6, 6, 6, 6, 6, 3, 6, 6, 5, 3, 5, 4, 4,…
+$ MW1_control_7 &lt;dbl&gt; 5, 5, 5, 6, 6, 6, 6, 6, 6, 2, 6, 4, 6, 6, 5, 3, 4, 5, 4,…
+$ MW2_control_1 &lt;dbl&gt; 1, 1, 2, 2, 2, 2, 2, 1, 3, 1, 1, 1, 1, 1, 3, 2, 3, 3, 4,…
+$ MW2_control_2 &lt;dbl&gt; 2, 2, 2, 3, 1, 1, 1, 1, 4, 2, 1, 1, 1, 1, 2, 3, 2, 4, 1,…
+$ MW2_control_3 &lt;dbl&gt; 1, 1, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 2, 1, 3, 6, 2,…
+$ MW2_control_4 &lt;dbl&gt; 2, 2, 1, 2, 1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 4, 1, 2, 1, 2,…
+$ MW2_control_5 &lt;dbl&gt; 2, 3, 1, 2, 1, 1, 3, 2, 3, 1, 1, 1, 1, 6, 2, 3, 3, 1, 3,…</code></pre>
+</div>
+</div>
+<p>Total number of observations: 220</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(mw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in alpha(mw): Some items were negatively correlated with the total scale and probably 
+should be reversed.  
+To do this, run the function again with the 'check.keys=TRUE' option</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Some items ( MW1_control_6 MW1_control_7 ) were negatively correlated with the total scale and 
+probably should be reversed.  
+To do this, run the function again with the 'check.keys=TRUE' option</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Reliability analysis   
+Call: alpha(x = mw)
+
+  raw_alpha std.alpha G6(smc) average_r S/N   ase mean   sd median_r
+      0.77      0.79    0.87      0.24 3.8 0.023  2.4 0.69     0.38
+
+    95% confidence boundaries 
+         lower alpha upper
+Feldt     0.72  0.77  0.81
+Duhachek  0.72  0.77  0.81
+
+ Reliability if an item is dropped:
+              raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
+MW1_control_1      0.74      0.77    0.86      0.23 3.3    0.026 0.114  0.38
+MW1_control_2      0.73      0.76    0.86      0.22 3.2    0.027 0.110  0.35
+MW1_control_3      0.75      0.78    0.87      0.24 3.5    0.025 0.112  0.38
+MW1_control_4      0.73      0.76    0.86      0.23 3.2    0.027 0.108  0.35
+MW1_control_5      0.73      0.76    0.85      0.22 3.2    0.027 0.108  0.37
+MW1_control_6      0.82      0.83    0.87      0.32 5.1    0.017 0.074  0.41
+MW1_control_7      0.82      0.83    0.87      0.31 5.0    0.017 0.075  0.41
+MW2_control_1      0.74      0.77    0.86      0.23 3.3    0.026 0.114  0.38
+MW2_control_2      0.73      0.76    0.85      0.22 3.2    0.027 0.109  0.37
+MW2_control_3      0.74      0.76    0.86      0.23 3.2    0.026 0.107  0.37
+MW2_control_4      0.74      0.76    0.85      0.23 3.2    0.026 0.104  0.37
+MW2_control_5      0.73      0.76    0.85      0.22 3.1    0.027 0.106  0.37
+
+ Item statistics 
+                n    raw.r  std.r r.cor r.drop mean  sd
+MW1_control_1 220  0.63311  0.631  0.58   0.52  2.4 1.4
+MW1_control_2 220  0.68809  0.691  0.65   0.59  2.4 1.3
+MW1_control_3 220  0.56167  0.574  0.52   0.45  2.0 1.2
+MW1_control_4 220  0.67666  0.687  0.66   0.58  1.9 1.3
+MW1_control_5 220  0.69253  0.700  0.68   0.60  2.2 1.3
+MW1_control_6 220 -0.00057 -0.057 -0.11  -0.18  4.5 1.5
+MW1_control_7 220  0.00711 -0.050 -0.10  -0.17  4.6 1.5
+MW2_control_1 220  0.63677  0.647  0.61   0.54  1.9 1.2
+MW2_control_2 220  0.69343  0.709  0.68   0.60  1.8 1.2
+MW2_control_3 220  0.65692  0.680  0.65   0.56  1.7 1.2
+MW2_control_4 220  0.66147  0.689  0.68   0.57  1.8 1.1
+MW2_control_5 220  0.70475  0.723  0.71   0.61  1.9 1.3
+
+Non missing response frequency for each item
+                 1    2    3    4    5    6 miss
+MW1_control_1 0.27 0.37 0.19 0.07 0.04 0.05    0
+MW1_control_2 0.30 0.28 0.25 0.08 0.06 0.03    0
+MW1_control_3 0.42 0.33 0.15 0.05 0.03 0.03    0
+MW1_control_4 0.51 0.25 0.12 0.06 0.02 0.04    0
+MW1_control_5 0.34 0.38 0.15 0.07 0.05 0.03    0
+MW1_control_6 0.06 0.06 0.08 0.22 0.24 0.34    0
+MW1_control_7 0.05 0.07 0.09 0.17 0.23 0.39    0
+MW2_control_1 0.45 0.35 0.09 0.05 0.03 0.03    0
+MW2_control_2 0.53 0.27 0.11 0.03 0.02 0.03    0
+MW2_control_3 0.59 0.28 0.05 0.02 0.03 0.03    0
+MW2_control_4 0.53 0.27 0.12 0.04 0.02 0.02    0
+MW2_control_5 0.47 0.33 0.09 0.05 0.02 0.04    0</code></pre>
+</div>
+</div>
+</section>
+<section id="situational-interests" class="level3">
+<h3 class="anchored" data-anchor-id="situational-interests">Situational Interests</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(si)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 227
+Columns: 14
+$ SI_1  &lt;dbl&gt; 4, 3, 2, 4, 5, 5, 5, 4, 3, 5, 5, 5, 5, 5, 4, 4, 5, 4, 5, 5, 4, 3…
+$ SI_2  &lt;dbl&gt; 4, 2, 4, 5, 5, 5, 4, 3, 3, 4, 5, 4, 4, 5, 5, 4, 4, 5, 5, 5, 3, 3…
+$ SI_3  &lt;dbl&gt; 5, 2, 3, 4, 4, 5, 5, 4, 2, 4, 5, 4, 4, 5, 4, 3, 5, 4, 5, 4, 3, 1…
+$ SI_4  &lt;dbl&gt; 4, 1, 3, 4, 5, 5, 4, 4, 4, 4, 5, 4, 4, 5, 4, 3, 4, 5, 5, 4, 4, 1…
+$ SI_5  &lt;dbl&gt; 5, 4, 4, 5, 4, 5, 5, 3, 3, 4, 5, 4, 5, 5, 4, 4, 4, 4, 5, 5, 4, 2…
+$ SI_6  &lt;dbl&gt; 5, 2, 2, 4, 5, 5, 5, 4, 4, 5, 5, 4, 5, 5, 4, 4, 5, 4, 5, 4, 4, 3…
+$ SI_7  &lt;dbl&gt; 5, 3, 2, 5, 5, 5, 4, 4, 3, 5, 4, 4, 5, 5, 4, 4, 5, 4, 5, 4, 4, 2…
+$ SI_8  &lt;dbl&gt; 4, 3, 3, 4, 5, 4, 5, 4, 4, 4, 5, 4, 5, 5, 4, 4, 5, 5, 5, 4, 5, 2…
+$ SI_9  &lt;dbl&gt; 5, 4, 4, 5, 5, 4, 5, 2, 3, 4, 4, 5, 4, 5, 5, 4, 5, 5, 5, 4, 4, 3…
+$ SI_10 &lt;dbl&gt; 4, 4, 4, 5, 5, 4, 4, 4, 3, 4, 5, 5, 4, 5, 5, 4, 5, 4, 5, 5, 5, 3…
+$ SI_11 &lt;dbl&gt; 5, 5, 4, 5, 5, 4, 5, 4, 3, 4, 5, 4, 3, 5, 4, 4, 4, 4, 5, 5, 5, 3…
+$ SI_12 &lt;dbl&gt; 4, 3, 4, 4, 4, 4, 4, 4, 3, 4, 5, 4, 4, 5, 5, 3, 4, 4, 5, 5, 5, 3…
+$ SI_13 &lt;dbl&gt; 5, 4, 2, 4, 5, 4, 4, 4, 2, 4, 5, 5, 4, 5, 4, 4, 4, 5, 5, 5, 3, 3…
+$ SI_14 &lt;dbl&gt; 4, 1, 3, 3, 5, 4, 4, 3, 3, 4, 5, 3, 2, 5, 5, 4, 4, 5, 5, 3, 4, 2…</code></pre>
+</div>
+</div>
+<p>Total number of observations: 227</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(si)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Reliability analysis   
+Call: alpha(x = si)
+
+  raw_alpha std.alpha G6(smc) average_r S/N    ase mean   sd median_r
+      0.94      0.94    0.95      0.55  17 0.0054  3.5 0.88     0.63
+
+    95% confidence boundaries 
+         lower alpha upper
+Feldt     0.93  0.94  0.95
+Duhachek  0.93  0.94  0.95
+
+ Reliability if an item is dropped:
+      raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
+SI_1       0.94      0.94    0.95      0.55  16   0.0058 0.039  0.64
+SI_2       0.94      0.94    0.95      0.54  15   0.0060 0.038  0.61
+SI_3       0.94      0.94    0.95      0.54  15   0.0060 0.037  0.61
+SI_4       0.94      0.94    0.95      0.55  16   0.0058 0.038  0.63
+SI_5       0.94      0.94    0.95      0.54  15   0.0060 0.036  0.61
+SI_6       0.94      0.94    0.95      0.54  15   0.0061 0.035  0.61
+SI_7       0.94      0.94    0.94      0.54  15   0.0061 0.034  0.60
+SI_8       0.94      0.94    0.95      0.54  15   0.0060 0.036  0.61
+SI_9       0.94      0.94    0.95      0.55  16   0.0057 0.038  0.64
+SI_10      0.94      0.94    0.95      0.54  15   0.0060 0.038  0.61
+SI_11      0.94      0.95    0.95      0.58  18   0.0054 0.035  0.64
+SI_12      0.94      0.94    0.95      0.55  16   0.0058 0.039  0.64
+SI_13      0.94      0.94    0.95      0.54  15   0.0060 0.038  0.62
+SI_14      0.95      0.95    0.96      0.61  21   0.0043 0.011  0.64
+
+ Item statistics 
+        n raw.r std.r r.cor r.drop mean   sd
+SI_1  227  0.76  0.76  0.74   0.72  3.6 1.07
+SI_2  227  0.84  0.84  0.83   0.81  3.3 1.16
+SI_3  227  0.84  0.83  0.83   0.80  3.2 1.24
+SI_4  227  0.78  0.78  0.76   0.74  3.1 1.20
+SI_5  227  0.84  0.84  0.83   0.81  3.4 1.21
+SI_6  227  0.86  0.86  0.86   0.83  3.5 1.23
+SI_7  227  0.86  0.86  0.87   0.84  3.5 1.18
+SI_8  227  0.85  0.84  0.84   0.82  3.5 1.16
+SI_9  227  0.75  0.75  0.73   0.70  3.7 1.13
+SI_10 227  0.82  0.83  0.81   0.79  3.6 1.15
+SI_11 227  0.56  0.58  0.53   0.50  4.0 0.98
+SI_12 227  0.79  0.79  0.78   0.75  3.7 1.05
+SI_13 227  0.83  0.83  0.81   0.79  3.3 1.18
+SI_14 227  0.30  0.29  0.21   0.20  3.0 1.34
+
+Non missing response frequency for each item
+         1    2    3    4    5 miss
+SI_1  0.05 0.07 0.30 0.34 0.23    0
+SI_2  0.10 0.12 0.30 0.33 0.15    0
+SI_3  0.15 0.08 0.33 0.29 0.15    0
+SI_4  0.14 0.15 0.33 0.26 0.12    0
+SI_5  0.11 0.11 0.27 0.33 0.18    0
+SI_6  0.10 0.10 0.26 0.31 0.22    0
+SI_7  0.09 0.08 0.26 0.35 0.22    0
+SI_8  0.08 0.10 0.25 0.37 0.21    0
+SI_9  0.07 0.04 0.23 0.39 0.26    0
+SI_10 0.07 0.10 0.28 0.31 0.25    0
+SI_11 0.02 0.03 0.25 0.32 0.38    0
+SI_12 0.04 0.10 0.22 0.41 0.23    0
+SI_13 0.11 0.09 0.33 0.31 0.16    0
+SI_14 0.20 0.17 0.25 0.24 0.15    0</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>All Cromback’s alpha scores for TMA, MW, and SI measures were good. They all had good internal consistency reliability overall.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

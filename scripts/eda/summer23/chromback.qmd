@@ -1,0 +1,107 @@
+---
+title: "Chromback's Alpha"
+format: html
+editor: visual
+---
+
+# Internal Consistency Reliability of Data
+
+We are interested in looking at internal consistency reliability using Chromback's alpha for following variables:
+
+*   Math anxiety scores (`TMA_1`, `TMA_2`, `TMA_3`, `TMA_4`, `TMA_5`, `TMA_6`)
+*   Mind wandering scores (Day 1: `MW1_control_1`, `MW1_control_2`, `MW1_control_3`, `MW1_control_4`, `MW1_control_5`, `MW1_control_6`, `MW1_control_7`, Day 2: `MW2_control_1`, `MW2_control_2`, `MW2_control_3`, `MW2_control_4`, `MW2_control_5` )
+*   Situational interest scores
+
+## Load libraries
+
+```{r}
+library(tidyverse)
+library(psych)
+```
+
+## Load data
+
+```{r}
+df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx') 
+```
+
+## Select variables of interest
+
+```{r}
+# Remove rows that had no condition assignment or gender
+df1 <- df %>% filter(Condition == 1 | Condition == 2)
+df1 <- df1 %>% filter(!is.na(Sex))
+```
+
+```{r}
+# Select variables
+tma <- df1 %>% select(TMA_1, TMA_2, TMA_3, TMA_4, TMA_5, TMA_6) %>% drop_na()
+mw <- df1 %>% select(contains("mw_control")) %>% drop_na()
+si <- df1 %>% select(contains("si_")) %>% select(1:14) %>% drop_na()
+```
+```{r}
+# change col names of mw
+col_names <- c("MW1_control_1", "MW1_control_2", "MW1_control_3", "MW1_control_4",
+               "MW1_control_5", "MW1_control_6","MW1_control_7", "MW2_control_1",
+               "MW2_control_2", "MW2_control_3", "MW2_control_4", "MW2_control_5")
+colnames(mw) <- col_names
+```
+
+## Cromback's Alpha
+
+Adequate internal consistency reliability $\geq .70$
+
+Qualitative Descriptors of Cronbach's alpha
+
+0.95 - 1.00 Excellent
+
+.90 - .94 Great
+
+.80 - .89 Good
+
+.70 - .79 Acceptable
+
+.60 - .69 Questionable
+
+.00 - .59 Unacceptable
+
+### TMA
+
+```{r}
+glimpse(tma)
+```
+
+Total observation of TMA: 229
+
+```{r}
+alpha(tma)
+```
+
+### Mind wandering
+
+```{r}
+glimpse(mw)
+```
+
+Total number of observations: 220
+
+```{r}
+alpha(mw)
+```
+
+### Situational Interests
+
+```{r}
+glimpse(si)
+```
+
+Total number of observations: 227
+
+```{r}
+alpha(si)
+```
+
+## Conclusion
+
+All Cromback's alpha scores for TMA, MW, and SI measures were good. They all had good internal consistency reliability overall.
+

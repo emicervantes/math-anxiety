@@ -2,38 +2,49 @@
 title: "Sampling"
 format: html
 editor: visual
+author: Emi Cervantes
+date: Sys. date() 
 ---
 
-## Load Libraries
+## Research Goal
+
+The goal of this study is to find the effectiveness of worked examples on math anxiety. Particularly, I'm interested in finding if there's a gender difference in the effects of worked examples.
+
+## Research Questions & Variablees
+
+*Research Question:* How does the impact of worked examples on mathematical anxiety differ by gender?
+
+-   *DV:* Learning achievements (understanding and accuracy)
+  `Understand_avg`, `Del_OverallAcc`
+-   *IV:* Condition, Sex, School, race, pretest, TMA (1-5), MW, SI
+  `Condition`, `Sex`, `chicago`, `race_rv`, `pretest`, `TMA_1`, `TMA_2`, `TMA_3`,`TMA_4`, `TMA_5`, `TMA_6`, `TMA_avg`, `MW_day1_avg`, `MW_day2_avg`, `SI_avg`
+
+## Understanding Final Sample
+
+### Load Libraries
 
 ```{r}
 library(tidyverse)
 library(janitor)
 library(gridExtra)
 library(ggpubr)
+library(skimr)
 ```
 
-## Import Dataset
+### Load Data
 
 ```{r}
 df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx')
 ```
 
-## Select Variables of Interest
+### Data Selection
 
-*Research Question:* How does the impact of worked examples on mathematical anxiety differ by gender?
-
--   *DV:* Learning achievements (understanding and accuracy)
--   *IV:* TMA (1-5), MW, SI, Condition, Sex, School
-
-## Understanding Final Sample
-
-Select variables:
+Obtaining variables of interest for the study:
 
 ```{r}
 tma_lst <- c("TMA_1", "TMA_2", "TMA_3","TMA_4", "TMA_5", "TMA_6",
              "TMA_avg")
-df1 <- df %>% select(Condition, Sex, chicago, pretest,
+df1 <- df %>% select(Condition, Sex, chicago, race_rv, pretest,
               MW_day1_avg, MW_day2_avg, SI_avg, tma_lst,
               Understand_avg, Del_OverallAcc)
 # Get rid of row that has NA values in Condition and/or Sex
@@ -41,6 +52,7 @@ df1 <- df1 %>% filter(Condition == 1 | Condition == 2)
 df1 <- df1 %>% filter(!is.na(Sex))
 head(df1)
 ```
+### Data Inspection & Cleaning
 
 Change values and type of some variables:
 
@@ -50,11 +62,29 @@ df1$Condition[df1$Condition == 2] <- 0
 # Assign 0 for "boy" and 1 for "girl"
 df1$Sex[df1$Sex == 1] <- 0
 df1$Sex[df1$Sex == 2] <- 1
-# Make sure `chicago` variable is categorical
+# Make sure variable is categorical
 df1$chicago <- as.factor(df1$chicago)
+df1$Sex <- as.factor(df1$Sex)
+df1$race_rv <- as.factor(df1$race_rv)
 ```
 
-Looking at the number of participants in each group / city:
+#### Ethnicity Descriptives
+
+```{r}
+df1 %>% group_by(race_rv) %>% count() %>% 
+  mutate(p = n / nrow(df1))
+```
+
+Summary:
+
+*   18% white (42)
+*   3% black (7)
+*   15% Asian/Pacific Islander (35)
+*   17% Hispanic/Latinx (39)
+*   32% Mixed race/other (73)
+*   14% Misisng (33)
+
+#### Condition and Pretest Descriptives
 
 ```{r}
 control_n <- df1 %>% 
@@ -78,8 +108,15 @@ Total number of samples in data: $n = 229$
 -   Number of samples in No Worked EX group: $n_{ex} = 118$
 
 ```{r}
+skim(df1)
+```
+
+
+```{r}
 cond <- c("No Worked EX", "Worked EX")
 names(cond) <- c(0, 1)
+location <- c("Irvine", "Chicago")
+names(location) <- c(0, 1)
 
 df1 %>% group_by(Sex, Condition, chicago) %>% 
   count() %>% 
@@ -95,7 +132,7 @@ df1 %>% group_by(Sex, Condition, chicago) %>%
   scale_x_discrete(labels=c("Irvine", "Chicago"))
 ```
 
-Looking at Students' Pretest Scores:
+#### Students' Pretest Scores
 
 ```{r}
 df1 %>% group_by(chicago, Sex) %>% 
@@ -112,8 +149,7 @@ df1 %>% group_by(chicago, Sex) %>%
   theme_minimal() + ylim(0,1) + scale_x_discrete(labels=c("Boy", "Girl"))
 ```
 
-
-Looking at TMA score distributions:
+#### TMA Scores
 
 ```{r}
 df1 %>% ggplot(aes(x = as.factor(chicago), y = TMA_avg, fill = as.factor(Sex))) + 
@@ -124,7 +160,7 @@ df1 %>% ggplot(aes(x = as.factor(chicago), y = TMA_avg, fill = as.factor(Sex))) 
   scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl"))+
   scale_x_discrete(labels=c("Irvine", "Chicago")) +
   labs(title = "Average TMA Distribution", fill = "Gender", 
-       x = "School Location", y = "Count")
+       x = "School Location", y = "TMA")
   
   
 ```
@@ -210,7 +246,6 @@ df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_avg, fill = as.factor(Sex))) +
   labs(title = "Average TMA Distribution", fill = "Gender", 
        x = "Gender", y = "Count")
 ```
-  
 
 ```{r}
 # TMA 1
@@ -222,7 +257,7 @@ tma_plt1 <- df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_1, fill = as.factor(S
   scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl"))+
   scale_x_discrete(labels=c("Boy", "Girl")) +
   labs(title = "TMA 1", fill = "Gender", 
-       x = "School Location", y = "Count")
+       x = "Gender", y = "Count")
 # TMA 2
 tma_plt2 <- df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_2, fill = as.factor(Sex))) + 
   geom_boxplot() +
@@ -232,7 +267,7 @@ tma_plt2 <- df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_2, fill = as.factor(S
   scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl"))+
   scale_x_discrete(labels=c("Boy", "Girl")) +
   labs(title = "TMA 2", fill = "Gender", 
-       x = "School Location", y = "Count")
+       x = "Gender", y = "Count")
 # TMA 3
 tma_plt3 <- df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_3, fill = as.factor(Sex))) + 
   geom_boxplot() +
@@ -242,17 +277,17 @@ tma_plt3 <- df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_3, fill = as.factor(S
   scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl"))+
   scale_x_discrete(labels=c("Boy", "Girl")) +
   labs(title = "TMA 3", fill = "Gender", 
-       x = "School Location", y = "Count")
+       x = "Gender", y = "Count")
 # TMA 4
 tma_plt4 <- df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_4, fill = as.factor(Sex))) + 
   geom_boxplot() +
   facet_grid(.~ Condition, 
              labeller = labeller(Condition = cond)) +
   theme_light() +
-  scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl"))+
-  scale_x_discrete(scale_x_discrete(labels=c("Boy", "Girl")) +
+  scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl")) +
+  scale_x_discrete(labels=c("Boy", "Girl")) +
   labs(title = "TMA 4", fill = "Gender", 
-       x = "School Location", y = "Count")
+       x = "Gender", y = "Count")
 # TMA 5
 tma_plt5 <- df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_5, fill = as.factor(Sex))) + 
   geom_boxplot() +
@@ -260,9 +295,9 @@ tma_plt5 <- df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_5, fill = as.factor(S
              labeller = labeller(Condition = cond)) +
   theme_light() +
   scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl"))+
-  scale_x_discrete(labels=c("Boy", "Girl")) +
+  scale_x_discrete(labels=c("Boy", "Girl")) + 
   labs(title = "TMA 5", fill = "Gender", 
-       x = "School Location", y = "Count")
+       x = "Gender", y = "Count")
 # TMA 6
 tma_plt6 <-  df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_6, fill = as.factor(Sex))) + 
   geom_boxplot() +
@@ -272,7 +307,7 @@ tma_plt6 <-  df1 %>% ggplot(aes(x = as.factor(Sex), y = TMA_6, fill = as.factor(
   scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl"))+
   scale_x_discrete(labels=c("Boy", "Girl")) +
   labs(title = "TMA 6", fill = "Gender", 
-       x = "School Location", y = "Count")
+       x = "Gender", y = "Count")
 ```
 
 ```{r}
@@ -282,7 +317,80 @@ tma_dist2 <- ggarrange(tma_plt1, tma_plt2, tma_plt3, tma_plt4, tma_plt5, tma_plt
 tma_dist2
 ```
 
-Looking at the relationship between TMA and Learning Achievements:
+#### Mind Wandering and Situational Interest
+
+##### Situational Interest
+
+```{r}
+df1 %>% ggplot(aes(x = SI_avg, fill = Condition)) +
+  geom_histogram(bins = 10, color = "black") +
+  facet_grid(.~ Condition, 
+             labeller = labeller(Condition = cond)) + theme_light()
+```
+
+```{r}
+df1 %>% ggplot(aes(x = as.factor(Sex), 
+                   y = SI_avg,
+                   fill = as.factor(Sex))) +
+  geom_boxplot() +
+  facet_grid(.~ Condition, 
+             labeller = labeller(Condition = cond)) + 
+  scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl"))+
+  scale_x_discrete(labels=c("Boy", "Girl")) + theme_light() +
+  labs("Siutational Interest Distribution",
+       fill = "Gender", x= "Gender",
+       y = "Avg Situational Interest")
+```
+##### Mind Wandering
+
+Mind wandering scores were measured two times during the study: Day 1 and Day 2 (3 days after Day 1).
+
+```{r}
+# Day 1 distribution
+df1 %>% ggplot(aes(x = MW_day1_avg, fill = Condition)) +
+  geom_histogram(color = "black", bins = 10) +
+  facet_grid(. ~ Condition,
+             labeller = labeller(Condition = cond)) +
+  theme_light() +
+  labs(title = "Day 1 Mind Wandering Distribution",
+       x = "Mind Wandering", y = "Count", fill = "Condition")
+# Day 2 distribution
+df1 %>% ggplot(aes(x = MW_day2_avg, fill = Condition)) +
+  geom_histogram(color = "black", bins = 10) +
+  facet_grid(. ~ Condition,
+             labeller = labeller(Condition = cond)) +
+  theme_light() +
+  labs(title = "Day 2 Mind Wandering Distribution",
+       x = "Mind Wandering", y = "Count", fill = "Condition")
+```
+
+```{r}
+mw_box1 <- df1 %>% ggplot(aes(x = Sex, y = MW_day1_avg, fill = Sex)) +
+  geom_boxplot( ) + 
+  facet_grid(.~ Condition, 
+             labeller = labeller(Condition = cond)) + 
+  scale_fill_manual(values = c("#F0E442", "#56B4E9"), 
+                    labels = c("Boy", "Girl"))+
+  scale_x_discrete(labels=c("Boy", "Girl")) + theme_light() +
+  labs(title = "Day 1 Mind Wandering Differences by Condition and Gender",
+       x = "Gender", y = "Mind Wandering", fill = "Gender")
+mw_box2 <- df1 %>% ggplot(aes(x = Sex, y = MW_day2_avg, fill = Sex)) +
+  geom_boxplot( ) + 
+  facet_grid(.~ Condition, 
+             labeller = labeller(Condition = cond)) + 
+  scale_fill_manual(values = c("#F0E442", "#56B4E9"), 
+                    labels = c("Boy", "Girl"))+
+  scale_x_discrete(labels=c("Boy", "Girl")) + theme_light() +
+  labs(title = "Day 2 Mind Wandering Differences by Condition and Gender",
+       x = "Gender", y = "Mind Wandering", fill = "Gender")
+```
+```{r}
+mw_dist <- ggarrange(mw_box1, mw_box2, 
+          common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
+mw_dist
+```
+
+#### Relationship between TMA and Learning Achievements
 
 Learning Achievement measures: `Understand_avg`, `Del_OverallAcc`
 
@@ -344,4 +452,49 @@ df2 %>% ggplot(aes(x = tma_score, y = acc, color = as.factor(gender))) +
   labs(title = "TMA Avg vs Perceived Understanding",
        x = "TMA Avg", y = "Perceived Understanding", color = "Gender")
 ```
+#### Relationship between Math Anxiety and MW, SI
+
+MW and TMA:
+
+```{r}
+# Day 1 Mind wandering
+mw1_tma <- df1 %>% 
+  ggplot(aes(x = MW_day1_avg, y = TMA_avg, color = Sex)) +
+  geom_point() +geom_smooth(method = "lm", se = FALSE) +
+  facet_grid(. ~ Condition, labeller = labeller(Condition = cond)) +
+  theme_light() +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(title = "Day 1 Mind Wandering vs TMA Avg",
+       x = "Mind Wandering", y = "TMA Avg", color = "Gender")
+# Day 2 Mind wandering
+mw2_tma <- df1 %>% 
+  ggplot(aes(x = MW_day2_avg, y = TMA_avg, color = Sex)) +
+  geom_point() +geom_smooth(method = "lm", se = FALSE) +
+  facet_grid(. ~ Condition, labeller = labeller(Condition = cond)) +
+  theme_light() +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(title = "Day 2 Mind Wandering vs TMA Avg",
+       x = "Mind Wandering", y = "TMA Avg", color = "Gender")
+```
+
+```{r}
+mw_tma <- ggarrange(mw1_tma, mw2_tma, 
+          common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
+mw_tma
+```
+SI and TMA:
+
+```{r}
+# Day 1 Mind wandering
+df1 %>% 
+  ggplot(aes(x = SI_avg, y = TMA_avg, color = Sex)) +
+  geom_point() +geom_smooth(method = "lm", se = FALSE) +
+  facet_grid(. ~ Condition, labeller = labeller(Condition = cond)) +
+  theme_light() +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(title = "Situational Interest vs TMA Avg",
+       x = "Situational Interest", y = "TMA Avg", color = "Gender")
+```
+
+
 
