@@ -14,10 +14,8 @@ The goal of this study is to find the effectiveness of worked examples on math a
 
 *Research Question:* How does the impact of worked examples on mathematical anxiety differ by gender?
 
--   *DV:* Learning achievements (understanding and accuracy)
-  `Understand_avg`, `Del_OverallAcc`
--   *IV:* Condition, Sex, School, race, pretest, TMA (1-5), MW, SI
-  `Condition`, `Sex`, `chicago`, `race_rv`, `pretest`, `TMA_1`, `TMA_2`, `TMA_3`,`TMA_4`, `TMA_5`, `TMA_6`, `TMA_avg`, `MW_day1_avg`, `MW_day2_avg`, `SI_avg`
+-   *DV:* Learning achievements (understanding and accuracy) `Understand_avg`, `Del_OverallAcc`
+-   *IV:* Condition, Sex, School, race, pretest, TMA (1-5), MW, SI `Condition`, `Sex`, `chicago`, `race_rv`, `pretest`, `TMA_1`, `TMA_2`, `TMA_3`,`TMA_4`, `TMA_5`, `TMA_6`, `TMA_avg`, `MW_day1_avg`, `MW_day2_avg`, `SI_avg`
 
 ## Understanding Final Sample
 
@@ -52,6 +50,7 @@ df1 <- df1 %>% filter(Condition == 1 | Condition == 2)
 df1 <- df1 %>% filter(!is.na(Sex))
 head(df1)
 ```
+
 ### Data Inspection & Cleaning
 
 Change values and type of some variables:
@@ -77,12 +76,12 @@ df1 %>% group_by(race_rv) %>% count() %>%
 
 Summary:
 
-*   18% white (42)
-*   3% black (7)
-*   15% Asian/Pacific Islander (35)
-*   17% Hispanic/Latinx (39)
-*   32% Mixed race/other (73)
-*   14% Misisng (33)
+-   18% white (42)
+-   3% black (7)
+-   15% Asian/Pacific Islander (35)
+-   17% Hispanic/Latinx (39)
+-   32% Mixed race/other (73)
+-   14% Misisng (33)
 
 #### Condition and Pretest Descriptives
 
@@ -110,7 +109,6 @@ Total number of samples in data: $n = 229$
 ```{r}
 skim(df1)
 ```
-
 
 ```{r}
 cond <- c("No Worked EX", "Worked EX")
@@ -341,6 +339,7 @@ df1 %>% ggplot(aes(x = as.factor(Sex),
        fill = "Gender", x= "Gender",
        y = "Avg Situational Interest")
 ```
+
 ##### Mind Wandering
 
 Mind wandering scores were measured two times during the study: Day 1 and Day 2 (3 days after Day 1).
@@ -384,6 +383,7 @@ mw_box2 <- df1 %>% ggplot(aes(x = Sex, y = MW_day2_avg, fill = Sex)) +
   labs(title = "Day 2 Mind Wandering Differences by Condition and Gender",
        x = "Gender", y = "Mind Wandering", fill = "Gender")
 ```
+
 ```{r}
 mw_dist <- ggarrange(mw_box1, mw_box2, 
           common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
@@ -452,6 +452,7 @@ df2 %>% ggplot(aes(x = tma_score, y = acc, color = as.factor(gender))) +
   labs(title = "TMA Avg vs Perceived Understanding",
        x = "TMA Avg", y = "Perceived Understanding", color = "Gender")
 ```
+
 #### Relationship between Math Anxiety and MW, SI
 
 MW and TMA:
@@ -482,6 +483,7 @@ mw_tma <- ggarrange(mw1_tma, mw2_tma,
           common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
 mw_tma
 ```
+
 SI and TMA:
 
 ```{r}
@@ -495,6 +497,3 @@ df1 %>%
   labs(title = "Situational Interest vs TMA Avg",
        x = "Situational Interest", y = "TMA Avg", color = "Gender")
 ```
-
-
-

@@ -8,9 +8,9 @@ editor: visual
 
 We are interested in looking at internal consistency reliability using Chromback's alpha for following variables:
 
-*   Math anxiety scores (`TMA_1`, `TMA_2`, `TMA_3`, `TMA_4`, `TMA_5`, `TMA_6`)
-*   Mind wandering scores (Day 1: `MW1_control_1`, `MW1_control_2`, `MW1_control_3`, `MW1_control_4`, `MW1_control_5`, `MW1_control_6`, `MW1_control_7`, Day 2: `MW2_control_1`, `MW2_control_2`, `MW2_control_3`, `MW2_control_4`, `MW2_control_5` )
-*   Situational interest scores
+-   Math anxiety scores (`TMA_1`, `TMA_2`, `TMA_3`, `TMA_4`, `TMA_5`, `TMA_6`)
+-   Mind wandering scores (Day 1: `MW1_control_1`, `MW1_control_2`, `MW1_control_3`, `MW1_control_4`, `MW1_control_5`, `MW1_control_6`, `MW1_control_7`, Day 2: `MW2_control_1`, `MW2_control_2`, `MW2_control_3`, `MW2_control_4`, `MW2_control_5` )
+-   Situational interest scores
 
 ## Load libraries
 
@@ -39,6 +39,7 @@ tma <- df1 %>% select(TMA_1, TMA_2, TMA_3, TMA_4, TMA_5, TMA_6) %>% drop_na()
 mw <- df1 %>% select(contains("mw_control")) %>% drop_na()
 si <- df1 %>% select(contains("si_")) %>% select(1:14) %>% drop_na()
 ```
+
 ```{r}
 # change col names of mw
 col_names <- c("MW1_control_1", "MW1_control_2", "MW1_control_3", "MW1_control_4",
@@ -104,4 +105,3 @@ alpha(si)
 ## Conclusion
 
 All Cromback's alpha scores for TMA, MW, and SI measures were good. They all had good internal consistency reliability overall.
-

@@ -1,0 +1,213 @@
+---
+title: "Modeling 1"
+format: html
+editor: visual
+---
+
+# Modeling Part 1
+
+We will be fitting different statistical models and running statistical tests to examine the effectiveness of worked examples on mathematical anxiety and learning achievements. Particularly, we are interested in looking at the gender differences in the effects of worked example.
+
+We will be using following statistical methods:
+
+*   Risk ratio
+*   Multiple ANOVA test
+*   Linear model and linear mixed-effect model
+
+## Load Libraries
+
+```{r}
+library(tidyverse)
+library(epitools)
+library(lme4)
+```
+
+## Load Dataset
+
+```{r}
+df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx')
+```
+
+## Clean Data
+
+```{r}
+tma_lst <- c("TMA_1", "TMA_2", "TMA_3","TMA_4", "TMA_5", "TMA_6",
+             "TMA_avg")
+df1 <- df %>% select(Condition, Sex, chicago, race_rv, pretest,
+              MW_day1_avg, MW_day2_avg, SI_avg, tma_lst,
+              Understand_avg, Del_OverallAcc)
+# Get rid of row that has NA values in Condition and/or Sex
+df1 <- df1 %>% filter(Condition == 1 | Condition == 2)
+df1 <- df1 %>% filter(!is.na(Sex))
+df1$Condition[df1$Condition == 2] <- 0
+# Assign 0 for "boy" and 1 for "girl"
+df1$Sex[df1$Sex == 1] <- 0
+df1$Sex[df1$Sex == 2] <- 1
+# Make sure variable is categorical
+df1$chicago <- as.factor(df1$chicago)
+df1$Sex <- as.factor(df1$Sex)
+df1$race_rv <- as.factor(df1$race_rv)
+```
+
+## Risk Ratio Test
+
+We define gender to be a potential **effect modifier**. Effect modifier is a variable that modifies the observed effect (math anxiety and learning achievements) differently. Evidence of effect modification is present when the crude estimate of the association (ex: odds ratio, rate ratio, risk ratio) is very close to a weighted average of group-specific estimates of the association.
+
+### TMA
+
+```{r}
+# Create a contingency table for TMA
+df2 <- df1 %>% mutate(high_tma = case_when(
+  TMA_avg < 3 ~ 0,
+  TMA_avg >= 3 ~ 1
+)) 
+df2b <- df2 %>% filter(Sex == 0)
+df2g <- df2 %>% filter(Sex == 1)
+contingency_tma_boy <- table(df2b$Condition, df2b$high_tma)
+contingency_tma_girl <- table(df2g$Condition, 
+                              df2g$high_tma)
+```
+
+```{r}
+# TMA risk ratio for boys
+riskratio(contingency_tma_boy)
+```
+
+```{r}
+# TMA risk ratio for girls
+riskratio(contingency_tma_girl)
+```
+
+$$RR_{boy} = 0.75$$
+$$RR_{girl} = 0.61$$
+
+Among boys, those who received worked examples during the lessons had 0.75 times the risk of low math anxiety ($TMA < 3$), compared to those who reported high math anxiety ($TMA \geq 3$).
+
+Among girls, those who received worked examples during the lessons had 0.61 times the risk of low math anxiety ($TMA < 3$), compared to those who reported high math anxiety ($TMA \geq 3$).
+
+### Accuracy
+
+```{r}
+df2 <- df1 %>% mutate(high_acc = case_when(
+  Del_OverallAcc < 0.7 ~ 0,
+  Del_OverallAcc >= 0.7 ~ 1
+)) 
+df2b <- df2 %>% filter(Sex == 0)
+df2g <- df2 %>% filter(Sex == 1)
+contingency_acc_boy <- table(df2b$Condition, df2b$high_acc)
+contingency_acc_girl <- table(df2g$Condition, 
+                              df2g$high_acc)
+```
+
+```{r}
+# Accuracy risk ratio for boys
+riskratio(contingency_acc_boy)
+```
+
+```{r}
+# Accuracy risk ratio for girls
+riskratio(contingency_acc_girl)
+```
+
+$$RR_{boy} =  0.89$$
+$$RR_{girl} = 0.90$$
+
+Among boys, those who received worked examples during the lessons had 0.89 times the risk of low accuracy scores (`DelOverall_Acc`$< 3$), compared to those who reported high accuracy score (`DelOverall_Acc`$\geq 3$).
+
+Among girls, those who received worked examples during the lessons had 0.90 times the risk of low accuracy scores (`DelOverall_Acc`$< 3$), compared to those who reported high accuracy score (`DelOverall_Acc`$\geq 3$).
+
+## ANOVA Test
+
+We are interested in seeing the effect of the interaction term between `Condition` and `Sex` on `TMA_avg` and `DelOverall_Acc`. We will use two-way ANOVA test.
+
+### TMA
+
+Proposed Anova Model: $Y_{i,j,k} = \mu + \alpha_i, \beta_j+ \zeta_{i,j} + \epsilon_{i,j,k}$
+
+*   $Y_{i,j,k}$: k-th observation of `TMA_avg` in the i-th level of `Condition` and j-th level of `Sex`.
+*   $\mu$: Grand mean
+*   $\alpha_i$: Main effect of i-th level of `Condition`
+*   $\beta_j$: Main effect of j-th level of `Sex`
+*   $\zeta_{i,j}$: Interaction effect between i-th level of `Condition` and j-th level of `Sex`
+
+Proposed Hypotheses:
+
+$H_0$: $\zeta_{i,j}$ for all i and j. Effect of interaction term is significant.
+
+$H_1$: Null is not true.
+
+```{r}
+tma_anova <- aov(TMA_avg ~ Condition + Sex + Condition * Sex, data = df1)
+summary(tma_anova)
+```
+
+Result: There is not enough evidence that interaction term between `Condition` and `Sex` has an effect on `TMA_avg` (p = 901). Thus we fail to reject the null.  
+
+### Accuracy
+
+Proposed Anova Model: $Y_{i,j,k} = \mu + \alpha_i, \beta_j+ \zeta_{i,j} + \epsilon_{i,j,k}$
+
+*   $Y_{i,j,k}$: k-th observation of `DelOverall_Acc` in the i-th level of `Condition` and j-th level of `Sex`.
+*   $\mu$: Grand mean
+*   $\alpha_i$: Main effect of i-th level of `Condition`
+*   $\beta_j$: Main effect of j-th level of `Sex`
+*   $\zeta_{i,j}$: Interaction effect between i-th level of `Condition` and j-th level of `Sex`
+
+Proposed Hypotheses:
+
+$H_0$: $\zeta_{i,j}$ for all i and j. Effect of interaction term is significant.
+
+$H_1$: Null is not true.
+
+```{r}
+acc_anova <- aov(Del_OverallAcc ~ Condition + Sex+ Condition * Sex, data = df1)
+summary(acc_anova)
+```
+
+Result: There is not enough evidence that interaction term between `Condition` and `Sex` has an effect on `Del_OverallAcc` (p = 901). Thus we fail to reject the null.  
+
+## Linear Regression Model
+
+In this section, we will fit linear regression model to our data to predict `Del_OverallAcc` using following covariates:
+
+*   `Condition`
+*   `Sex`
+*   `TMA_avg`
+*   Interaction term between `Condition` and `TMA_avg`
+
+```{r}
+model1 <- Del_OverallAcc ~ Condition + Sex + TMA_avg + Condition*Sex
+fit1 <- lm(model1, data = df1)
+summary(fit1)
+```
+
+```{r}
+model2 <- Del_OverallAcc ~ Condition + Sex + TMA_avg + pretest*Condition +
+  race_rv + pretest + chicago + 
+  Condition*TMA_avg + Condition*TMA_avg*Sex
+fit2 <- lm(model2, data = df1)
+summary(fit2)
+```
+`pretest` and `chicago` had high p-values (< 0.05). Specifically, for `pretest`, if students already knew how to do the ratio problem before the study, the accuracy was increased by 0.20. Furthermore, for `chicago`, if the students were from Chicago, then the accuracy was decreased by -0.20.
+
+`race_rv2` (black) also had a high, significant p-value (p < 0.05). If the students identified themselves as African Americans, their accuracy scores dropped by 0.24.
+
+There was not enough evidence to show that interaction term between `Condition` and `Sex` was significant. Thus we fail to reject the null. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
