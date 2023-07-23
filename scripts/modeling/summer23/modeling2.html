@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emi Cervantes">
+
+<title>Modeling 2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="modeling2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="modeling2_files/libs/quarto-html/quarto.js"></script>
+<script src="modeling2_files/libs/quarto-html/popper.min.js"></script>
+<script src="modeling2_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="modeling2_files/libs/quarto-html/anchor.min.js"></script>
+<link href="modeling2_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="modeling2_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="modeling2_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="modeling2_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="modeling2_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Modeling 2</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Emi Cervantes </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="modeling-part-2-structural-equation-modeling" class="level1">
+<h1>Modeling Part 2: Structural Equation Modeling</h1>
+<p><em>Structural Equation Modeling</em> is a linear model framework that models both simultaneous regression equations with latent variables.</p>
+</section>
+<section id="load-libraries" class="level1">
+<h1>Load Libraries</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.2     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>This is lavaan 0.6-15
+lavaan is FREE software! Please report any bugs.</code></pre>
+</div>
+</div>
+</section>
+<section id="load-dataset" class="level1">
+<h1>Load Dataset</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_xlsx</span>(<span class="st">'../../../data/math-anxiety-raw-data.xlsx'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+• `Subject ID #` -&gt; `Subject ID #...8`
+• `Subject ID #` -&gt; `Subject ID #...9`
+• `StartDate` -&gt; `StartDate...11`
+• `EndDate` -&gt; `EndDate...12`
+• `Progress` -&gt; `Progress...13`
+• `Duration (in seconds)` -&gt; `Duration (in seconds)...17`
+• `Finished` -&gt; `Finished...18`
+• `RecordedDate` -&gt; `RecordedDate...19`
+• `Browser_info_Browser` -&gt; `Browser_info_Browser...20`
+• `Browser_info_Version` -&gt; `Browser_info_Version...21`
+• `Browser_info_Operating System` -&gt; `Browser_info_Operating System...22`
+• `Browser_info_Resolution` -&gt; `Browser_info_Resolution...23`
+• `Misc_0` -&gt; `Misc_0...36`
+• `Misc_1` -&gt; `Misc_1...100`
+• `Misc_2` -&gt; `Misc_2...145`
+• `MW_control_1` -&gt; `MW_control_1...210`
+• `MW_control_2` -&gt; `MW_control_2...211`
+• `MW_control_3` -&gt; `MW_control_3...212`
+• `MW_control_4` -&gt; `MW_control_4...213`
+• `MW_control_5` -&gt; `MW_control_5...214`
+• `` -&gt; `...219`
+• `StartDate` -&gt; `StartDate...221`
+• `EndDate` -&gt; `EndDate...222`
+• `Progress` -&gt; `Progress...223`
+• `Duration (in seconds)` -&gt; `Duration (in seconds)...224`
+• `Finished` -&gt; `Finished...225`
+• `RecordedDate` -&gt; `RecordedDate...226`
+• `Browser_info_Browser` -&gt; `Browser_info_Browser...227`
+• `Browser_info_Version` -&gt; `Browser_info_Version...228`
+• `Browser_info_Operating System` -&gt; `Browser_info_Operating System...229`
+• `Browser_info_Resolution` -&gt; `Browser_info_Resolution...230`
+• `Misc_0` -&gt; `Misc_0...232`
+• `Misc_1` -&gt; `Misc_1...239`
+• `Misc_2` -&gt; `Misc_2...290`
+• `MW_control_1` -&gt; `MW_control_1...295`
+• `MW_control_2` -&gt; `MW_control_2...296`
+• `MW_control_3` -&gt; `MW_control_3...297`
+• `MW_control_4` -&gt; `MW_control_4...298`
+• `MW_control_5` -&gt; `MW_control_5...299`</code></pre>
+</div>
+</div>
+<section id="clean-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="clean-dataset">Clean Dataset</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tma_lst <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"TMA_1"</span>, <span class="st">"TMA_2"</span>, <span class="st">"TMA_3"</span>,<span class="st">"TMA_4"</span>, <span class="st">"TMA_5"</span>, <span class="st">"TMA_6"</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>             <span class="st">"TMA_avg"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">select</span>(Condition, Sex, chicago, nonwhite, pretest,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>              MW_day1_avg, MW_day2_avg, SI_avg, tma_lst,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>              Understand_avg, Del_OverallAcc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using an external vector in selections was deprecated in tidyselect 1.1.0.
+ℹ Please use `all_of()` or `any_of()` instead.
+  # Was:
+  data %&gt;% select(tma_lst)
+
+  # Now:
+  data %&gt;% select(all_of(tma_lst))
+
+See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get rid of row that has NA values in Condition and/or Sex</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> df1 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Condition <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> Condition <span class="sc">==</span> <span class="dv">2</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> df1 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Sex))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>Condition[df1<span class="sc">$</span>Condition <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign 0 for "boy" and 1 for "girl"</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>Sex[df1<span class="sc">$</span>Sex <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>Sex[df1<span class="sc">$</span>Sex <span class="sc">==</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure variable is categorical</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>chicago <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df1<span class="sc">$</span>chicago)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>Sex <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df1<span class="sc">$</span>Sex)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>nonwhite <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df1<span class="sc">$</span>nonwhite)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>df1<span class="sc">$</span>Condition <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df1<span class="sc">$</span>Condition)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standardize the data</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">scale</span>(df1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="structural-equation-model" class="level1">
+<h1>Structural Equation Model</h1>
+<p>We will be observing 6 latent variables:</p>
+<ul>
+<li><em>Academic Preparation</em></li>
+<li><em>Sociocultural status</em></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st"># measurement model</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">prep =~ chicago + pretest</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">socio_status =~ Sex</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">tma =~ TMA_avg</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="st">mw =~ MW_day1_avg + MW_day2_avg</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">si =~ SI_avg</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">achievement =~ Del_OverallAcc + Understand_avg</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st"># regression</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="st">tma ~ mw + si + prep + socio_status</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="st">achievement ~ tma + prep + socio_status</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">sem</span>(m1, <span class="at">data=</span>df2),<span class="at">standardized=</span><span class="cn">TRUE</span>, <span class="at">fit.measures=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in lav_object_post_check(object): lavaan WARNING: some estimated lv
+variances are negative</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6.15 ended normally after 305 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        28
+
+                                                  Used       Total
+  Number of observations                           222         229
+
+Model Test User Model:
+                                                      
+  Test statistic                                53.947
+  Degrees of freedom                                17
+  P-value (Chi-square)                           0.000
+
+Model Test Baseline Model:
+
+  Test statistic                               347.080
+  Degrees of freedom                                36
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.881
+  Tucker-Lewis Index (TLI)                       0.748
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -2662.191
+  Loglikelihood unrestricted model (H1)      -2635.218
+                                                      
+  Akaike (AIC)                                5380.383
+  Bayesian (BIC)                              5475.658
+  Sample-size adjusted Bayesian (SABIC)       5386.923
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.099
+  90 Percent confidence interval - lower         0.070
+  90 Percent confidence interval - upper         0.129
+  P-value H_0: RMSEA &lt;= 0.050                    0.004
+  P-value H_0: RMSEA &gt;= 0.080                    0.866
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.079
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  prep =~                                                               
+    chicago           1.000                               0.148    0.149
+    pretest          -0.927    0.209   -4.438    0.000   -0.137   -0.138
+  socio_status =~                                                       
+    Sex               1.000                               0.998    1.000
+  tma =~                                                                
+    TMA_avg           1.000                               0.968    1.000
+  mw =~                                                                 
+    MW_day1_avg       1.000                               0.819    0.821
+    MW_day2_avg       0.845    0.128    6.604    0.000    0.692    0.721
+  si =~                                                                 
+    SI_avg            1.000                               0.989    1.000
+  achievement =~                                                        
+    Del_OverallAcc    1.000                               0.503    0.507
+    Understand_avg    0.895    0.146    6.147    0.000    0.450    0.456
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  tma ~                                                                 
+    mw                0.465    0.105    4.427    0.000    0.394    0.394
+    si               -0.115    0.070   -1.661    0.097   -0.118   -0.118
+    prep             -0.016    2.565   -0.006    0.995   -0.002   -0.002
+    socio_status      0.062    0.207    0.302    0.763    0.064    0.064
+  achievement ~                                                         
+    tma              -0.049    1.062   -0.047    0.963   -0.095   -0.095
+    prep            -20.314   57.663   -0.352    0.725   -5.970   -5.970
+    socio_status     -1.566    4.548   -0.344    0.731   -3.106   -3.106
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  prep ~~                                                               
+    socio_status     -0.076    0.050   -1.520    0.128   -0.518   -0.518
+    mw                0.014    0.029    0.471    0.637    0.112    0.112
+    si               -0.004    0.034   -0.131    0.896   -0.030   -0.030
+  socio_status ~~                                                       
+    mw               -0.051    0.063   -0.806    0.420   -0.062   -0.062
+    si               -0.098    0.067   -1.465    0.143   -0.099   -0.099
+  mw ~~                                                                 
+    si               -0.234    0.066   -3.571    0.000   -0.289   -0.289
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .chicago           0.967    0.101    9.544    0.000    0.967    0.978
+   .pretest           0.972    0.099    9.793    0.000    0.972    0.981
+   .Sex               0.000                               0.000    0.000
+   .TMA_avg           0.000                               0.000    0.000
+   .MW_day1_avg       0.324    0.097    3.356    0.001    0.324    0.326
+   .MW_day2_avg       0.444    0.078    5.706    0.000    0.444    0.481
+   .SI_avg            0.000                               0.000    0.000
+   .Del_OverallAcc    0.732    0.088    8.309    0.000    0.732    0.743
+   .Understand_avg    0.771    0.085    9.061    0.000    0.771    0.792
+    prep              0.022    0.047    0.463    0.643    1.000    1.000
+    socio_status      0.996    0.095   10.536    0.000    1.000    1.000
+   .tma               0.751    0.076    9.875    0.000    0.802    0.802
+    mw                0.671    0.128    5.248    0.000    1.000    1.000
+    si                0.979    0.093   10.536    0.000    1.000    1.000
+   .achievement      -6.359   18.269   -0.348    0.728  -25.134  -25.134</code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

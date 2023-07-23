@@ -1,0 +1,106 @@
+---
+title: "Modeling 2"
+format: html
+editor: visual
+author: Emi Cervantes
+---
+
+# Modeling Part 2: Structural Equation Modeling
+
+*Structural Equation Modeling* is a linear model framework that models both simultaneous regression equations with latent variables.
+
+# Load Libraries
+
+```{r}
+library(tidyverse)
+library(lavaan)
+library(semPlot)
+```
+
+# Load Dataset
+
+```{r}
+df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx')
+```
+
+## Clean Dataset
+
+```{r}
+tma_lst <- c("TMA_1", "TMA_2", "TMA_3","TMA_4", "TMA_5", "TMA_6",
+             "TMA_sum", "TMA_avg")
+df1 <- df %>% select(Condition, Sex, chicago, nonwhite, pretest,
+              MW_day1_avg, MW_day2_avg, SI_avg, tma_lst,
+              Understand_avg, Del_OverallAcc)
+# Get rid of row that has NA values in Condition and/or Sex
+df1 <- df1 %>% filter(Condition == 1 | Condition == 2)
+df1 <- df1 %>% filter(!is.na(Sex))
+df1$Condition[df1$Condition == 2] <- 0
+# Assign 0 for "boy" and 1 for "girl"
+df1$Sex[df1$Sex == 1] <- 0
+df1$Sex[df1$Sex == 2] <- 1
+# Make sure variable is categorical
+df1$chicago <- as.numeric(df1$chicago)
+df1$Sex <- as.numeric(df1$Sex)
+df1$nonwhite <- as.numeric(df1$nonwhite)
+df1$Condition <- as.numeric(df1$Condition)
+```
+
+```{r}
+# standardize the data
+df2 <- as.data.frame(scale(df1))
+df2
+```
+
+
+# Structural Equation Model
+
+We will be observing 6 latent variables:
+
+*   *Academic Preparation*
+*   *Sociocultural status*
+
+```{r}
+m1 <- '
+# measurement model
+prep =~ chicago + pretest
+socio_status =~ Sex
+tma =~ TMA_avg
+mw =~ MW_day1_avg + MW_day2_avg
+si =~ SI_avg
+achievement =~ Del_OverallAcc + Understand_avg
+# regression
+tma ~ mw + si + prep + socio_status
+achievement ~ tma + prep + socio_status
+'
+fit1 <- sem(m1, data = df1,
+            ordered = c("Condition", "Sex"))
+summary(fit1,standardized=TRUE, fit.measures=TRUE)
+```
+
+```{r}
+parameterEstimates(fit1)
+semPaths(fit1,
+           whatLabels = "est",
+           sizeMan = 10,
+           edge.label.cex = 1.15,
+           style = "ram",
+           nCharNodes = 0, nCharEdges = 0)
+```
+
+```{r}
+# Path analysis
+m2 <- '
+  TMA_avg ~ Condition + chicago + MW_day1_avg + MW_day2_avg + SI_avg + 
+  MW_day2_avg + SI_avg
+  Del_OverallAcc ~ 1 + TMA_avg + chicago + Condition
+'
+fit2 <- sem(m2, data = df1,
+             ordered = c("Condition", "Sex"))
+summary(fit2)
+```
+
+```{r}
+fit <- sem(TMA_avg ~ Condition + chicago + MW_day1_avg + MW_day2_avg + SI_avg, data = df1)
+summary(fit)
+```
+
