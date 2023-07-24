@@ -42,9 +42,14 @@ df1$chicago <- as.factor(df1$chicago)
 df1$Sex <- as.factor(df1$Sex)
 ```
 
-# Math Anxiety by Gender
+# Math Anxiety by Gender and Group
 
 ```{r}
+cond <- c("No Worked EX", "Worked EX")
+names(cond) <- c(0, 1)
+location <- c("Irvine", "Chicago")
+names(location) <- c(0, 1)
+
 df1 %>% ggplot(aes(x = TMA_avg, fill = Sex,
                    color = Sex)) +
   geom_density(alpha = 0.5) +
@@ -57,33 +62,9 @@ df1 %>% ggplot(aes(x = TMA_avg, fill = Sex,
        fill = "Gender", color = "Gender")
 ```
 
-Girls seemed to have a higher math anxiety compared to boys overall. Check if the difference is significant by using ANOVA test.
-
 ```{r}
-m1 <- aov(TMA_avg ~ Condition + chicago + Sex + Condition*Sex, 
-          data = df1)
-summary(m1)
-```
-
-```{r}
-m2 <- aov(Del_OverallAcc ~ TMA_sum + chicago + Sex + Sex*Condition,
-          data = df1, type = "III")
-summary(m2)
-```
-
-No significant difference between gender on learning achievement and math anxiety was found by gender.
-
-# Math Anxiety by Group and Gender
-
-```{r}
-cond <- c("No Worked EX", "Worked EX")
-names(cond) <- c(0, 1)
-location <- c("Irvine", "Chicago")
-names(location) <- c(0, 1)
 mu <- df1 %>% group_by(chicago, Condition, Sex) %>% summarize(mean = mean(TMA_avg))
-```
 
-```{r}
 tma_hist_plt <- df1 %>% ggplot(aes(x = TMA_avg, fill = Sex,
                    color = Sex)) +
   geom_density(alpha = 0.2) +
@@ -100,20 +81,22 @@ tma_hist_plt <- df1 %>% ggplot(aes(x = TMA_avg, fill = Sex,
        fill = "Gender", color = "Gender") +theme(legend.position="bottom")
 ggsave(tma_hist_plt, file =  "../../../outputs/tma_hist_plt.png",
        width = 8, height = 5)
+tma_hist_plt
 ```
 
+We see from the figure that in Irvine schools, girls seemed to have a higher average math anxiety than boys in both condition. However, in Chicago schools, boys seemed to have a higher math anxiety than girls in both condition.
+
+Girls seemed to have a higher math anxiety compared to boys overall. Check if the difference is significant by using ANOVA test:
+
 ```{r}
-m3 <- aov(TMA_avg ~ SI_avg + MW_day2_avg + chicago + Sex*Condition
-          + Sex*Condition*chicago, 
+m1 <- aov(TMA_avg ~ Condition + chicago + Sex + Condition*Sex, 
           data = df1)
-summary(m3)
+summary(m1)
 ```
 
-```{r}
-m4 <- aov(Del_OverallAcc ~ TMA_avg + SI_avg + MW_day2_avg  +
-            chicago + Sex + Sex*Condition + Sex*chicago*Condition, data = df1)
-summary(m4)
-```
+No significant difference between gender on learning achievement and math anxiety was found by gender.
+
+# Relationship between Math Anxiety and Learning Achievements
 
 ## Linear Regression
 
@@ -126,14 +109,22 @@ We will be fitting two different models to our data: one for predicting `Del_Ove
 df1 %>% count(is.na(Del_OverallAcc))
 ```
 
-Every participant has a `Del_OverallAcc` data
+Every participant has a `Del_OverallAcc` data, now we fit the model to our data to predict `Del_OverallAcc`:
 
 ```{r}
 # Fit model
-m6 <- Del_OverallAcc ~ TMA_avg + MW_day2_avg + SI_avg + chicago + Condition + Condition*Sex + Condition*TMA_avg + Condition*TMA_avg*Sex
-fit6 <- lm(m6, data = df1)
-summary(fit6)
+m2 <- Del_OverallAcc ~ TMA_avg + MW_day2_avg + SI_avg + chicago + Condition + Condition*Sex + Condition*TMA_avg + Condition*TMA_avg*Sex
+fit2 <- lm(m2, data = df1)
+summary(fit2)
 ```
+
+**Significant Predictors**
+
+-   `TMA_avg` (p = 0.0372): While controlling for other predictors, every 1 unit of increase in math anxiety decreases accuracy scores by 0.075.
+
+-   `TMA_avg:Condition` (p = 0.0133): Students who received worked examples, while controlling for other predictors, had increase in accuracy by 0.04 for every 1 unit increase in math anxiety.
+
+-   Other significant predictors include: `chicago` (p = 2.72e-12), `Condition` (p = 0.0267)
 
 ### Perceived Understanding
 
@@ -146,7 +137,6 @@ df1 %>% count(is.na(Understand_avg))
 
 ```{r}
 # Fill out missing understanding avg data with the group average
-df1 %>% filter(is.na(Understand_avg))
 understand_avg1 <- df1 %>% filter(Condition == 1 & Sex == 0 & chicago == 0) %>% summarize(mean_understand = mean(Understand_avg, na.rm = TRUE))
 understand_avg2 <- df1 %>% filter(Condition == 0 & Sex == 0 & chicago == 0) %>% summarize(mean_understand = mean(Understand_avg, na.rm = TRUE))
 # assign imputed value
@@ -154,14 +144,24 @@ df1[56, 17] = understand_avg1
 df1[198, 17] = understand_avg1
 ```
 
+Every participant now has a `Understand_avg` data, now we fit the model to our data to predict `Understand_avg`:
 
 ```{r}
-m7 <- Understand_avg ~ TMA_avg + MW_day2_avg + SI_avg + chicago + Condition + Condition*Sex + Condition*TMA_avg + Condition*TMA_avg*Sex
-fit7 <- lm(m7, data = df1)
-summary(fit7)
+m3 <- Understand_avg ~ TMA_avg + MW_day2_avg + SI_avg + chicago + Condition + Condition*Sex + Condition*TMA_avg + Condition*TMA_avg*Sex
+fit3 <- lm(m3, data = df1)
+summary(fit3)
 ```
 
+**Significant Predictors**
+
+-   `MW_day2_avg` (p = 5.49e-05): While controlling for other predictors, every 1 unit of increase in mind wandering decreases perceived understanding by 6.2254.
+
+-   `SI_avg` (p = 1.20e-05): While controlling for other predictors, every 1 unit of increase in situational interest decreases perceived understanding by 7.0573.
+
+-   `chicago` (p = 0.00056)
+
 ```{r}
+# Display result as a table
 tab_model(fit6, fit7,
           pred.labels = c("Intercept", "Math 
                           Anxiety", "Mind 
@@ -171,3 +171,12 @@ tab_model(fit6, fit7,
   dv.labels = c("Posttest Accuracy", "Perceived Understanding"))
 ```
 
+# Results
+
+-   No significant effect was found by gender on either math anxiety or learning achievements
+
+-   However, we saw that worked examples were overall effective in reducing the effect of math anxiety on posttest accuracy scores, regardless of gender and sites
+
+-   No significant effect was found by math anxiety on perceived understanding. Instead, mind wandering and situational interest were two dominant significant predictors.
+
+-   Students in Chicago significantly performed worst in learning achievements

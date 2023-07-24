@@ -5,7 +5,7 @@ editor: visual
 author: Emi Cervantes
 ---
 
-# Modeling Part 2: Structural Equation Modeling
+# Modeling Part 2: Structural Equation Modeling - Path Analysis
 
 *Structural Equation Modeling* is a linear model framework that models both simultaneous regression equations with latent variables.
 
@@ -51,13 +51,12 @@ df2 <- as.data.frame(scale(df1))
 df2
 ```
 
-
 # Structural Equation Model
 
 We will be observing 6 latent variables:
 
-*   *Academic Preparation*
-*   *Sociocultural status*
+-   *Academic Preparation*
+-   *Sociocultural status*
 
 ```{r}
 m1 <- '
@@ -90,12 +89,11 @@ semPaths(fit1,
 ```{r}
 # Path analysis
 m2 <- '
-  TMA_avg ~ Condition + chicago + MW_day1_avg + MW_day2_avg + SI_avg + 
-  MW_day2_avg + SI_avg
-  Del_OverallAcc ~ 1 + TMA_avg + chicago + Condition
+  TMA_avg ~ 1 + Sex + chicago + MW_day2_avg + SI_avg
+  Del_OverallAcc ~ 1 + TMA_avg + chicago + Sex
 '
 fit2 <- sem(m2, data = df1,
-             ordered = c("Condition", "Sex"))
+             ordered = c("Condition", "Sex"), group = "Condition")
 summary(fit2)
 ```
 
@@ -103,4 +101,3 @@ summary(fit2)
 fit <- sem(TMA_avg ~ Condition + chicago + MW_day1_avg + MW_day2_avg + SI_avg, data = df1)
 summary(fit)
 ```
-
