@@ -35,6 +35,11 @@ library(skimr)
 df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx')
 ```
 
+```{r}
+df %>% group_by(chicago) %>% count()
+```
+
+
 ### Data Selection
 
 Obtaining variables of interest for the study:
@@ -83,6 +88,7 @@ Summary:
 -   32% Mixed race/other (73)
 -   14% Misisng (33)
 
+
 #### Condition and Pretest Descriptives
 
 ```{r}
@@ -104,7 +110,7 @@ sample_size
 Total number of samples in data: $n = 229$
 
 -   Number of samples in No Worked EX group: $n_{c} = 111$
--   Number of samples in No Worked EX group: $n_{ex} = 118$
+-   Number of samples in Worked EX group: $n_{ex} = 118$
 
 ```{r}
 skim(df1)
@@ -146,6 +152,13 @@ df1 %>% group_by(chicago, Sex) %>%
   scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl"))+
   theme_minimal() + ylim(0,1) + scale_x_discrete(labels=c("Boy", "Girl"))
 ```
+
+t-test:
+
+```{r}
+t.test(pretest ~ chicago, data = df1)
+```
+
 
 #### TMA Scores
 
@@ -396,28 +409,41 @@ Learning Achievement measures: `Understand_avg`, `Del_OverallAcc`
 
 ```{r}
 # TMA avg vs Overall accuracy scores
-df1 %>% ggplot(aes(x = TMA_avg, y = Del_OverallAcc, 
+tma_acc_plt <- df1 %>% ggplot(aes(x = TMA_avg, y = Del_OverallAcc, 
                    color = as.factor(Sex))) +
-  geom_point() + geom_smooth(method = "lm", se = FALSE) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
   scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
   facet_grid(.~ Condition, 
              labeller = labeller(Condition = cond)) +
   theme_light() +
-  labs(title = "TMA Avg vs Overall Posttest Accuracy",
-       x = "TMA Avg", y = "Overall Accuracy", color = "Gender")
+  labs(x = "Math Anxiety", y = "Overall Accuracy", color = "Gender")
+ggsave(tma_acc_plt, file =  "../../../outputs/tma_acc_plt.png",
+       width = 8, height = 4)
+```
+
+
+```{r}
+# Fill out missing understanding avg data with the group average
+df1 %>% filter(is.na(Understand_avg))
+understand_avg1 <- df1 %>% filter(Condition == 1 & Sex == 0 & chicago == 0) %>% summarize(mean_understand = mean(Understand_avg, na.rm = TRUE))
+understand_avg2 <- df1 %>% filter(Condition == 0 & Sex == 0 & chicago == 0) %>% summarize(mean_understand = mean(Understand_avg, na.rm = TRUE))
+# assign imputed value
+df1[56, 17] = understand_avg1
+df1[198, 17] = understand_avg1
 ```
 
 ```{r}
 # TMA avg vs Perceived understanding
-df1 %>% ggplot(aes(x = TMA_avg, y = Understand_avg, 
+tma_under_plt <- df1 %>% ggplot(aes(x = TMA_avg, y = Understand_avg, 
                    color = as.factor(Sex))) +
-  geom_point() + geom_smooth(method = "lm", se = FALSE) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
   scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
   facet_grid(.~ Condition, 
              labeller = labeller(Condition = cond)) +
   theme_light() +
-  labs(title = "TMA Avg vs Perceived Understanding",
-       x = "TMA Avg", y = "Perceived Understanding", color = "Gender")
+  labs(x = "Math Anxiety", y = "Perceived Understanding", color = "Gender")
+ggsave(tma_under_plt, file =  "../../../outputs/tma_under_plt.png",
+       width = 8, height = 4)
 ```
 
 ```{r}

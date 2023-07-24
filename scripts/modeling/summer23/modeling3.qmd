@@ -11,6 +11,9 @@ author: Emi Cervantes
 
 ```{r}
 library(tidyverse)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
 ```
 
 # Load Dataset
@@ -57,14 +60,14 @@ df1 %>% ggplot(aes(x = TMA_avg, fill = Sex,
 Girls seemed to have a higher math anxiety compared to boys overall. Check if the difference is significant by using ANOVA test.
 
 ```{r}
-m1 <- aov(TMA_avg ~ SI_avg + MW_day2_avg + chicago + Sex*chicago, 
+m1 <- aov(TMA_avg ~ Condition + chicago + Sex + Condition*Sex, 
           data = df1)
 summary(m1)
 ```
 
-
 ```{r}
-m2 <- aov(Del_OverallAcc ~ TMA_sum + chicago + Sex + Sex*Condition, data = df1, type = "III")
+m2 <- aov(Del_OverallAcc ~ TMA_sum + chicago + Sex + Sex*Condition,
+          data = df1, type = "III")
 summary(m2)
 ```
 
@@ -77,22 +80,26 @@ cond <- c("No Worked EX", "Worked EX")
 names(cond) <- c(0, 1)
 location <- c("Irvine", "Chicago")
 names(location) <- c(0, 1)
+mu <- df1 %>% group_by(chicago, Condition, Sex) %>% summarize(mean = mean(TMA_avg))
 ```
 
-
 ```{r}
-df1 %>% ggplot(aes(x = TMA_avg, fill = Sex,
+tma_hist_plt <- df1 %>% ggplot(aes(x = TMA_avg, fill = Sex,
                    color = Sex)) +
-  geom_density(alpha = 0.5) +
+  geom_density(alpha = 0.2) +
   theme_minimal() +
+  geom_vline(data=mu, aes(xintercept=mean, color=Sex),
+           linetype="dashed") +
   facet_grid(rows = vars(Condition),
              cols = vars(chicago),
              labeller = labeller(Condition = cond,
                                  chicago = location)) +
-  scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl")) +
-  scale_color_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl")) +
+  scale_fill_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
   labs(x = "Math Anxiety", y = "Density",
-       fill = "Gender", color = "Gender")
+       fill = "Gender", color = "Gender") +theme(legend.position="bottom")
+ggsave(tma_hist_plt, file =  "../../../outputs/tma_hist_plt.png",
+       width = 8, height = 5)
 ```
 
 ```{r}
@@ -110,23 +117,57 @@ summary(m4)
 
 ## Linear Regression
 
-```{r}
-m5 <- TMA_avg ~ MW_day2_avg + SI_avg + chicago + Condition + chicago*Sex + chicago*Condition + Sex*Condition + chicago*Sex*Condition
-fit5 <- lm(m5, data = df1)
-summary(fit5)
-```
+We will be fitting two different models to our data: one for predicting `Del_OverallAcc` and `Understand_avg`.
+
+### Posttest Accuracy Scores
 
 ```{r}
-m6 <- Del_OverallAcc ~ TMA_avg + MW_day2_avg + SI_avg + chicago + Condition + Condition*Sex + Condition*TMA_avg + 
-            Condition*TMA_avg*chicago + Condition*TMA_avg*chicago*Sex
+# Check if there's any participant missing accuracy score data
+df1 %>% count(is.na(Del_OverallAcc))
+```
+
+Every participant has a `Del_OverallAcc` data
+
+```{r}
+# Fit model
+m6 <- Del_OverallAcc ~ TMA_avg + MW_day2_avg + SI_avg + chicago + Condition + Condition*Sex + Condition*TMA_avg + Condition*TMA_avg*Sex
 fit6 <- lm(m6, data = df1)
 summary(fit6)
 ```
 
+### Perceived Understanding
+
+```{r}
+# Check if there's any participant missing understanding data
+df1 %>% count(is.na(Understand_avg))
+```
+
+2 participants were missing `Understand_avg` data (row #56 and #198)
+
+```{r}
+# Fill out missing understanding avg data with the group average
+df1 %>% filter(is.na(Understand_avg))
+understand_avg1 <- df1 %>% filter(Condition == 1 & Sex == 0 & chicago == 0) %>% summarize(mean_understand = mean(Understand_avg, na.rm = TRUE))
+understand_avg2 <- df1 %>% filter(Condition == 0 & Sex == 0 & chicago == 0) %>% summarize(mean_understand = mean(Understand_avg, na.rm = TRUE))
+# assign imputed value
+df1[56, 17] = understand_avg1
+df1[198, 17] = understand_avg1
+```
 
 
+```{r}
+m7 <- Understand_avg ~ TMA_avg + MW_day2_avg + SI_avg + chicago + Condition + Condition*Sex + Condition*TMA_avg + Condition*TMA_avg*Sex
+fit7 <- lm(m7, data = df1)
+summary(fit7)
+```
 
-
-
-
+```{r}
+tab_model(fit6, fit7,
+          pred.labels = c("Intercept", "Math 
+                          Anxiety", "Mind 
+                          Wandering", 
+                          "Situational 
+                          Interest", "Site (Chicago)", "Condition (Worked EX)", "Gender (boy)", "Condition (Worked EX)*Gender (boy)", "Math Anxiety*Condition (Worked EX)", "Math Anxiety*Gender (boy)", "Math Anxiety*Condition (Worked EX)*Gender (boy)"),
+  dv.labels = c("Posttest Accuracy", "Perceived Understanding"))
+```
 
