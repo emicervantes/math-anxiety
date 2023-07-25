@@ -1,8 +1,28 @@
 ---
 title: "Modeling 3"
-format: html
 editor: visual
 author: Emi Cervantes
+toc: true
+date: "7-17-2023"
+number-sections: true
+highlight-style: pygments
+format: 
+  html: 
+    code-fold: false
+    html-math-method: katex
+    fig-width: 7
+    fig-height: 4
+  pdf:
+    toc: true
+    number-sections: true
+    geometry:
+      - top=30mm
+      - left=20mm
+    fig-width: 7
+    fig-height: 4
+  docx: 
+    fig-width: 10
+    fig-height: 5
 ---
 
 # Modeling (Final PART I)
@@ -162,7 +182,7 @@ summary(fit3)
 
 ```{r}
 # Display result as a table
-tab_model(fit6, fit7,
+tab_model(fit2, fit3,
           pred.labels = c("Intercept", "Math 
                           Anxiety", "Mind 
                           Wandering", 
