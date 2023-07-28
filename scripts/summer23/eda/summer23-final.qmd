@@ -1,0 +1,631 @@
+---
+title: "Gender Differences in the Impact of Worked Examples on Math Anxiety"
+editor: visual
+author: Emi Cervantes
+toc: true
+date: "7-28-2023"
+number-sections: true
+highlight-style: pygments
+format: 
+  html: 
+    code-fold: false
+    html-math-method: katex
+    fig-width: 7
+    fig-height: 4
+  pdf:
+    toc: true
+    number-sections: true
+    geometry:
+      - top=30mm
+      - left=20mm
+    fig-width: 7
+    fig-height: 4
+  docx: 
+    fig-width: 10
+    fig-height: 5
+---
+
+# Research Goal
+
+The goal of this study is to find the effectiveness of worked examples on math anxiety. Particularly, I'm interested in finding if there's a gender difference in the effects of worked examples.
+
+# Research Questions & Variablees
+
+*Research Question:* How does the impact of worked examples on mathematical anxiety differ by gender?
+
+-   *DV:* Learning achievements (understanding and accuracy) `Understand_avg`, `Del_OverallAcc`
+-   *IV:* Condition, Sex, School, race, pretest, TMA (1-5), MW, SI `Condition`, `Sex`, `chicago`, `race_rv`, `pretest`, `TMA_1`, `TMA_2`, `TMA_3`,`TMA_4`, `TMA_5`, `TMA_6`, `TMA_avg`, `MW_day1_avg`, `MW_day2_avg`, `SI_avg`
+
+# Understanding Final Sample
+
+### Load Libraries
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(gridExtra)
+library(ggpubr)
+library(skimr)
+library(lavaan)
+library(semPlot)
+library(semptools)
+```
+
+### Load Data
+
+```{r}
+df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx')
+```
+
+```{r}
+df %>% group_by(chicago) %>% count()
+```
+
+### Data Selection
+
+Obtaining variables of interest for the study:
+
+```{r}
+tma_lst <- c("TMA_1", "TMA_2", "TMA_3","TMA_4", "TMA_5", "TMA_6",
+             "TMA_avg")
+df1 <- df %>% select(Condition, Sex, chicago, race_rv, pretest,
+              MW_day1_avg, MW_day2_avg, SI_avg, tma_lst,
+              Understand_avg, Del_OverallAcc)
+# Get rid of row that has NA values in Condition and/or Sex
+df1 <- df1 %>% filter(Condition == 1 | Condition == 2)
+df1 <- df1 %>% filter(!is.na(Sex))
+head(df1)
+```
+
+### Data Inspection & Cleaning
+
+Change values and type of some variables:
+
+```{r}
+# Assign "no worked ex" group 0
+df1$Condition[df1$Condition == 2] <- 0
+# Assign 0 for "boy" and 1 for "girl"
+df1$Sex[df1$Sex == 1] <- 0
+df1$Sex[df1$Sex == 2] <- 1
+# Make sure variable is categorical
+df1$chicago <- as.factor(df1$chicago)
+df1$Sex <- as.factor(df1$Sex)
+df1$race_rv <- as.factor(df1$race_rv)
+```
+
+### Overall Data Descriptivies
+
+```{r}
+skim(df1)
+```
+
+
+#### Ethnicity Descriptives
+
+```{r}
+df1 %>% group_by(race_rv) %>% count() %>% 
+  mutate(p = n / nrow(df1))
+```
+
+Summary:
+
+-   18% white (42)
+-   3% black (7)
+-   15% Asian/Pacific Islander (35)
+-   17% Hispanic/Latinx (39)
+-   32% Mixed race/other (73)
+-   14% Misisng (33)
+
+#### Condition and Pretest Descriptives
+
+```{r}
+control_n <- df1 %>% 
+  filter(Condition == 0) %>% group_by(chicago, Sex) %>% count()
+exp_n <- df1 %>% 
+  filter(Condition == 1) %>% group_by(chicago, Sex) %>% count()
+```
+
+```{r}
+sample_size <- data.frame(rbind(t(control_n[3]),t(exp_n[3]))) %>% remove_rownames 
+sample_size <- cbind(c("No Worked EX", "Worked EX"), sample_size)
+sample_size <- sample_size %>% mutate(Total =  rowSums(sample_size[2:5])) %>% 
+  adorn_totals("row") %>% data.frame()
+colnames(sample_size) <- c("Condition", "Boy-I", "Girl-I", "Boy-C", "Girl-C", "Total")
+sample_size
+```
+
+Total number of samples in data: $n = 229$
+
+-   Number of samples in No Worked EX group: $n_{c} = 111$
+-   Number of samples in Worked EX group: $n_{ex} = 118$
+
+```{r}
+cond <- c("No Worked EX", "Worked EX")
+names(cond) <- c(0, 1)
+location <- c("Irvine", "Chicago")
+names(location) <- c(0, 1)
+
+df1 %>% group_by(Sex, Condition, chicago) %>% 
+  count() %>% 
+  ggplot(aes(x = chicago, y = n, fill = as.factor(Sex))) + 
+  facet_grid(.~ Condition, 
+             labeller = labeller(Condition = cond)) +
+  geom_bar(position = "dodge", stat = "identity", color = "black")+
+  geom_text(aes(label=n),  position=position_dodge(width=0.9), 
+            vjust=-0.25) +
+  labs(title = "Sample Size", fill = "Gender", x = "School Location", y = "Count") +
+  theme_minimal() +
+  scale_fill_manual(values = c("#F0E442", "#56B4E9"), labels = c("Boy", "Girl"))+
+  scale_x_discrete(labels=c("Irvine", "Chicago"))
+```
+
+#### Students' Pretest Scores
+
+```{r}
+pretest_plt <- df1 %>% group_by(chicago) %>% summarize(pre_avg = mean(pretest, na.rm = TRUE)) %>% ggplot(aes(x = chicago, y = pre_avg))+ 
+  geom_bar(position = "dodge", stat = "identity", color = "black",
+           fill = "#ef476f", alpha = 0.5) + 
+  geom_text(aes(label=round(pre_avg,2)),  position=position_dodge(width=0.9), 
+            vjust=-0.25) +
+  ylim(0,1) +
+  labs(title = "Average Pretest Score by Sites",
+    x = "Location", y = "Pretest Score") + 
+  scale_x_discrete(labels=c("Irvine", "Chicago")) +
+  theme_light()
+ggsave(pretest_plt, 
+       file= "../../../outputs/pretest_plt.png", 
+       width = 8, height = 4)
+pretest_plt
+```
+
+##### t-test
+
+The students from Irvine had higher average pretest score than students from Chicago. This indicates that most students from Irvine already knew about ratio strategies before the study. To find the significant difference by sites, we performed a t-test by sites:
+
+```{r}
+t.test(pretest ~ chicago, data = df1)
+```
+
+The result shows that the difference is significant (p-value = 0.03). Since both sites are significantly different, we will treat each site as separate data. 
+
+#### TMA Scores (ANOVA Test)
+
+Math anxiety score was measured using six survey questions where students filled out their answer on a discrete scale range from 1 (low anxious) to 5 (high anxious).
+
+```{r}
+# TMA mean by site, condition, and gender
+mu <- df1 %>% group_by(chicago, Condition, Sex) %>% summarize(mean = mean(TMA_avg))
+# math anxiety density plot
+df1 %>% ggplot(aes(x = TMA_avg, fill = Sex,
+                   color = Sex)) +
+  geom_density(alpha = 0.2) +
+  theme_light() +
+  geom_vline(data=mu, aes(xintercept=mean, color=Sex),
+           linetype="dashed") +
+  facet_grid(rows = vars(Condition),
+             cols = vars(chicago),
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  scale_fill_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(x = "Math Anxiety", y = "Density",
+       fill = "Gender", color = "Gender") +theme(legend.position="bottom")
+```
+
+Overall, all students seemed to have a low average math anxiety (1 ~ 2). In Irvine, girls seemed to have higher math average than boys in both condition. However, in Chicago, boys seemed to have higher average than girls. 
+
+Girls seemed to have a higher math anxiety compared to boys overall. Check if the difference is significant in each site by using ANOVA test:
+
+```{r}
+m1 <-  aov(TMA_avg ~ Condition + Sex + chicago + 
+             Condition*Sex + Condition*Sex*chicago,
+           data = df1)
+summary(m1)
+```
+
+No significant difference between gender on math anxiety was found by gender.
+
+#### Mind Wandering and Situational Interest
+
+Mind wandering was measured during both Day 1 and Day 2 of the study. 
+
+Situational interest was only measured during Day 1. 
+
+##### Situational Interest
+
+```{r}
+# TMA mean by site, condition, and gender
+mu <- df1 %>% group_by(chicago, Condition, Sex) %>% summarize(mean = mean(SI_avg))
+# math anxiety density plot
+df1 %>% ggplot(aes(x = SI_avg, fill = Sex,
+                   color = Sex)) +
+  geom_density(alpha = 0.2) +
+  theme_light() +
+  geom_vline(data=mu, aes(xintercept=mean, color=Sex),
+           linetype="dashed") +
+  facet_grid(rows = vars(Condition),
+             cols = vars(chicago),
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  scale_fill_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(title = "Average Situational Interest Density Plot",
+    x = "Situational Interest", y = "Density",
+       fill = "Gender", color = "Gender") +theme(legend.position="bottom")
+```
+
+In Irvine data, there was not much of a difference in situational interest by condition. In worked example group, gender difference was bigger than the no worked example. Boys tended to have more situational interest score than girls on average.
+
+In Chicago data, the situational interests were different between the condition groups. Situational interests seemed to be much larger for worked example group, but with no gender difference.
+
+##### Mind Wandering
+
+Mind wandering scores were measured two times during the study: Day 1 and Day 2 (3 days after Day 1).
+
+```{r}
+# TMA mean by site, condition, and gender
+mu1 <- df1 %>% group_by(chicago, Condition, Sex) %>% summarize(mean = mean(MW_day1_avg, na.rm = TRUE))
+mu2 <- df1 %>% group_by(chicago, Condition, Sex) %>% summarize(mean = mean(MW_day2_avg, na.rm = TRUE))
+# mind wandering density plot (day 1)
+mw_plt1 <- df1 %>% ggplot(aes(x = MW_day1_avg, fill = Sex,
+                   color = Sex)) +
+  geom_density(alpha = 0.2) +
+  theme_light() +
+  geom_vline(data=mu1, aes(xintercept=mean, color=Sex),
+           linetype="dashed") +
+  facet_grid(rows = vars(Condition),
+             cols = vars(chicago),
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  scale_fill_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(title = "Day 1",
+    x = "Mind Wandering", y = "Density",
+       fill = "Gender", color = "Gender") +theme(legend.position="bottom")
+# mind wandering density plot (day 2)
+mw_plt2 <- df1 %>% ggplot(aes(x = MW_day2_avg, fill = Sex,
+                   color = Sex)) +
+  geom_density(alpha = 0.2) +
+  theme_light() +
+  geom_vline(data=mu2, aes(xintercept=mean, color=Sex),
+           linetype="dashed") +
+  facet_grid(rows = vars(Condition),
+             cols = vars(chicago),
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  scale_fill_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(title = "Day 2",
+    x = "Mind Wandering", y = "Density",
+       fill = "Gender", color = "Gender") +theme(legend.position="bottom")
+```
+
+
+```{r}
+mw_dist <- ggarrange(mw_plt1, mw_plt2, 
+          common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
+mw_dist
+```
+
+Not much of a difference in the average of mind wandering scores by sites, condition, and genders.Overall, the average was roughly pretty low (1 ~ 2).
+
+#### Relationship between TMA and Learning Achievements
+
+Learning Achievement measures: `Understand_avg`, `Del_OverallAcc`
+
+##### Posttest Acucracy Scores
+
+```{r}
+# TMA avg vs Overall accuracy scores
+tma_acc_plt <- df1 %>% ggplot(aes(x = TMA_avg, 
+                                  y = Del_OverallAcc, 
+                   color = as.factor(Sex))) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  facet_grid(Condition ~ chicago, 
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  theme_light() +
+  labs(title = "Posttest Accuracy Score", 
+       x = "Math Anxiety", y = "Overall Accuracy", color = "Gender") 
+ggsave(tma_acc_plt, file =  "../../../outputs/tma_acc_plt.png",
+       width = 8, height = 4)
+tma_acc_plt
+```
+
+##### Perceived Understanding
+
+```{r}
+# Fill out missing understanding avg data with the group average
+df1 %>% filter(is.na(Understand_avg))
+understand_avg1 <- df1 %>% filter(Condition == 1 & Sex == 0 & chicago == 0) %>% summarize(mean_understand = mean(Understand_avg, na.rm = TRUE))
+understand_avg2 <- df1 %>% filter(Condition == 0 & Sex == 0 & chicago == 0) %>% summarize(mean_understand = mean(Understand_avg, na.rm = TRUE))
+# assign imputed value
+df1[56, 16] = understand_avg1
+df1[198, 16] = understand_avg1
+```
+
+```{r}
+# TMA avg vs Perceived understanding
+tma_under_plt <- df1 %>% ggplot(aes(x = TMA_avg, y = Understand_avg, 
+                   color = as.factor(Sex))) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  facet_grid(Condition ~ chicago, 
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  theme_light() +
+  labs(title = "Perceived Understanding", 
+       x = "Math Anxiety", y = "Perceived Understanding", color = "Gender") +  theme(legend.position = "none")
+ggsave(tma_under_plt, file =  "../../../outputs/tma_under_plt.png",
+       width = 8, height = 4)
+tma_under_plt
+```
+
+For both perceived understanding and posttest accuracy scores, there is not enough data from Chicago schools to conlcude relationship with math anxiety. However, in Irvine, we were able to observe potentila relationships. 
+
+Mind wandering seemed to have a positive relationship with math anxiety, that is higher mind wandeirng, more anxious students felt. Not much of a significant difference by gender and condition were observed. 
+
+Situational interest and math anxiety seemed to have a negative relationship, that is higher situational interest, less anxious students felt. Furthermore, there seemed to be a stronger relationship in no worked example compared to the worked example group.
+
+#### Relationship between Math Anxiety and MW, SI
+
+#### MW and TMA
+
+```{r}
+# Day 1 Mind wandering
+mw1_tma <- df1 %>% 
+  ggplot(aes(x = MW_day1_avg, y = TMA_avg, color = Sex)) +
+  geom_point() +geom_smooth(method = "lm", alpha = 0.2) +
+  facet_grid(Condition ~ chicago, 
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  theme_light() +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(title = "Day 1",
+       x = "Mind Wandering", y = "Math Anxiety", color = "Gender")
+# Day 2 Mind wandering
+mw2_tma <- df1 %>% 
+  ggplot(aes(x = MW_day2_avg, y = TMA_avg, color = Sex)) +
+  geom_point() +geom_smooth(method = "lm", alpha = 0.2) +
+  facet_grid(Condition ~ chicago, 
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  theme_light() +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(title = "Day 2",
+       x = "Mind Wandering", y = "Math Anxiety", color = "Gender")
+```
+
+```{r}
+mw_tma <- ggarrange(mw1_tma, mw2_tma, 
+          common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
+
+mw_tma
+```
+
+
+Overall in each group and site, mind wandering and math anxiety had a positive relationship. That is, more anxious student felt, their mind wandering score increased. This result was the same for majority, except for worked example group in Chicago from both day 1 and day 2, since some of the gender group has a slight negative relationship. This result may be due to a small sample size in the Chicago data.
+
+#### SI and TMA
+
+```{r}
+# Day 1 Mind wandering
+df1 %>% 
+  ggplot(aes(x = SI_avg, y = TMA_avg, color = Sex)) +
+  geom_point() +geom_smooth(method = "lm", alpha = 0.2) +
+  facet_grid(Condition ~ chicago, 
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  theme_light() +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(title = "Situational Interest vs Math Anxiety",
+       x = "Situational Interest", y = "Math Anxiety", color = "Gender")
+```
+
+In each condition, gender, and sites, there was a negative relationship between situational interest and math anxiety. That is, the situational interest scores decreased as they felt more anxious.Similar to the mind wandring situation, chicago data was too small to conclude results from linear regression.
+
+# Multigtoup Analysis with Path Analysis
+
+We constructed structural equation models to model learning achievements: `Del_OverallAcc` and `Understand_avg`. We fit the model for each site data (`df_c` and `df_i`), and chi-square test was used to determine if the free model was significantly different from the constrined model.
+
+## Split Dataset
+
+```{r}
+# chicago data
+df_i <- df1 %>% filter(chicago == 1)
+# irvine data
+df_c <- df1 %>% filter(chicago == 0)
+```
+
+
+## Posttest Acucracy Scores
+
+```{r}
+# model definition
+m_acc <- '
+  TMA_avg ~ 1 + MW_day1_avg + MW_day2_avg + SI_avg + Condition
+  Del_OverallAcc ~ 1 + TMA_avg + Condition
+'
+```
+
+### Chicago Data
+
+```{r}
+# free model
+fit_ca <- sem(m_acc, data = df_c, group = "Sex")
+summary(fit_ca)
+# constrained model
+fit_ca_c <- sem(m_acc, data = df_c, group = "Sex",
+                group.equal = c("intercepts", "regressions"))
+```
+
+```{r}
+# check if the constrained and free models are significantly diff
+anova(fit_ca, fit_ca_c)
+```
+
+No significant difference between the free and constrained models for Chicago in modeling `Del_OverallAcc`.
+
+### Irvine Data
+
+```{r}
+# free model
+fit_ia <- sem(m_acc, data = df_i, group = "Sex")
+summary(fit_ia)
+# constrained model
+fit_ia_c <- sem(m_acc, data = df_i, group = "Sex",
+                group.equal = c("intercepts", "regressions"))
+```
+
+```{r}
+summary(fit_ia)
+```
+
+```{r}
+# check if the constrained and free models are significantly diff
+anova(fit_ia, fit_ia_c)
+```
+
+Chi-squared difference test showed a significant result (p = 0.004444), which indicated that free model and constrained models are significantly different. Now, we need to see which predictors are different.
+
+```{r}
+m_a2 <- '
+  TMA_avg ~ 1 + MW_day1_avg + MW_day2_avg + SI_avg + Condition
+  Del_OverallAcc ~ 1 + c("b1", "b1") * TMA_avg + Condition
+'
+```
+
+```{r}
+fit_ia2 <- sem(m_a2, df_i, group = "Sex")
+anova(fit_ia2, fit_ia)
+```
+
+We find that the models are still significantly different, implying that the path between `TMA_avg` -> `Del_OverallAcc` should not be constrained and instead that it should be left to vary among gender.
+
+### Visualize Results
+
+```{r}
+# Chicago
+semPaths(fit_ca,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("Math\nAnxiety", "Accuracy",
+                        "MW 1","MW 2", "SI", "Condition"),
+         intercepts = FALSE)
+
+# Irvine
+semPaths(fit_ia,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("Math\nAnxiety", "Accuracy",
+                        "MW 1","MW 2", "SI", "Condition"),
+         intercepts = FALSE)
+```
+
+## Perceived Understanding
+
+```{r}
+# model definition
+m_und <- '
+  TMA_avg ~ 1 + MW_day1_avg + MW_day2_avg + SI_avg + Condition
+  Understand_avg ~ 1 + TMA_avg + Condition
+'
+```
+
+### Chicago Data
+
+```{r}
+# free model
+fit_cu <- sem(m_und, data = df_c, group = "Sex")
+summary(fit_cu)
+# constrained model
+fit_cu_c <- sem(m_und, data = df_c, group = "Sex",
+                group.equal = c("intercepts", "regressions"))
+```
+
+```{r}
+# check if the constrained and free models are significantly diff
+anova(fit_cu, fit_cu_c)
+```
+
+No significant difference between the free and constrained models for Chicago in modeling `Understand_avg`.
+
+### Irvine Data
+
+```{r}
+# free model
+fit_iu <- sem(m_und, data = df_i, group = "Sex")
+summary(fit_iu)
+# constrained model
+fit_iu_c <- sem(m_und, data = df_i, group = "Sex",
+                group.equal = c("intercepts", "regressions"))
+```
+
+```{r}
+# check if the constrained and free models are significantly diff
+anova(fit_iu, fit_iu_c)
+```
+
+Chi-squared difference test showed a significant result (p = 0.004444), which indicated that free model and constrained models are significantly different. Now, we need to see which predictors are different.
+
+```{r}
+m_u2 <- '
+  TMA_avg ~ 1 + MW_day1_avg + MW_day2_avg + SI_avg + Condition
+  Understand_avg ~ 1 + c("b1", "b1") * TMA_avg + Condition
+'
+```
+
+```{r}
+fit_iu2 <- sem(m_u2, df_i, group = "Sex")
+anova(fit_iu2, fit_iu)
+```
+
+In this case, there is not a significant difference between the two models (P = 0.659), implying that there is no difference in the fit of the constrained model and the unconstrained model and that this constraint is valid.
+
+### Visualize Results
+
+```{r}
+# Chicago
+semPaths(fit_cu,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("Math\nAnxiety", "Accuracy",
+                        "MW 1","MW 2", "SI", "Condition"),
+         intercepts = FALSE)
+
+# Irvine
+semPaths(fit_iu,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("Math\nAnxiety", "Accuracy",
+                        "MW 1","MW 2", "SI", "Condition"),
+         intercepts = FALSE)
+```
+
+# Result
+
+There was no significant difference by gender in the effect of worked examples on math anxiety and learning achievements. From our previous results, we conclude that worked examples are effective instructional tools in mitigating the effect of math anxiety, regardless of gender differences. Additionally, worked examples were most effective in reducing the effect of math anxiety on posttest accuracy scores instead of perceived understanding, which may suggest that worked examples are most effective in improving students' problem solving skills.
+
+Moreover, our results from path analysis showed that girls and boys had significant difference in the effect of math anxiety on posttest accuracy scores, without accounting for the difference in condition. This result indicated that girls' problem solving skills are negatively effected by math anxiety than boys, which may also support previous studies that found gender gaps in test anxiety.
+
+
+
+
+
+
+
