@@ -49,6 +49,7 @@ library(skimr)
 library(lavaan)
 library(semPlot)
 library(semptools)
+library(stargazer)
 ```
 
 ### Load Data
@@ -98,7 +99,6 @@ df1$race_rv <- as.factor(df1$race_rv)
 ```{r}
 skim(df1)
 ```
-
 
 #### Ethnicity Descriptives
 
@@ -186,7 +186,7 @@ The students from Irvine had higher average pretest score than students from Chi
 t.test(pretest ~ chicago, data = df1)
 ```
 
-The result shows that the difference is significant (p-value = 0.03). Since both sites are significantly different, we will treat each site as separate data. 
+The result shows that the difference is significant (p-value = 0.03). Since both sites are significantly different, we will treat each site as separate data.
 
 #### TMA Scores (ANOVA Test)
 
@@ -212,7 +212,7 @@ df1 %>% ggplot(aes(x = TMA_avg, fill = Sex,
        fill = "Gender", color = "Gender") +theme(legend.position="bottom")
 ```
 
-Overall, all students seemed to have a low average math anxiety (1 ~ 2). In Irvine, girls seemed to have higher math average than boys in both condition. However, in Chicago, boys seemed to have higher average than girls. 
+Overall, all students seemed to have a low average math anxiety (1 \~ 2). In Irvine, girls seemed to have higher math average than boys in both condition. However, in Chicago, boys seemed to have higher average than girls.
 
 Girls seemed to have a higher math anxiety compared to boys overall. Check if the difference is significant in each site by using ANOVA test:
 
@@ -227,9 +227,9 @@ No significant difference between gender on math anxiety was found by gender.
 
 #### Mind Wandering and Situational Interest
 
-Mind wandering was measured during both Day 1 and Day 2 of the study. 
+Mind wandering was measured during both Day 1 and Day 2 of the study.
 
-Situational interest was only measured during Day 1. 
+Situational interest was only measured during Day 1.
 
 ##### Situational Interest
 
@@ -300,14 +300,13 @@ mw_plt2 <- df1 %>% ggplot(aes(x = MW_day2_avg, fill = Sex,
        fill = "Gender", color = "Gender") +theme(legend.position="bottom")
 ```
 
-
 ```{r}
 mw_dist <- ggarrange(mw_plt1, mw_plt2, 
           common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
 mw_dist
 ```
 
-Not much of a difference in the average of mind wandering scores by sites, condition, and genders.Overall, the average was roughly pretty low (1 ~ 2).
+Not much of a difference in the average of mind wandering scores by sites, condition, and genders.Overall, the average was roughly pretty low (1 \~ 2).
 
 #### Relationship between TMA and Learning Achievements
 
@@ -364,9 +363,9 @@ ggsave(tma_under_plt, file =  "../../../outputs/tma_under_plt.png",
 tma_under_plt
 ```
 
-For both perceived understanding and posttest accuracy scores, there is not enough data from Chicago schools to conlcude relationship with math anxiety. However, in Irvine, we were able to observe potentila relationships. 
+For both perceived understanding and posttest accuracy scores, there is not enough data from Chicago schools to conlcude relationship with math anxiety. However, in Irvine, we were able to observe potentila relationships.
 
-Mind wandering seemed to have a positive relationship with math anxiety, that is higher mind wandeirng, more anxious students felt. Not much of a significant difference by gender and condition were observed. 
+Mind wandering seemed to have a positive relationship with math anxiety, that is higher mind wandeirng, more anxious students felt. Not much of a significant difference by gender and condition were observed.
 
 Situational interest and math anxiety seemed to have a negative relationship, that is higher situational interest, less anxious students felt. Furthermore, there seemed to be a stronger relationship in no worked example compared to the worked example group.
 
@@ -406,7 +405,6 @@ mw_tma <- ggarrange(mw1_tma, mw2_tma,
 mw_tma
 ```
 
-
 Overall in each group and site, mind wandering and math anxiety had a positive relationship. That is, more anxious student felt, their mind wandering score increased. This result was the same for majority, except for worked example group in Chicago from both day 1 and day 2, since some of the gender group has a slight negative relationship. This result may be due to a small sample size in the Chicago data.
 
 #### SI and TMA
@@ -435,11 +433,10 @@ We constructed structural equation models to model learning achievements: `Del_O
 
 ```{r}
 # chicago data
-df_i <- df1 %>% filter(chicago == 1)
+df_c <- df1 %>% filter(chicago == 1)
 # irvine data
-df_c <- df1 %>% filter(chicago == 0)
+df_i <- df1 %>% filter(chicago == 0)
 ```
-
 
 ## Posttest Acucracy Scores
 
@@ -503,7 +500,39 @@ fit_ia2 <- sem(m_a2, df_i, group = "Sex")
 anova(fit_ia2, fit_ia)
 ```
 
-We find that the models are still significantly different, implying that the path between `TMA_avg` -> `Del_OverallAcc` should not be constrained and instead that it should be left to vary among gender.
+We find that the models are still significantly different, implying that the path between `TMA_avg` -\> `Del_OverallAcc` should not be constrained and instead that it should be left to vary among gender.
+
+Path `Condition` -\> `TMA_avg`:
+
+```{r}
+m_a3 <- '
+  TMA_avg ~ 1 + MW_day1_avg + MW_day2_avg + SI_avg + c("b1", "b1") * Condition
+  Del_OverallAcc ~ 1 +  TMA_avg + Condition
+'
+```
+
+```{r}
+fit_ia3 <- sem(m_a3, df_i, group = "Sex")
+anova(fit_ia3, fit_ia)
+```
+
+No significant difference by genders in this path
+
+Path `Condition` -\> `Del_OverallAcc`:
+
+```{r}
+m_a4 <- '
+  TMA_avg ~ 1 + MW_day1_avg + MW_day2_avg + SI_avg + Condition
+  Del_OverallAcc ~ 1 +  TMA_avg + c("b1", "b1") * Condition
+'
+```
+
+```{r}
+fit_ia4 <- sem(m_a4, df_i, group = "Sex")
+anova(fit_ia4, fit_ia)
+```
+
+No significant difference by genders in this path
 
 ### Visualize Results
 
@@ -591,6 +620,38 @@ anova(fit_iu2, fit_iu)
 
 In this case, there is not a significant difference between the two models (P = 0.659), implying that there is no difference in the fit of the constrained model and the unconstrained model and that this constraint is valid.
 
+Path `Condition` -\> `TMA_avg`:
+
+```{r}
+m_u3 <- '
+  TMA_avg ~ 1 + MW_day1_avg + MW_day2_avg + SI_avg + c("b1", "b1") * Condition
+  Understand_avg ~ 1 +  TMA_avg + Condition
+'
+```
+
+```{r}
+fit_iu3 <- sem(m_u3, df_i, group = "Sex")
+anova(fit_iu3, fit_iu)
+```
+
+No significant difference by genders in this path
+
+Path `Condition` -\> `Del_OverallAcc`:
+
+```{r}
+m_u4 <- '
+  TMA_avg ~ 1 + MW_day1_avg + MW_day2_avg + SI_avg + Condition
+  Understand_avg ~ 1 +  TMA_avg + c("b1", "b1") * Condition
+'
+```
+
+```{r}
+fit_iu4 <- sem(m_u4, df_i, group = "Sex")
+anova(fit_iu4, fit_iu)
+```
+
+No significant difference by genders in this path
+
 ### Visualize Results
 
 ```{r}
@@ -623,9 +684,6 @@ There was no significant difference by gender in the effect of worked examples o
 
 Moreover, our results from path analysis showed that girls and boys had significant difference in the effect of math anxiety on posttest accuracy scores, without accounting for the difference in condition. This result indicated that girls' problem solving skills are negatively effected by math anxiety than boys, which may also support previous studies that found gender gaps in test anxiety.
 
-
-
-
-
-
-
+```{r}
+stargazer(fit_ia, type = "text")
+```
