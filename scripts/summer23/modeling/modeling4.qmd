@@ -1,0 +1,150 @@
+---
+title: "Math Anxiety Modeling"
+format: html
+editor: visual
+---
+
+# Math Anxiety Modeling
+
+We propose a new model for our project, which emphasizes the relationship between trait math anxiety and mind wandering. *Mind wandeirng* indicates a fault in information processing caused by 3 hypotheses: an individual's conscious behavior, failure of executive control, and an individual's current concerns. Furthermore, common predictors of mind wandering include learners' trait anxiety and task-value beliefs. 
+
+# Load Libraries
+
+```{r}
+library(tidyverse)
+```
+
+# Data Preparation
+
+## Load Dataset
+
+```{r}
+df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx')
+```
+
+## Clean Dataset
+
+We need following variables for modeling:
+
+* Trait math anxiety: `TMA_1`, `TMA_2`, `TMA_3`, `TMA_4`,`TMA_5`, `TMA_6`
+
+* Situational interest: `SI_1`, `SI_2`, `SI_3`, `SI_4`, `SI_5`, `SI_6`, `SI_7`, `SI_8`, `SI_9`, `SI_10`, `SI_11`, `SI_12`, `SI_13`, `SI_14`
+
+* Mind wandering:
+
+  * Day 1: `MW_control_1...210`, `MW_control_2...211`, `MW_control_3...212`, `MW_control_4...213`, `MW_control_5...214`, `MW_control_6`, `MW_control_7`
+  * Day 2: `MW_control_1...295`, `MW_control_2...296`, `MW_control_3...297`, `MW_control_4...298`, `MW_control_5...299`
+
+* Learning achievements:`Del_OverallAcc`, `Understand_avg`
+
+* Condition:`Condition`
+
+* Gender:`Sex`
+
+* School location: `chicago`
+
+Create new dataset with necessary variables: 
+
+```{r}
+# variable list
+tma <- c("TMA_1","TMA_2","TMA_3","TMA_4","TMA_5","TMA_6", "TMA_avg")
+si <- c("SI_1", "SI_2", "SI_3", "SI_4", "SI_5", "SI_6", "SI_7", "SI_8", "SI_9", "SI_10", "SI_11", "SI_12", "SI_13", "SI_14")
+mw <- c("MW_control_1...210", "MW_control_2...211", "MW_control_3...212", "MW_control_4...213", "MW_control_5...214", "MW_control_6", "MW_control_7",
+"MW_control_1...295", "MW_control_2...296", "MW_control_3...297", "MW_control_4...298", "MW_control_5...299")
+learning_achiev <- c("Del_OverallAcc", "Understand_avg")
+# select variables
+df2 <- df %>% select(Condition, Sex, chicago, tma, si, mw, learning_achiev)
+# rename mw variables
+mw_names <- c("MW1_1", "MW1_2", "MW1_3", "MW1_4", "MW1_5", "MW1_6", "MW1_7", "MW2_1", "MW2_2", "MW2_3","MW2_4","MW2_5")
+colnames(df2)[25:36] <- mw_names
+```
+
+Clean new dataset to exclude NA values, etc: 
+
+```{r}
+# Get rid of row that has NA values in Condition and/or Sex
+df2 <- df2 %>% filter(Condition == 1 | Condition == 2)
+df2 <- df2 %>% filter(!is.na(Sex))
+# assign 0 to no worked ex and 1 to worked ex
+df2$Condition[df2$Condition == 2] <- 0
+# Assign 0 for "boy" and 1 for "girl"
+df2$Sex[df2$Sex == 1] <- 0
+df2$Sex[df2$Sex == 2] <- 1
+```
+
+Check to see any NA values in TMA, MW, and SI
+
+```{r}
+# TMA
+df2 %>% select(contains("tma")) %>% 
+  summarise(across(everything(), ~ sum(is.na(.))))
+# MW
+df2 %>% select(contains("mw")) %>% 
+  summarise(across(everything(), ~ sum(is.na(.))))
+# SI
+df2 %>% select(contains("si")) %>% 
+  summarise(across(everything(), ~ sum(is.na(.))))
+```
+
+No missing data in TMA, but some data were missing in MW and SI
+- 7 missing data from at least each MW score from day 1
+
+```{r}
+# filter rows with NA mind wandeirng from day 1
+df2 %>% select(Condition, Sex, chicago, 
+               contains("MW1")) %>% 
+   filter_all(any_vars(is.na(.)))
+```
+7 students did not fill any mind wandering questionnaire on Day 1. One student filled out 6 out of 7 mind wandering questions. Missing data will be filled out based on students' condition, gender, school location, and math anxiety scores by mean imputation method.
+
+```{r}
+# accuracy
+df2 %>% select(contains("acc")) %>% 
+  summarise(across(everything(), ~ sum(is.na(.))))
+# perceived understanding
+df2 %>% select(contains("under")) %>% 
+  summarise(across(everything(), ~ sum(is.na(.))))
+```
+
+2 missing `Understand_avg` data
+
+## Data Imputation
+
+Data imputation is required for following variables: `MW1_1`, `MW1_2`, `MW1_3` ,`MW1_4` ,`MW1_5` ,`MW1_6`,`MW1_7`,
+`MW2_5`, `SI_6`, `Understand_avg`
+
+Mean imputation method is used based on following variables: `Condition`, `Sex`, `chicago`, `TMA`. `TMA` is a new variable which assigns LOW for low `TMA_avg` scores (1-3) and HIGH for high TMA scores (4,5).
+
+```{r}
+# make new variable HIGH
+df3 <- df2 %>% mutate(TMA = case_when(
+  TMA_avg < 4 ~ "LOW",
+  TMA_avg >= 4 ~ "HIGH"
+))
+# create a dataset with average values
+df_avg <- df3 %>% group_by(Condition, Sex, chicago, TMA) %>% 
+  summarise(MW1_1 = mean(MW1_1, na.rm = TRUE),
+            MW1_2 = mean(MW1_2, na.rm = TRUE),
+            MW1_3 = mean(MW1_3, na.rm = TRUE),
+            MW1_4 = mean(MW1_4, na.rm = TRUE),
+            MW1_5 = mean(MW1_5, na.rm = TRUE),
+            MW1_6 = mean(MW1_6, na.rm = TRUE),
+            MW1_7 = mean(MW1_7, na.rm = TRUE),
+            MW2_5 = mean(MW2_5, na.rm = TRUE),
+            SI_6 = mean(SI_6, na.rm = TRUE),
+            under = mean(Understand_avg, na.rm = TRUE))
+head(df_avg)
+```
+
+Filling missing data:
+
+```{r}
+# mind wandering
+df3 %>% select(Condition, Sex, chicago, TMA,
+               contains("MW1")) %>% 
+   filter_all(any_vars(is.na(.)))
+# situational interest
+# perceived understanding
+```
+
+
