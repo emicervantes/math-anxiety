@@ -1,7 +1,28 @@
 ---
-title: "Math Anxiety Modeling"
-format: html
+title: "Modeling 3"
 editor: visual
+author: Emi Cervantes
+toc: true
+date: "9-7-2023"
+number-sections: true
+highlight-style: pygments
+format: 
+  html: 
+    code-fold: false
+    html-math-method: katex
+    fig-width: 7
+    fig-height: 4
+  pdf:
+    toc: true
+    number-sections: true
+    geometry:
+      - top=30mm
+      - left=20mm
+    fig-width: 7
+    fig-height: 4
+  docx: 
+    fig-width: 10
+    fig-height: 5
 ---
 
 # Math Anxiety Modeling
@@ -118,8 +139,8 @@ Mean imputation method is used based on following variables: `Condition`, `Sex`,
 ```{r}
 # make new variable HIGH
 df3 <- df2 %>% mutate(TMA = case_when(
-  TMA_avg < 4 ~ "LOW",
-  TMA_avg >= 4 ~ "HIGH"
+  TMA_avg < 4 ~ 0,
+  TMA_avg >= 4 ~ 1
 ))
 # create a dataset with average values
 df_avg <- df3 %>% group_by(Condition, Sex, chicago, TMA) %>% 
@@ -132,6 +153,7 @@ df_avg <- df3 %>% group_by(Condition, Sex, chicago, TMA) %>%
             MW1_7 = mean(MW1_7, na.rm = TRUE),
             MW2_5 = mean(MW2_5, na.rm = TRUE),
             SI_6 = mean(SI_6, na.rm = TRUE),
+            SI_10 = mean(SI_10, na.rm = TRUE),
             under = mean(Understand_avg, na.rm = TRUE))
 head(df_avg)
 ```
@@ -139,12 +161,71 @@ head(df_avg)
 Filling missing data:
 
 ```{r}
-# mind wandering
-df3 %>% select(Condition, Sex, chicago, TMA,
-               contains("MW1")) %>% 
-   filter_all(any_vars(is.na(.)))
-# situational interest
-# perceived understanding
+# filling missing values for MW day 1
+for (i in 1:nrow(df3)){
+  # get condition values
+  cond <- df3$Condition[i]
+  sex <- df3$Sex[i]
+  location <- df3$chicago[i]
+  tma <- df3$TMA[i]
+  # fill in missing values for mw
+  for (j in 25:31){
+    if (is.na(df3[i,j]) == TRUE) {
+      df3[i,j] <- 
+        df_avg[df_avg$Condition == cond & 
+                 df_avg$Sex == sex &
+                 df_avg$chicago == location &
+                 df_avg$TMA == tma, j-20] 
+    }
+  }
+}
+# fill. in missing values for MW day 2
+i <- which(is.na(df2$MW2_5))
+cond <- df3$Condition[i]
+sex <- df3$Sex[i]
+location <- df3$chicago[i]
+tma <- df3$TMA[i]
+df3[i,36] <- df_avg[df_avg$Condition == cond & 
+                 df_avg$Sex == sex &
+                 df_avg$chicago == location &
+                 df_avg$TMA == tma, 12] 
+# fill in missing values for SI
+for (i in 1:nrow(df3)){
+  # get condition values
+  cond <- df3$Condition[i]
+  sex <- df3$Sex[i]
+  location <- df3$chicago[i]
+  tma <- df3$TMA[i]
+  # fill in missing values for mw
+  for (j in c(16,20)){
+    if (is.na(df3[i,j]) == TRUE) {
+      k <- 13
+      df3[i,j] <- 
+        df_avg[df_avg$Condition == cond & 
+                 df_avg$Sex == sex &
+                 df_avg$chicago == location &
+                 df_avg$TMA == tma, k] 
+      k <- 14
+    }
+  }
+}
+# fill in missing values for perceived understanding
+for (i in 1:nrow(df3)){
+  # get condition values
+  cond <- df3$Condition[i]
+  sex <- df3$Sex[i]
+  location <- df3$chicago[i]
+  tma <- df3$TMA[i]
+  # fill in missing values for mw
+  if (is.na(df3[i,38]) == TRUE) {
+      df3[i,38] <- 
+        df_avg[df_avg$Condition == cond & 
+                 df_avg$Sex == sex &
+                 df_avg$chicago == location &
+                 df_avg$TMA == tma, 15] 
+  }
+}
 ```
+
 
 

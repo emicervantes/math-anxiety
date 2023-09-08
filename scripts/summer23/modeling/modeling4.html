@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Emi Cervantes">
+<meta name="dcterms.date" content="2023-09-07">
 
-<title>Math Anxiety Modeling</title>
+<title>Modeling 3</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -71,22 +73,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#math-anxiety-modeling" id="toc-math-anxiety-modeling" class="nav-link active" data-scroll-target="#math-anxiety-modeling"><span class="header-section-number">1</span> Math Anxiety Modeling</a></li>
+  <li><a href="#load-libraries" id="toc-load-libraries" class="nav-link" data-scroll-target="#load-libraries"><span class="header-section-number">2</span> Load Libraries</a></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">3</span> Data Preparation</a>
+  <ul class="collapse">
+  <li><a href="#load-dataset" id="toc-load-dataset" class="nav-link" data-scroll-target="#load-dataset"><span class="header-section-number">3.1</span> Load Dataset</a></li>
+  <li><a href="#clean-dataset" id="toc-clean-dataset" class="nav-link" data-scroll-target="#clean-dataset"><span class="header-section-number">3.2</span> Clean Dataset</a></li>
+  <li><a href="#data-imputation" id="toc-data-imputation" class="nav-link" data-scroll-target="#data-imputation"><span class="header-section-number">3.3</span> Data Imputation</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="modeling4.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li><li><a href="modeling4.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></nav>
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Math Anxiety Modeling</h1>
+<h1 class="title">Modeling 3</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Emi Cervantes </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 7, 2023</p>
+    </div>
+  </div>
   
     
   </div>
@@ -94,12 +123,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="math-anxiety-modeling" class="level1">
-<h1>Math Anxiety Modeling</h1>
+<section id="math-anxiety-modeling" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Math Anxiety Modeling</h1>
 <p>We propose a new model for our project, which emphasizes the relationship between trait math anxiety and mind wandering. <em>Mind wandeirng</em> indicates a fault in information processing caused by 3 hypotheses: an individual’s conscious behavior, failure of executive control, and an individual’s current concerns. Furthermore, common predictors of mind wandering include learners’ trait anxiety and task-value beliefs.</p>
 </section>
-<section id="load-libraries" class="level1">
-<h1>Load Libraries</h1>
+<section id="load-libraries" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Load Libraries</h1>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -116,10 +145,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="data-preparation" class="level1">
-<h1>Data Preparation</h1>
-<section id="load-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="load-dataset">Load Dataset</h2>
+<section id="data-preparation" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Data Preparation</h1>
+<section id="load-dataset" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="load-dataset"><span class="header-section-number">3.1</span> Load Dataset</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_xlsx</span>(<span class="st">'../../../data/math-anxiety-raw-data.xlsx'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -166,8 +195,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="clean-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="clean-dataset">Clean Dataset</h2>
+<section id="clean-dataset" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="clean-dataset"><span class="header-section-number">3.2</span> Clean Dataset</h2>
 <p>We need following variables for modeling:</p>
 <ul>
 <li><p>Trait math anxiety: <code>TMA_1</code>, <code>TMA_2</code>, <code>TMA_3</code>, <code>TMA_4</code>,<code>TMA_5</code>, <code>TMA_6</code></p></li>
@@ -185,7 +214,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Create new dataset with necessary variables:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># variable list</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tma <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"TMA_1"</span>,<span class="st">"TMA_2"</span>,<span class="st">"TMA_3"</span>,<span class="st">"TMA_4"</span>,<span class="st">"TMA_5"</span>,<span class="st">"TMA_6"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tma <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"TMA_1"</span>,<span class="st">"TMA_2"</span>,<span class="st">"TMA_3"</span>,<span class="st">"TMA_4"</span>,<span class="st">"TMA_5"</span>,<span class="st">"TMA_6"</span>, <span class="st">"TMA_avg"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>si <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"SI_1"</span>, <span class="st">"SI_2"</span>, <span class="st">"SI_3"</span>, <span class="st">"SI_4"</span>, <span class="st">"SI_5"</span>, <span class="st">"SI_6"</span>, <span class="st">"SI_7"</span>, <span class="st">"SI_8"</span>, <span class="st">"SI_9"</span>, <span class="st">"SI_10"</span>, <span class="st">"SI_11"</span>, <span class="st">"SI_12"</span>, <span class="st">"SI_13"</span>, <span class="st">"SI_14"</span>)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>mw <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"MW_control_1...210"</span>, <span class="st">"MW_control_2...211"</span>, <span class="st">"MW_control_3...212"</span>, <span class="st">"MW_control_4...213"</span>, <span class="st">"MW_control_5...214"</span>, <span class="st">"MW_control_6"</span>, <span class="st">"MW_control_7"</span>,</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">"MW_control_1...295"</span>, <span class="st">"MW_control_2...296"</span>, <span class="st">"MW_control_3...297"</span>, <span class="st">"MW_control_4...298"</span>, <span class="st">"MW_control_5...299"</span>)</span>
@@ -238,7 +267,7 @@ See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.</co
 </div>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rename mw variables</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>mw_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"MW1_1"</span>, <span class="st">"MW1_2"</span>, <span class="st">"MW1_3"</span>, <span class="st">"MW1_4"</span>, <span class="st">"MW1_5"</span>, <span class="st">"MW1_6"</span>, <span class="st">"MW1_7"</span>, <span class="st">"MW2_1"</span>, <span class="st">"MW2_2"</span>, <span class="st">"MW2_3"</span>,<span class="st">"MW2_4"</span>,<span class="st">"MW2_5"</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df2)[<span class="dv">24</span><span class="sc">:</span><span class="dv">35</span>] <span class="ot">&lt;-</span> mw_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df2)[<span class="dv">25</span><span class="sc">:</span><span class="dv">36</span>] <span class="ot">&lt;-</span> mw_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Clean new dataset to exclude NA values, etc:</p>
 <div class="cell">
@@ -257,10 +286,10 @@ See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.</co
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"tma"</span>)) <span class="sc">%&gt;%</span> </span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 6
-  TMA_1 TMA_2 TMA_3 TMA_4 TMA_5 TMA_6
-  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
-1     0     0     0     0     0     0</code></pre>
+<pre><code># A tibble: 1 × 7
+  TMA_1 TMA_2 TMA_3 TMA_4 TMA_5 TMA_6 TMA_avg
+  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;   &lt;int&gt;
+1     0     0     0     0     0     0       0</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MW</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"mw"</span>)) <span class="sc">%&gt;%</span> </span>
@@ -282,7 +311,158 @@ See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.</co
 # ℹ 1 more variable: SI_14 &lt;int&gt;</code></pre>
 </div>
 </div>
-<p>No missing data in TMA, but some data were missing in MW and SI</p>
+<p>No missing data in TMA, but some data were missing in MW and SI - 7 missing data from at least each MW score from day 1</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># filter rows with NA mind wandeirng from day 1</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>df2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(Condition, Sex, chicago, </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>               <span class="fu">contains</span>(<span class="st">"MW1"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter_all</span>(<span class="fu">any_vars</span>(<span class="fu">is.na</span>(.)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 10
+  Condition   Sex chicago MW1_1 MW1_2 MW1_3 MW1_4 MW1_5 MW1_6 MW1_7
+  &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 0             1       1    NA    NA    NA    NA    NA    NA    NA
+2 1             1       1    NA    NA    NA    NA    NA    NA    NA
+3 1             0       0    NA    NA    NA    NA    NA    NA    NA
+4 0             0       0    NA    NA    NA    NA    NA    NA    NA
+5 0             1       0    NA    NA    NA    NA    NA    NA    NA
+6 1             1       0     4     3     2    NA     2     3     4
+7 0             1       0    NA    NA    NA    NA    NA    NA    NA
+8 0             0       0    NA    NA    NA    NA    NA    NA    NA</code></pre>
+</div>
+</div>
+<p>7 students did not fill any mind wandering questionnaire on Day 1. One student filled out 6 out of 7 mind wandering questions. Missing data will be filled out based on students’ condition, gender, school location, and math anxiety scores by mean imputation method.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># accuracy</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>df2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"acc"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  Del_OverallAcc
+           &lt;int&gt;
+1              0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># perceived understanding</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>df2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"under"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(.))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  Understand_avg
+           &lt;int&gt;
+1              2</code></pre>
+</div>
+</div>
+<p>2 missing <code>Understand_avg</code> data</p>
+</section>
+<section id="data-imputation" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="data-imputation"><span class="header-section-number">3.3</span> Data Imputation</h2>
+<p>Data imputation is required for following variables: <code>MW1_1</code>, <code>MW1_2</code>, <code>MW1_3</code> ,<code>MW1_4</code> ,<code>MW1_5</code> ,<code>MW1_6</code>,<code>MW1_7</code>, <code>MW2_5</code>, <code>SI_6</code>, <code>Understand_avg</code></p>
+<p>Mean imputation method is used based on following variables: <code>Condition</code>, <code>Sex</code>, <code>chicago</code>, <code>TMA</code>. <code>TMA</code> is a new variable which assigns LOW for low <code>TMA_avg</code> scores (1-3) and HIGH for high TMA scores (4,5).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make new variable HIGH</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>df3 <span class="ot">&lt;-</span> df2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">TMA =</span> <span class="fu">case_when</span>(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  TMA_avg <span class="sc">&lt;</span> <span class="dv">4</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  TMA_avg <span class="sc">&gt;=</span> <span class="dv">4</span> <span class="sc">~</span> <span class="dv">1</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co"># create a dataset with average values</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>df_avg <span class="ot">&lt;-</span> df3 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Condition, Sex, chicago, TMA) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">MW1_1 =</span> <span class="fu">mean</span>(MW1_1, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">MW1_2 =</span> <span class="fu">mean</span>(MW1_2, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">MW1_3 =</span> <span class="fu">mean</span>(MW1_3, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">MW1_4 =</span> <span class="fu">mean</span>(MW1_4, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">MW1_5 =</span> <span class="fu">mean</span>(MW1_5, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">MW1_6 =</span> <span class="fu">mean</span>(MW1_6, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">MW1_7 =</span> <span class="fu">mean</span>(MW1_7, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">MW2_5 =</span> <span class="fu">mean</span>(MW2_5, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">SI_6 =</span> <span class="fu">mean</span>(SI_6, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">SI_10 =</span> <span class="fu">mean</span>(SI_10, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">under =</span> <span class="fu">mean</span>(Understand_avg, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'Condition', 'Sex', 'chicago'. You can
+override using the `.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df_avg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 15
+# Groups:   Condition, Sex, chicago [4]
+  Condition   Sex chicago   TMA  MW1_1  MW1_2  MW1_3  MW1_4  MW1_5  MW1_6  MW1_7
+  &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 0             0       0     0   2.55   2.55   2.09   2.15   2.48   4.42   4.30
+2 0             0       0     1 NaN    NaN    NaN    NaN    NaN    NaN    NaN   
+3 0             0       1     0   2.18   2.18   2.09   2.18   2.09   4.36   4.18
+4 0             1       0     0   2.51   2.51   2.11   1.87   2.34   4.64   4.83
+5 0             1       0     1   4.5    5      2.5    3      3      3      4   
+6 0             1       1     0   2.54   2.46   2.15   1.77   2.08   4.31   4.31
+# ℹ 4 more variables: MW2_5 &lt;dbl&gt;, SI_6 &lt;dbl&gt;, SI_10 &lt;dbl&gt;, under &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Filling missing data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># filling missing values for MW day 1</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df3)){</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get condition values</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  cond <span class="ot">&lt;-</span> df3<span class="sc">$</span>Condition[i]</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  sex <span class="ot">&lt;-</span> df3<span class="sc">$</span>Sex[i]</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  location <span class="ot">&lt;-</span> df3<span class="sc">$</span>chicago[i]</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  tma <span class="ot">&lt;-</span> df3<span class="sc">$</span>TMA[i]</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fill in missing values for mw</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">25</span><span class="sc">:</span><span class="dv">31</span>){</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.na</span>(df3[i,j]) <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>      df3[i,j] <span class="ot">&lt;-</span> </span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>        df_avg[df_avg<span class="sc">$</span>Condition <span class="sc">==</span> cond <span class="sc">&amp;</span> </span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>Sex <span class="sc">==</span> sex <span class="sc">&amp;</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>chicago <span class="sc">==</span> location <span class="sc">&amp;</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>TMA <span class="sc">==</span> tma, j<span class="dv">-20</span>] </span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="co"># fill. in missing values for MW day 2</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">is.na</span>(df2<span class="sc">$</span>MW2_5))</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>cond <span class="ot">&lt;-</span> df3<span class="sc">$</span>Condition[i]</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>sex <span class="ot">&lt;-</span> df3<span class="sc">$</span>Sex[i]</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>location <span class="ot">&lt;-</span> df3<span class="sc">$</span>chicago[i]</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>tma <span class="ot">&lt;-</span> df3<span class="sc">$</span>TMA[i]</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>df3[i,<span class="dv">36</span>] <span class="ot">&lt;-</span> df_avg[df_avg<span class="sc">$</span>Condition <span class="sc">==</span> cond <span class="sc">&amp;</span> </span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>Sex <span class="sc">==</span> sex <span class="sc">&amp;</span></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>chicago <span class="sc">==</span> location <span class="sc">&amp;</span></span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>TMA <span class="sc">==</span> tma, <span class="dv">12</span>] </span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a><span class="co"># fill in missing values for SI</span></span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df3)){</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get condition values</span></span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>  cond <span class="ot">&lt;-</span> df3<span class="sc">$</span>Condition[i]</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>  sex <span class="ot">&lt;-</span> df3<span class="sc">$</span>Sex[i]</span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>  location <span class="ot">&lt;-</span> df3<span class="sc">$</span>chicago[i]</span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>  tma <span class="ot">&lt;-</span> df3<span class="sc">$</span>TMA[i]</span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fill in missing values for mw</span></span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">16</span>,<span class="dv">20</span>)){</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.na</span>(df3[i,j]) <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>      k <span class="ot">&lt;-</span> <span class="dv">13</span></span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>      df3[i,j] <span class="ot">&lt;-</span> </span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>        df_avg[df_avg<span class="sc">$</span>Condition <span class="sc">==</span> cond <span class="sc">&amp;</span> </span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>Sex <span class="sc">==</span> sex <span class="sc">&amp;</span></span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>chicago <span class="sc">==</span> location <span class="sc">&amp;</span></span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>TMA <span class="sc">==</span> tma, k] </span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>      k <span class="ot">&lt;-</span> <span class="dv">14</span></span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a><span class="co"># fill in missing values for perceived understanding</span></span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df3)){</span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get condition values</span></span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a>  cond <span class="ot">&lt;-</span> df3<span class="sc">$</span>Condition[i]</span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a>  sex <span class="ot">&lt;-</span> df3<span class="sc">$</span>Sex[i]</span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a>  location <span class="ot">&lt;-</span> df3<span class="sc">$</span>chicago[i]</span>
+<span id="cb28-55"><a href="#cb28-55" aria-hidden="true" tabindex="-1"></a>  tma <span class="ot">&lt;-</span> df3<span class="sc">$</span>TMA[i]</span>
+<span id="cb28-56"><a href="#cb28-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fill in missing values for mw</span></span>
+<span id="cb28-57"><a href="#cb28-57" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.na</span>(df3[i,<span class="dv">38</span>]) <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb28-58"><a href="#cb28-58" aria-hidden="true" tabindex="-1"></a>      df3[i,<span class="dv">38</span>] <span class="ot">&lt;-</span> </span>
+<span id="cb28-59"><a href="#cb28-59" aria-hidden="true" tabindex="-1"></a>        df_avg[df_avg<span class="sc">$</span>Condition <span class="sc">==</span> cond <span class="sc">&amp;</span> </span>
+<span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>Sex <span class="sc">==</span> sex <span class="sc">&amp;</span></span>
+<span id="cb28-61"><a href="#cb28-61" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>chicago <span class="sc">==</span> location <span class="sc">&amp;</span></span>
+<span id="cb28-62"><a href="#cb28-62" aria-hidden="true" tabindex="-1"></a>                 df_avg<span class="sc">$</span>TMA <span class="sc">==</span> tma, <span class="dv">15</span>] </span>
+<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-64"><a href="#cb28-64" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 
