@@ -6,3 +6,96 @@ editor: visual
 
 ## Relationship between Math Anxiety and Mind Wandering
 
+# Load Libraries
+
+```{r}
+library(tidyverse)
+library(gridExtra)
+library(ggpubr)
+```
+
+# Dataset Preparation
+
+## Load Dataset
+
+```{r}
+df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx')
+```
+
+## Clean Dataset
+
+Obtaining variables of interest for the study:
+
+```{r}
+tma_lst <- c("TMA_1", "TMA_2", "TMA_3","TMA_4", "TMA_5", "TMA_6",
+             "TMA_avg")
+df1 <- df %>% select(Condition, Sex, chicago, race_rv, pretest,
+              MW_day1_avg, MW_day2_avg, SI_avg, tma_lst,
+              Understand_avg, Del_OverallAcc)
+# Get rid of row that has NA values in Condition and/or Sex
+df1 <- df1 %>% filter(Condition == 1 | Condition == 2)
+df1 <- df1 %>% filter(!is.na(Sex))
+head(df1)
+```
+
+Change values and type of some variables:
+
+```{r}
+# Assign "no worked ex" group 0
+df1$Condition[df1$Condition == 2] <- 0
+# Assign 0 for "boy" and 1 for "girl"
+df1$Sex[df1$Sex == 1] <- 0
+df1$Sex[df1$Sex == 2] <- 1
+# Make sure variable is categorical
+df1$chicago <- as.factor(df1$chicago)
+df1$Sex <- as.factor(df1$Sex)
+df1$race_rv <- as.factor(df1$race_rv)
+```
+
+
+# Inspecting Relationship Between Math Anxiety and Mind Wandering
+
+Facet grid label:
+
+```{r}
+cond <- c("No Worked EX", "Worked EX")
+names(cond) <- c(0, 1)
+location <- c("Irvine", "Chicago")
+names(location) <- c(0, 1)
+```
+
+
+Mind wandering and math anxiety:
+
+```{r}
+mw1_tma <- df1 %>% ggplot(aes(MW_day1_avg, TMA_avg,
+                   color = Sex)) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
+  facet_grid(rows = vars(Condition),
+             cols = vars(chicago),
+             labeller = 
+               labeller(Condition = cond,
+                        chicago = location)) +
+  theme_minimal() +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(x = "Avg Mind Wandering (day 1)",
+       y = "Avg Trait Math Anxiety",
+       color = "Gender")
+
+mw2_tma <- df1 %>% ggplot(aes(MW_day2_avg, TMA_avg,
+                   color = Sex)) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
+  facet_grid(rows = vars(Condition),
+             cols = vars(chicago),
+             labeller = 
+               labeller(Condition = cond,
+                        chicago = location)) +
+  theme_minimal() +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(x = "Avg Mind Wandering (day 2)",
+       y = "Avg Trait Math Anxiety",
+       color = "Gender")
+ggarrange(mw1_tma, mw2_tma, 
+          common.legend = TRUE, legend="bottom", ncol = 2, nrow = 1)
+```
+
