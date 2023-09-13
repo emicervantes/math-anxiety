@@ -235,36 +235,47 @@ We will be using structural equation model to do a multigroup confirmatory facto
 
 In our model, we have three latent variables: `TMA`, `SI`, and `MW`. Each latent variable has exogenous observed variables:
 
-* `TMA`: `TMA_1`, `TMA_2`, `TMA_3`, `TMA_4`,`TMA_5`, `TMA_6`
+-   `TMA`: `TMA_1`, `TMA_2`, `TMA_3`, `TMA_4`,`TMA_5`, `TMA_6`
 
-* `SI`: `SI_1`, `SI_2`, `SI_3`, `SI_4`, `SI_5`, `SI_6`, `SI_7`, `SI_8`, `SI_9`, `SI_10`, `SI_11`, `SI_12`, `SI_13`, `SI_14`
+-   `SI`: `SI_1`, `SI_2`, `SI_3`, `SI_4`, `SI_5`, `SI_6`, `SI_7`, `SI_8`, `SI_9`, `SI_10`, `SI_11`, `SI_12`, `SI_13`, `SI_14`
 
-* `MW`: `MW1_1`, `MW1_2`, `MW1_3`, `MW1_4`, `MW1_5`, `MW1_6`, `MW1_7`
+-   `MW`: `MW1_1`, `MW1_2`, `MW1_3`, `MW1_4`, `MW1_5`, `MW1_6`, `MW1_7`
 
-### Structural Equation Models
+## Structural Equation Models
 
 **Latent Variable Models**
 
-`TMA` ~ `TMA_1`+`TMA_2`+`TMA_3`+`TMA_4`+`TMA_5`+`TMA_6`
+`TMA` \~ `TMA_1`+`TMA_2`+`TMA_3`+`TMA_4`+`TMA_5`+`TMA_6`
 
-`SI` ~ `SI_1`+`SI_2`+`SI_3`+`SI_4`+`SI_5`+`SI_6`+`SI_7`+`SI_8`+`SI_9`+`SI_10`+`SI_11`+`SI_12`+`SI_13`+`SI_14`
+`SI` \~ `SI_1`+`SI_2`+`SI_3`+`SI_4`+`SI_5`+`SI_6`+`SI_7`+`SI_8`+`SI_9`+`SI_10`+`SI_11`+`SI_12`+`SI_13`+`SI_14`
 
-`MW` ~ `MW1_1`+`MW1_2`+`MW1_3`+`MW1_4`+`MW1_5`+`MW1_6`+`MW1_7`'
+`MW` \~ `MW1_1`+`MW1_2`+`MW1_3`+`MW1_4`+`MW1_5`+`MW1_6`+`MW1_7`'
 
 **Regression Models**
 
 Exogenous Variables:
 
-`SI` ~ `TMA`
+`SI` \~ `TMA`
 
-`MW` ~ `TMA` + `SI`
+`MW` \~ `TMA` + `SI`
 
 Endogenous Variable (Learning achievements):
 
-Learning Achievements ~ `TMA` + `MW`
+Learning Achievements \~ `TMA` + `MW`
 
 *Where learning achievement is either post test accuracy scores or perceived understanding scores*
 
+## Multigroup Analysis
+
+We are interested in seeing differences in the paths between girls and boys. The data will be split into worked example and no worked example group, and we will examine the gender difference in each subgroup.
+
+```{r}
+# split data to worked ex and no worked ex groups
+# worked ex group
+df_we = df3 %>% filter(Condition == 1)
+# no worked ex group
+df_nwe = df3 %>% filter(Condition == 0)
+```
 
 ```{r}
 # model definition
@@ -274,20 +285,140 @@ tma =~ TMA_1 + TMA_2 + TMA_3 + TMA_4 + TMA_5 + TMA_6
 si =~ SI_1 + SI_2 + SI_3 + SI_4 + SI_5 + SI_6 + SI_7 + SI_8 + SI_9 + SI_10 + SI_11 + SI_12 + SI_13 + SI_14
 mw =~ MW1_1 + MW1_2 + MW1_3 + MW1_4 + MW1_5 + MW1_6 + MW1_7
 # regressions
-si ~ tma
-mw ~ tma + si
-Del_OverallAcc ~ tma + mw
+si ~ 1 + tma
+mw ~ 1 + tma + si
+Del_OverallAcc ~ 1 + tma + mw
 '
-# fit the model
-fit1 <- cfa(m, data = df3, group = "Condition")
-fit2 <- cfa(m, data = df3, group = "Condition",
-            group.equal = "loadings")
-fit3 <- cfa(m, data = df3, group = "Condition",
-            group.equal = c("intercepts", "loadings"))
-# invariance check
-lavTestLRT(fit1, fit2,fit3)
 ```
 
 
+## Worked EX Group
 
+```{r}
+# fit the model (group by gender)
+fit1_we <- cfa(m, data = df_we, 
+            std.lv = T, group = "Sex")
+fit2_we <- cfa(m, data = df_we, group = "Sex",
+            group.equal = "loadings")
+fit3_we <- cfa(m, data = df_we, group = "Sex",
+            group.equal = c("intercepts", "loadings"))
+# display summary
+summary(fit1_we, fit.measures = T, standardized = T)
+summary(fit2_we, fit.measures = T, standardized = T)
+summary(fit3_we, fit.measures = T, standardized = T)
+# invariance check
+lavTestLRT(fit1_we, fit2_we, fit3_we)
+```
+
+## No Worked EX Group
+
+```{r}
+# fit the model (group by gender)
+fit1_nwe <- cfa(m, data = df_nwe, 
+            std.lv = T, group = "Sex")
+fit2_nwe <- cfa(m, data = df_nwe, group = "Sex",
+            group.equal = "loadings")
+fit3_nwe <- cfa(m, data = df_nwe, group = "Sex",
+            group.equal = c("intercepts", "loadings"))
+# display summary
+summary(fit1_nwe, fit.measures = T, standardized = T)
+summary(fit2_nwe, fit.measures = T, standardized = T)
+summary(fit3_nwe, fit.measures = T, standardized = T)
+# invariance check
+lavTestLRT(fit1_nwe, fit2_nwe, fit3_nwe)
+```
+
+## Looking at Different Site
+
+We will be running the same analysis, but to both Chicago and Irvine as we saw from the initial EDA that Chicago and Irvine students have significant difference in their previous knowledge in ratio.
+
+```{r}
+# split data to Chicago, Irvine
+# worked ex data
+## Chicago
+df_we$chicago <- as.factor(df_we$chicago)
+df_we_c = df_we %>% filter(chicago == 1)
+## Irvine
+df_we_i = df_we %>% filter(chicago == 0)
+# no worked ex data
+## Chicago
+df_nwe_c = df_nwe %>% filter(chicago == 1)
+## Irvine
+df_nwe_i = df_nwe %>% filter(chicago == 0)
+```
+
+### Worked EX Group
+
+#### Chicago
+
+```{r}
+# fit the model (group by gender)
+fit1_we_c <- cfa(m, data = df_we_c, 
+            std.lv = T, group = "Sex")
+fit2_we_c <- cfa(m, data = df_we_c, group = "Sex",
+            group.equal = "loadings")
+fit3_we_c <- cfa(m, data = df_we_c, group = "Sex",
+            group.equal = c("intercepts", "loadings"))
+# display summary
+summary(fit1_we_c, fit.measures = T, standardized = T)
+summary(fit2_we_c, fit.measures = T, standardized = T)
+summary(fit3_we_c, fit.measures = T, standardized = T)
+# invariance check
+lavTestLRT(fit1_we_c, fit2_we_c, fit3_we_c)
+```
+#### Irvine
+
+```{r}
+# fit the model (group by gender)
+fit1_we_i <- cfa(m, data = df_we_i, 
+            std.lv = T, group = "Sex")
+fit2_we_i <- cfa(m, data = df_we_i, group = "Sex",
+            group.equal = "loadings")
+fit3_we_i <- cfa(m, data = df_we_i, group = "Sex",
+            group.equal = c("intercepts", "loadings"))
+# display summary
+summary(fit1_we_i, fit.measures = T, standardized = T)
+summary(fit2_we_i, fit.measures = T, standardized = T)
+summary(fit3_we_i, fit.measures = T, standardized = T)
+# invariance check
+lavTestLRT(fit1_we_i, fit2_we_i, fit3_we_i)
+```
+
+### No Worked EX Group
+
+#### Chicago
+
+```{r}
+# fit the model (group by gender)
+fit1_nwe_c <- cfa(m, data = df_nwe_c, 
+            std.lv = T, group = "Sex")
+fit2_nwe_c <- cfa(m, data = df_nwe_c, group = "Sex",
+            group.equal = "loadings")
+fit3_nwe_c <- cfa(m, data = df_nwe_c, group = "Sex",
+            group.equal = c("intercepts", "loadings"))
+# display summary
+summary(fit1_nwe_c, fit.measures = T, standardized = T)
+summary(fit2_nwe_c, fit.measures = T, standardized = T)
+summary(fit3_nwe_c, fit.measures = T, standardized = T)
+# invariance check
+lavTestLRT(fit1_nwe_c, fit2_nwe_c, fit3_nwe_c)
+```
+
+#### Irvine
+
+```{r}
+# fit the model (group by gender)
+fit1_nwe_i <- cfa(m, data = df_nwe_i, 
+            std.lv = T, group = "Sex")
+fit2_nwe_i <- cfa(m, data = df_nwe_i, group = "Sex",
+            group.equal = "loadings")
+fit3_nwe_i <- cfa(m, data = df_nwe_i, group = "Sex",
+            group.equal = c("intercepts", "loadings"))
+# display summary
+summary(fit1_nwe_i, fit.measures = T, standardized = T)
+summary(fit2_nwe_i, fit.measures = T, standardized = T)
+summary(fit3_nwe_i, fit.measures = T, standardized = T)
+# invariance check
+lavTestLRT(fit1_nwe_i, fit2_nwe_i, fit3_nwe_i)
+```
 
