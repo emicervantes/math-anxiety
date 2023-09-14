@@ -6,6 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Emi Cervantes">
+<meta name="dcterms.date" content="2023-09-13">
 
 <title>Modeling 5</title>
 <style>
@@ -68,15 +70,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="modeling5_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="modeling5_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css">
 
 </head>
 
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#load-libraries" id="toc-load-libraries" class="nav-link active" data-scroll-target="#load-libraries"><span class="header-section-number">1</span> Load Libraries</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data"><span class="header-section-number">2</span> Load Data</a>
+  <ul class="collapse">
+  <li><a href="#data-clearning" id="toc-data-clearning" class="nav-link" data-scroll-target="#data-clearning"><span class="header-section-number">2.1</span> Data Clearning</a></li>
+  </ul></li>
+  <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model"><span class="header-section-number">3</span> Model</a>
+  <ul class="collapse">
+  <li><a href="#hypotheses" id="toc-hypotheses" class="nav-link" data-scroll-target="#hypotheses"><span class="header-section-number">3.1</span> Hypotheses</a></li>
+  <li><a href="#overall-accuracy-scores" id="toc-overall-accuracy-scores" class="nav-link" data-scroll-target="#overall-accuracy-scores"><span class="header-section-number">3.2</span> Overall Accuracy Scores</a></li>
+  <li><a href="#perceived-understanding" id="toc-perceived-understanding" class="nav-link" data-scroll-target="#perceived-understanding"><span class="header-section-number">3.3</span> Perceived Understanding</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="modeling5.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li><li><a href="modeling5.docx"><i class="bi bi-file-word"></i>MS Word</a></li></ul></div></nav>
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -88,7 +122,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Emi Cervantes </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 13, 2023</p>
+    </div>
+  </div>
   
     
   </div>
@@ -100,8 +146,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol type="1">
 <li>Fulfill the requirements to perform a path analysis: assumptions regarding sample size, multivariate normal distribution, and multicollinearity</li>
 </ol>
-<section id="load-libraries" class="level2">
-<h2 class="anchored" data-anchor-id="load-libraries">Load Libraries</h2>
+<section id="load-libraries" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="load-libraries"><span class="header-section-number">1</span> Load Libraries</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -124,8 +170,8 @@ lavaan is FREE software! Please report any bugs.</code></pre>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(semPlot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="load-data" class="level2">
-<h2 class="anchored" data-anchor-id="load-data">Load Data</h2>
+<section id="load-data" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="load-data"><span class="header-section-number">2</span> Load Data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../../../data/df_imputed.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -157,8 +203,8 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 #   MW2_5 &lt;dbl&gt;, Del_OverallAcc &lt;dbl&gt;, Understand_avg &lt;dbl&gt;, TMA &lt;dbl&gt;</code></pre>
 </div>
 </div>
-<section id="data-clearning" class="level3">
-<h3 class="anchored" data-anchor-id="data-clearning">Data Clearning</h3>
+<section id="data-clearning" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="data-clearning"><span class="header-section-number">2.1</span> Data Clearning</h3>
 <p>We need to add average for situational interest and mind wandering</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># average for situational interest and mind wandering</span></span>
@@ -198,14 +244,15 @@ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 </div>
 </section>
 </section>
-<section id="model" class="level2">
-<h2 class="anchored" data-anchor-id="model">Model</h2>
-<p><strong>Hypotheses</strong></p>
-<p><span class="math inline">\(H1\)</span>: Trait math anxiety will have a direct positive effect on mind wandering and will have a direct negative effect on learning achievement</p>
-<p><span class="math inline">\(H2\)</span>: Situational interest will have a direct positive effect on mind wandering, and will have a direct positive effect on learning achievement</p>
-<p><span class="math inline">\(H3\)</span>: Mind wandering has a direct negative effect on learning achievement</p>
-<p><span class="math inline">\(H4\)</span>: Trait math anxiety will have an indirect negative effect on learning achievement</p>
-<p><span class="math inline">\(H5\)</span>: Situational interest will have an indirect positive effect on learning achievement</p>
+<section id="model" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="model"><span class="header-section-number">3</span> Model</h2>
+<section id="hypotheses" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="hypotheses"><span class="header-section-number">3.1</span> Hypotheses</h3>
+<p><span class="math inline">H1</span>: Trait math anxiety will have a direct positive effect on mind wandering and will have a direct negative effect on learning achievement</p>
+<p><span class="math inline">H2</span>: Situational interest will have a direct positive effect on mind wandering, and will have a direct positive effect on learning achievement</p>
+<p><span class="math inline">H3</span>: Mind wandering has a direct negative effect on learning achievement</p>
+<p><span class="math inline">H4</span>: Trait math anxiety will have an indirect negative effect on learning achievement</p>
+<p><span class="math inline">H5</span>: Situational interest will have an indirect positive effect on learning achievement</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># covariance table</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df2[<span class="dv">4</span><span class="sc">:</span><span class="dv">8</span>] <span class="sc">%&gt;%</span> <span class="fu">cov</span>(<span class="at">use =</span> <span class="st">"complete.obs"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -224,10 +271,11 @@ Del_OverallAcc      0.2377496
 Understand_avg      0.9825640</code></pre>
 </div>
 </div>
-<section id="overall-accuracy-scores" class="level3">
-<h3 class="anchored" data-anchor-id="overall-accuracy-scores">Overall Accuracy Scores</h3>
-<section id="model-definition" class="level4">
-<h4 class="anchored" data-anchor-id="model-definition">Model Definition</h4>
+</section>
+<section id="overall-accuracy-scores" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="overall-accuracy-scores"><span class="header-section-number">3.2</span> Overall Accuracy Scores</h3>
+<section id="model-definition" class="level4" data-number="3.2.1">
+<h4 data-number="3.2.1" class="anchored" data-anchor-id="model-definition"><span class="header-section-number">3.2.1</span> Model Definition</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model definition</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>m_acc <span class="ot">&lt;-</span> <span class="st">'</span></span>
@@ -237,10 +285,10 @@ Understand_avg      0.9825640</code></pre>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="worked-ex-group" class="level4">
-<h4 class="anchored" data-anchor-id="worked-ex-group">Worked EX Group</h4>
-<section id="full-sample" class="level5">
-<h5 class="anchored" data-anchor-id="full-sample">Full Sample</h5>
+<section id="worked-ex-group" class="level4" data-number="3.2.2">
+<h4 data-number="3.2.2" class="anchored" data-anchor-id="worked-ex-group"><span class="header-section-number">3.2.2</span> Worked EX Group</h4>
+<section id="full-sample" class="level5" data-number="3.2.2.1">
+<h5 data-number="3.2.2.1" class="anchored" data-anchor-id="full-sample"><span class="header-section-number">3.2.2.1</span> Full Sample</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fit1_we <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_we, </span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
@@ -351,9 +399,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><img src="modeling5_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Trait math anxiety had a positive direct effect on mind wandering for girls (<span class="math inline">\beta = 0.597, p &lt; 0.0001</span>). Boys did not have any direct effect on mind wandering by any predictors.</p>
+<p>None of the predictors had any significant effects on students’ overall accuracy scores for boys and girls.</p>
 </section>
-<section id="chicago" class="level5">
-<h5 class="anchored" data-anchor-id="chicago">Chicago</h5>
+<section id="chicago" class="level5" data-number="3.2.2.2">
+<h5 data-number="3.2.2.2" class="anchored" data-anchor-id="chicago"><span class="header-section-number">3.2.2.2</span> Chicago</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fit1_we_c <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_we_c, </span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
@@ -464,9 +515,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><img src="modeling5_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Trait math anxiety had a positive direct effect on mind wandering (<span class="math inline">\beta = 0.847, p &lt; 0.001</span>) for girls. On the other hand, for boys, neither trait math anxiety or situational interests had any direct effects on mind wandering.</p>
+<p>None of the predictors had any significant effects on girls’ overall accuracy scores. For boys, trait math anxiety had negative direct effect on accuracy scores (<span class="math inline">\beta = -2.090, p = 0.001</span>) and situational interest also had negative direct effects on accuracy scores. (<span class="math inline">\beta = -2.226, p = 0.002</span>)</p>
 </section>
-<section id="irvine" class="level5">
-<h5 class="anchored" data-anchor-id="irvine">Irvine</h5>
+<section id="irvine" class="level5" data-number="3.2.2.3">
+<h5 data-number="3.2.2.3" class="anchored" data-anchor-id="irvine"><span class="header-section-number">3.2.2.3</span> Irvine</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fit1_we_i <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_we_i, </span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
@@ -577,12 +631,15 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><img src="modeling5_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Girls had no direct effects on mind wandering. For boys, trait math anxiety had positive direct effect (<span class="math inline">\beta = 0.338, p = 0.021</span>) on mind wandering.</p>
+<p>Girls did not have any direct/indirect effects on accuracy scores. Boys had both positive effects by trait math anxiety (<span class="math inline">\beta = 0.260, p = 0.052</span>) and situational interest (<span class="math inline">\beta = 0.477, p = 0.0001</span>)</p>
 </section>
 </section>
-<section id="no-wokred-ex-group" class="level4">
-<h4 class="anchored" data-anchor-id="no-wokred-ex-group">No Wokred EX Group</h4>
-<section id="full-sample-1" class="level5">
-<h5 class="anchored" data-anchor-id="full-sample-1">Full Sample</h5>
+<section id="no-wokred-ex-group" class="level4" data-number="3.2.3">
+<h4 data-number="3.2.3" class="anchored" data-anchor-id="no-wokred-ex-group"><span class="header-section-number">3.2.3</span> No Wokred EX Group</h4>
+<section id="full-sample-1" class="level5" data-number="3.2.3.1">
+<h5 data-number="3.2.3.1" class="anchored" data-anchor-id="full-sample-1"><span class="header-section-number">3.2.3.1</span> Full Sample</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>fit1_nwe <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_nwe, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>fit2_nwe <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_nwe, <span class="at">group =</span> <span class="st">"Sex"</span>,</span>
@@ -690,9 +747,13 @@ fit3_nwe  7 610.49 640.19 6.4308     5.9997 0.060292       5     0.3063</code></
 <p><img src="modeling5_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Girls had positive direct effect on mind wandering by trait math anxiety (<span class="math inline">\beta = 0.375, p = 0.0001</span>). Boys did not have any direct effect on mind wandering.</p>
+<p>Girls had negative direct effect on accuracy scores by trait math anxiety (<span class="math inline">\beta = -0.332, p = 0.029</span>). Boys had negative direct on accuracy scores by trait math anxiety (<span class="math inline">\beta = -0.273, p = 0.044</span>).</p>
+<p>Girls had worst effect on trait math anxiety than boys.</p>
 </section>
-<section id="chicago-1" class="level5">
-<h5 class="anchored" data-anchor-id="chicago-1">Chicago</h5>
+<section id="chicago-1" class="level5" data-number="3.2.3.2">
+<h5 data-number="3.2.3.2" class="anchored" data-anchor-id="chicago-1"><span class="header-section-number">3.2.3.2</span> Chicago</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>fit1_nwe_c <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_nwe_c, </span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
@@ -785,7 +846,6 @@ fit3_nwe_c  7 142.90 156.30 11.5156     4.6370 0.00000       5    0.46177
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
-<p>Visualize Results:</p>
 <p>Visualization:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">semPaths</span>(fit1_nwe_c,</span>
@@ -804,9 +864,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><img src="modeling5_files/figure-html/unnamed-chunk-17-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Girls did not have any direct effects on mind wandering. Boys had direct positive effects on mind wandering by both trait math anxiety (<span class="math inline">\beta = 0.419, p = 0.011</span>) and situational interest (<span class="math inline">\beta = 0.487, p = 0.020</span>).</p>
+<p>Girls did not have any direct effects on accuracy scores. Boys had significant negative direct effect on accuracy scores by trait math anxiety (<span class="math inline">\beta = -0.580, p = 0.040</span>).</p>
 </section>
-<section id="irvine-1" class="level5">
-<h5 class="anchored" data-anchor-id="irvine-1">Irvine</h5>
+<section id="irvine-1" class="level5" data-number="3.2.3.3">
+<h5 data-number="3.2.3.3" class="anchored" data-anchor-id="irvine-1"><span class="header-section-number">3.2.3.3</span> Irvine</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fit1_nwe_i <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_nwe_i, </span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
@@ -917,13 +980,16 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><img src="modeling5_files/figure-html/unnamed-chunk-19-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Girls did not have any direct effects on mind wandering. Boys had positive direct effect on mind wandering by trait math anxiety (<span class="math inline">\beta = 0.390, p = 0.0001</span>).</p>
+<p>Girls did not have any direct effects on accuracy scores. Boys had a negative direct effect on overall accuracy by trait math anxiety (<span class="math inline">\beta = -0.381, p = 0.003</span>).</p>
 </section>
 </section>
 </section>
-<section id="perceived-understanding" class="level3">
-<h3 class="anchored" data-anchor-id="perceived-understanding">Perceived Understanding</h3>
-<section id="model-definition-1" class="level4">
-<h4 class="anchored" data-anchor-id="model-definition-1">Model Definition</h4>
+<section id="perceived-understanding" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="perceived-understanding"><span class="header-section-number">3.3</span> Perceived Understanding</h3>
+<section id="model-definition-1" class="level4" data-number="3.3.1">
+<h4 data-number="3.3.1" class="anchored" data-anchor-id="model-definition-1"><span class="header-section-number">3.3.1</span> Model Definition</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model definition</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>m_und <span class="ot">&lt;-</span> <span class="st">'</span></span>
@@ -933,10 +999,10 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="worked-ex-group-1" class="level4">
-<h4 class="anchored" data-anchor-id="worked-ex-group-1">Worked EX Group</h4>
-<section id="full-sample-2" class="level5">
-<h5 class="anchored" data-anchor-id="full-sample-2">Full Sample</h5>
+<section id="worked-ex-group-1" class="level4" data-number="3.3.2">
+<h4 data-number="3.3.2" class="anchored" data-anchor-id="worked-ex-group-1"><span class="header-section-number">3.3.2</span> Worked EX Group</h4>
+<section id="full-sample-2" class="level5" data-number="3.3.2.1">
+<h5 data-number="3.3.2.1" class="anchored" data-anchor-id="full-sample-2"><span class="header-section-number">3.3.2.1</span> Full Sample</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>fit1_we <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_we, </span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
@@ -1047,9 +1113,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><img src="modeling5_files/figure-html/unnamed-chunk-22-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Girls had a positive direct effect on mind wandering by trait math anxiety (<span class="math inline">\beta = 0.597, p = 0.0001</span>). Boys did not have any significant direct effect on mind wandering.</p>
+<p>Girls did not have any direct effects on perceived understanding. Boys had a positive direct effect on perceived understanding by situational interest (<span class="math inline">\beta = 0.351, p = 0.001</span>).</p>
 </section>
-<section id="chicago-2" class="level5">
-<h5 class="anchored" data-anchor-id="chicago-2">Chicago</h5>
+<section id="chicago-2" class="level5" data-number="3.3.2.2">
+<h5 data-number="3.3.2.2" class="anchored" data-anchor-id="chicago-2"><span class="header-section-number">3.3.2.2</span> Chicago</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>fit1_we_c <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_we_c, </span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
@@ -1160,9 +1229,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><img src="modeling5_files/figure-html/unnamed-chunk-24-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Girls had a positive direct effect on mind wandering by trait math anxiety (<span class="math inline">\beta = 0.854, p = 0.001</span>). Boys did not have any direct effect on mind wandering.</p>
+<p>Girls did not have any direct effects on perceived understanding. Boys had a positive effect on perceived understanding by situational interest (<span class="math inline">\beta = 1.246, p = 0.008</span>).</p>
 </section>
-<section id="irvine-2" class="level5">
-<h5 class="anchored" data-anchor-id="irvine-2">Irvine</h5>
+<section id="irvine-2" class="level5" data-number="3.3.2.3">
+<h5 data-number="3.3.2.3" class="anchored" data-anchor-id="irvine-2"><span class="header-section-number">3.3.2.3</span> Irvine</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>fit1_we_i <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_we_i, </span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
@@ -1271,12 +1343,16 @@ fit3_we_i  7 449.83 477.57 3.2911    2.95845     0       5     0.7064</code></pr
 <p><img src="modeling5_files/figure-html/unnamed-chunk-26-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Girls did not have any direct effect on mind wandering. Boys had a positive direct effect on mind wandering by trait math anxiety (<span class="math inline">\beta = 0.338, p = 0.021</span>).</p>
+<p>Girls had a positive effect on perceived understanding by situational interest (<span class="math inline">\beta = 0.368, p = 0.001</span>). Boys had a positive effect on perceived understanding by situational interest (<span class="math inline">\beta = 0.387, p = 0.003</span>).</p>
+<p>Effects on perceived understanding by situational interest were somewhat the same for both girls and boys.</p>
 </section>
 </section>
-<section id="no-wokred-ex-group-1" class="level4">
-<h4 class="anchored" data-anchor-id="no-wokred-ex-group-1">No Wokred EX Group</h4>
-<section id="full-sample-3" class="level5">
-<h5 class="anchored" data-anchor-id="full-sample-3">Full Sample</h5>
+<section id="no-wokred-ex-group-1" class="level4" data-number="3.3.3">
+<h4 data-number="3.3.3" class="anchored" data-anchor-id="no-wokred-ex-group-1"><span class="header-section-number">3.3.3</span> No Wokred EX Group</h4>
+<section id="full-sample-3" class="level5" data-number="3.3.3.1">
+<h5 data-number="3.3.3.1" class="anchored" data-anchor-id="full-sample-3"><span class="header-section-number">3.3.3.1</span> Full Sample</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>fit1_nwe <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_nwe, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>fit2_nwe <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_nwe, <span class="at">group =</span> <span class="st">"Sex"</span>,</span>
@@ -1384,9 +1460,12 @@ fit3_nwe  7 605.34 635.04 4.6866     4.2329     0       5     0.5164</code></pre
 <p><img src="modeling5_files/figure-html/unnamed-chunk-28-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Girls had a positive direct effect on mind wandering by trait math anxiety (<span class="math inline">\beta = 0.375, p = 0.0001</span>). Boys had no direct effect on mind wandering.</p>
+<p>Girls did not have any direct effects on perceived understanding. Boys had a negative direct effect on perceived understanding by mind wandering (<span class="math inline">\beta = -0.342, p = 0.010</span>).</p>
 </section>
-<section id="chicago-3" class="level5">
-<h5 class="anchored" data-anchor-id="chicago-3">Chicago</h5>
+<section id="chicago-3" class="level5" data-number="3.3.3.2">
+<h5 data-number="3.3.3.2" class="anchored" data-anchor-id="chicago-3"><span class="header-section-number">3.3.3.2</span> Chicago</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>fit1_nwe_c <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_nwe_c, </span>
 <span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
@@ -1499,9 +1578,12 @@ fit3_nwe_c  7 150.63 164.03 9.1236     6.2038 0.13878       5     0.2869</code><
 <p><img src="modeling5_files/figure-html/unnamed-chunk-30-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p><strong>Results</strong></p>
+<p>Girls did not have any direct effect on mind wandering. Boys had positive effects on perceived understanding by both trait math anxiety (<span class="math inline">\beta = 0.419, p = 0.011</span>) and situational interest (<span class="math inline">\beta = 0.487, p = 0.020</span>).</p>
+<p>Girls did not have any direct effect on perceived understanding. Boys had a negative direct effect on perceived understanding by trait math anxiety (<span class="math inline">\beta = -0.580, p = 0.040</span>).</p>
 </section>
-<section id="irvine-3" class="level5">
-<h5 class="anchored" data-anchor-id="irvine-3">Irvine</h5>
+<section id="irvine-3" class="level5" data-number="3.3.3.3">
+<h5 data-number="3.3.3.3" class="anchored" data-anchor-id="irvine-3"><span class="header-section-number">3.3.3.3</span> Irvine</h5>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>fit1_nwe_i <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_nwe_i, </span>
 <span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
@@ -1612,6 +1694,32 @@ fit3_nwe_i  7 460.57 487.44 4.1713     3.7775     0       5     0.5819</code></p
 </div>
 <div class="cell-output-display">
 <p><img src="modeling5_files/figure-html/unnamed-chunk-32-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>Results</strong></p>
+<p>Girls had no direct effect on mind wandering. Boys had a positive direct effect on mind wandering by trait math anxiety (<span class="math inline">\beta = 0.390, p = 0.000</span>).</p>
+<p>Girls had no direct/indirect effect on perceived understanding. Boys had a negative direct effect on perceived understanding by trait math anxiety (<span class="math inline">\beta = -0.381, p = 0.003</span>).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit1_we)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         MW_avg~1                    MW_avg~TMA_avg 
+                           -0.019                             0.597 
+                    MW_avg~SI_avg                  Understand_avg~1 
+                            0.268                            -0.064 
+           Understand_avg~TMA_avg             Understand_avg~MW_avg 
+                           -0.043                            -0.129 
+            Understand_avg~SI_avg                    MW_avg~~MW_avg 
+                            0.184                             1.258 
+   Understand_avg~~Understand_avg                       MW_avg~1.g2 
+                            0.961                            -0.121 
+                MW_avg~TMA_avg.g2                  MW_avg~SI_avg.g2 
+                            0.033                             0.116 
+              Understand_avg~1.g2         Understand_avg~TMA_avg.g2 
+                            0.146                            -0.143 
+         Understand_avg~MW_avg.g2          Understand_avg~SI_avg.g2 
+                           -0.137                             0.351 
+                MW_avg~~MW_avg.g2 Understand_avg~~Understand_avg.g2 
+                            0.624                             0.576 </code></pre>
 </div>
 </div>
 </section>

@@ -1,7 +1,28 @@
 ---
 title: "Modeling 5"
-format: html
 editor: visual
+author: Emi Cervantes
+toc: true
+date: "9-13-2023"
+number-sections: true
+highlight-style: pygments
+format: 
+  html: 
+    code-fold: false
+    html-math-method: katex
+    fig-width: 7
+    fig-height: 4
+  pdf:
+    toc: true
+    number-sections: true
+    geometry:
+      - top=30mm
+      - left=20mm
+    fig-width: 7
+    fig-height: 4
+  docx: 
+    fig-width: 10
+    fig-height: 5
 ---
 
 **Modeling Procedures**
@@ -60,7 +81,7 @@ df_nwe_i <-  df_nwe %>% filter(chicago == 0)
 
 ## Model
 
-**Hypotheses**
+### Hypotheses
 
 $H1$: Trait math anxiety will have a direct positive effect on mind wandering and will have a direct negative effect on learning achievement 
 
@@ -120,6 +141,12 @@ semPaths(fit1_we,
          intercepts = FALSE)
 ```
 
+**Results**
+
+Trait math anxiety had a positive direct effect on mind wandering for girls ($\beta = 0.597, p < 0.0001$). Boys did not have any direct effect on mind wandering by any predictors.
+
+None of the predictors had any significant effects on students' overall accuracy scores for boys and girls.
+
 ##### Chicago
 
 ```{r}
@@ -147,6 +174,12 @@ semPaths(fit1_we_c,
          intercepts = FALSE)
 ```
 
+**Results**
+
+Trait math anxiety had a positive direct effect on mind wandering ($\beta = 0.847, p < 0.001$) for girls. On the other hand, for boys, neither trait math anxiety or situational interests had any direct effects on mind wandering.
+
+None of the predictors had any significant effects on girls' overall accuracy scores. For boys, trait math anxiety had negative direct effect on accuracy scores ($\beta = -2.090, p = 0.001$) and situational interest also had negative direct effects on accuracy scores. ($\beta = -2.226, p = 0.002$)
+
 ##### Irvine
 
 ```{r}
@@ -173,6 +206,12 @@ semPaths(fit1_we_c,
                         "TMA","SI"),
          intercepts = FALSE)
 ```
+
+**Results**
+
+Girls had no direct effects on mind wandering. For boys, trait math anxiety had positive direct effect ($\beta = 0.338, p = 0.021$) on mind wandering.
+
+Girls did not have any direct/indirect effects on accuracy scores. Boys had both positive effects by trait math anxiety ($\beta = 0.260, p = 0.052$) and situational interest ($\beta = 0.477, p = 0.0001$)
 
 #### No Wokred EX Group
 
@@ -202,6 +241,13 @@ semPaths(fit1_nwe,
          intercepts = FALSE)
 ```
 
+**Results**
+
+Girls had positive direct effect on mind wandering by trait math anxiety ($\beta = 0.375, p = 0.0001$). Boys did not have any direct effect on mind wandering.
+
+Girls had negative direct effect on accuracy scores by trait math anxiety ($\beta = -0.332, p = 0.029$). Boys had negative direct on accuracy scores by trait math anxiety ($\beta = -0.273, p = 0.044$).
+
+Girls had worst effect on trait math anxiety than boys.
 
 ##### Chicago
 
@@ -216,8 +262,6 @@ summary(fit1_nwe_c)
 lavTestLRT(fit1_nwe_c, fit2_nwe_c, fit3_nwe_c)
 ```
 
-Visualize Results:
-
 Visualization:
 
 ```{r}
@@ -231,6 +275,12 @@ semPaths(fit1_nwe_c,
                         "TMA","SI"),
          intercepts = FALSE)
 ```
+
+**Results**
+
+Girls did not have any direct effects on mind wandering. Boys had direct positive effects on mind wandering by both trait math anxiety ($\beta = 0.419, p = 0.011$) and situational interest ($\beta = 0.487, p = 0.020$). 
+
+Girls did not have any direct effects on accuracy scores. Boys had significant negative direct effect on accuracy scores by trait math anxiety ($\beta = -0.580, p = 0.040$).
 
 ##### Irvine
 
@@ -258,6 +308,12 @@ semPaths(fit1_nwe_i,
                         "TMA","SI"),
          intercepts = FALSE)
 ```
+
+**Results**
+
+Girls did not have any direct effects on mind wandering. Boys had positive direct effect on mind wandering by trait math anxiety ($\beta = 0.390, p = 0.0001$).
+
+Girls did not have any direct effects on accuracy scores. Boys had a negative direct effect on overall accuracy by trait math anxiety ($\beta = -0.381, p = 0.003$).
 
 ### Perceived Understanding
 
@@ -301,6 +357,12 @@ semPaths(fit1_we,
          intercepts = FALSE)
 ```
 
+**Results**
+
+Girls had a positive direct effect on mind wandering by trait math anxiety ($\beta = 0.597, p = 0.0001$). Boys did not have any significant direct effect on mind wandering.
+
+Girls did not have any direct effects on perceived understanding. Boys had a positive direct effect on perceived understanding by situational interest ($\beta = 0.351, p = 0.001$).
+
 ##### Chicago
 
 ```{r}
@@ -328,6 +390,11 @@ semPaths(fit1_we_c,
          intercepts = FALSE)
 ```
 
+**Results**
+
+Girls had a positive direct effect on mind wandering by trait math anxiety ($\beta = 0.854, p = 0.001$). Boys did not have any direct effect on mind wandering.
+
+Girls did not have any direct effects on perceived understanding. Boys had a positive effect on perceived understanding by situational interest ($\beta = 1.246, p = 0.008$).
 
 ##### Irvine
 
@@ -355,6 +422,14 @@ semPaths(fit1_we_i,
                         "TMA","SI"),
          intercepts = FALSE)
 ```
+
+**Results** 
+
+Girls did not have any direct effect on mind wandering. Boys had a positive direct effect on mind wandering by trait math anxiety ($\beta = 0.338, p = 0.021$).
+
+Girls had a positive effect on perceived understanding by situational interest ($\beta = 0.368, p = 0.001$). Boys had a positive effect on perceived understanding by situational interest ($\beta = 0.387, p = 0.003$).
+
+Effects on perceived understanding by situational interest were somewhat the same for both girls and boys.
 
 #### No Wokred EX Group
 
@@ -384,6 +459,12 @@ semPaths(fit1_nwe,
          intercepts = FALSE)
 ```
 
+**Results**
+
+Girls had a positive direct effect on mind wandering by trait math anxiety ($\beta = 0.375, p = 0.0001$). Boys had no direct effect on mind wandering.
+
+Girls did not have any direct effects on perceived understanding. Boys had a negative direct effect on perceived understanding by mind wandering ($\beta = -0.342, p = 0.010$).
+
 ##### Chicago
 
 ```{r}
@@ -411,6 +492,12 @@ semPaths(fit1_nwe_c,
          intercepts = FALSE)
 ```
 
+**Results**
+
+Girls did not have any direct effect on mind wandering. Boys had positive effects on perceived understanding by both trait math anxiety ($\beta = 0.419, p = 0.011$) and situational interest ($\beta = 0.487, p = 0.020$).
+
+Girls did not have any direct effect on perceived understanding. Boys had a negative direct effect on perceived understanding by trait math anxiety ($\beta = -0.580, p = 0.040$). 
+
 ##### Irvine
 
 ```{r}
@@ -437,4 +524,11 @@ semPaths(fit1_nwe_i,
                         "TMA","SI"),
          intercepts = FALSE)
 ```
+
+**Results**
+
+Girls had no direct effect on mind wandering. Boys had a positive direct effect on mind wandering by trait math anxiety ($\beta = 0.390, p = 0.000$).
+
+Girls had no direct/indirect effect on perceived understanding. Boys had a negative direct effect on perceived understanding by trait math anxiety ($\beta = -0.381, p = 0.003$).
+
 
