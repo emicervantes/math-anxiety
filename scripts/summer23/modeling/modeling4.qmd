@@ -227,6 +227,12 @@ for (i in 1:nrow(df3)){
 }
 ```
 
+```{r}
+# save dataset
+write.csv(df3, file = "../../../data/df_imputed.csv")
+```
+
+
 # Modeling
 
 We will be using structural equation model to do a multigroup confirmatory factor analysis (MGCFA). Confirmatory factor analysis (CFA) is a multivariate procedure that is used to test how well the measured variables represent the number of constructs.Moreover, it is used to test whether measures of construct are consistent with a researcher's understanding of the nature of that construct.
@@ -285,22 +291,20 @@ tma =~ TMA_1 + TMA_2 + TMA_3 + TMA_4 + TMA_5 + TMA_6
 si =~ SI_1 + SI_2 + SI_3 + SI_4 + SI_5 + SI_6 + SI_7 + SI_8 + SI_9 + SI_10 + SI_11 + SI_12 + SI_13 + SI_14
 mw =~ MW1_1 + MW1_2 + MW1_3 + MW1_4 + MW1_5 + MW1_6 + MW1_7
 # regressions
-si ~ 1 + tma
 mw ~ 1 + tma + si
 Del_OverallAcc ~ 1 + tma + mw
 '
 ```
 
-
 ## Worked EX Group
 
 ```{r}
 # fit the model (group by gender)
-fit1_we <- cfa(m, data = df_we, 
+fit1_we <- sem(m, data = df_we, 
             std.lv = T, group = "Sex")
-fit2_we <- cfa(m, data = df_we, group = "Sex",
+fit2_we <- sem(m, data = df_we, group = "Sex",
             group.equal = "loadings")
-fit3_we <- cfa(m, data = df_we, group = "Sex",
+fit3_we <- sem(m, data = df_we, group = "Sex",
             group.equal = c("intercepts", "loadings"))
 # display summary
 summary(fit1_we, fit.measures = T, standardized = T)
@@ -314,11 +318,11 @@ lavTestLRT(fit1_we, fit2_we, fit3_we)
 
 ```{r}
 # fit the model (group by gender)
-fit1_nwe <- cfa(m, data = df_nwe, 
+fit1_nwe <- sem(m, data = df_nwe, 
             std.lv = T, group = "Sex")
-fit2_nwe <- cfa(m, data = df_nwe, group = "Sex",
+fit2_nwe <- sem(m, data = df_nwe, group = "Sex",
             group.equal = "loadings")
-fit3_nwe <- cfa(m, data = df_nwe, group = "Sex",
+fit3_nwe <- sem(m, data = df_nwe, group = "Sex",
             group.equal = c("intercepts", "loadings"))
 # display summary
 summary(fit1_nwe, fit.measures = T, standardized = T)
@@ -336,7 +340,6 @@ We will be running the same analysis, but to both Chicago and Irvine as we saw f
 # split data to Chicago, Irvine
 # worked ex data
 ## Chicago
-df_we$chicago <- as.factor(df_we$chicago)
 df_we_c = df_we %>% filter(chicago == 1)
 ## Irvine
 df_we_i = df_we %>% filter(chicago == 0)
@@ -353,11 +356,10 @@ df_nwe_i = df_nwe %>% filter(chicago == 0)
 
 ```{r}
 # fit the model (group by gender)
-fit1_we_c <- cfa(m, data = df_we_c, 
-            std.lv = T, group = "Sex")
-fit2_we_c <- cfa(m, data = df_we_c, group = "Sex",
+fit1_we_c <- sem(m, data = df_we_c, group = "Sex")
+fit2_we_c <- sem(m, data = df_we_c, group = "Sex",
             group.equal = "loadings")
-fit3_we_c <- cfa(m, data = df_we_c, group = "Sex",
+fit3_we_c <- sem(m, data = df_we_c, group = "Sex",
             group.equal = c("intercepts", "loadings"))
 # display summary
 summary(fit1_we_c, fit.measures = T, standardized = T)
@@ -366,15 +368,16 @@ summary(fit3_we_c, fit.measures = T, standardized = T)
 # invariance check
 lavTestLRT(fit1_we_c, fit2_we_c, fit3_we_c)
 ```
+
 #### Irvine
 
 ```{r}
 # fit the model (group by gender)
-fit1_we_i <- cfa(m, data = df_we_i, 
+fit1_we_i <- sem(m, data = df_we_i, 
             std.lv = T, group = "Sex")
-fit2_we_i <- cfa(m, data = df_we_i, group = "Sex",
+fit2_we_i <- sem(m, data = df_we_i, group = "Sex",
             group.equal = "loadings")
-fit3_we_i <- cfa(m, data = df_we_i, group = "Sex",
+fit3_we_i <- sem(m, data = df_we_i, group = "Sex",
             group.equal = c("intercepts", "loadings"))
 # display summary
 summary(fit1_we_i, fit.measures = T, standardized = T)
@@ -390,11 +393,11 @@ lavTestLRT(fit1_we_i, fit2_we_i, fit3_we_i)
 
 ```{r}
 # fit the model (group by gender)
-fit1_nwe_c <- cfa(m, data = df_nwe_c, 
+fit1_nwe_c <- sem(m, data = df_nwe_c, 
             std.lv = T, group = "Sex")
-fit2_nwe_c <- cfa(m, data = df_nwe_c, group = "Sex",
+fit2_nwe_c <- sem(m, data = df_nwe_c, group = "Sex",
             group.equal = "loadings")
-fit3_nwe_c <- cfa(m, data = df_nwe_c, group = "Sex",
+fit3_nwe_c <- sem(m, data = df_nwe_c, group = "Sex",
             group.equal = c("intercepts", "loadings"))
 # display summary
 summary(fit1_nwe_c, fit.measures = T, standardized = T)
@@ -408,11 +411,12 @@ lavTestLRT(fit1_nwe_c, fit2_nwe_c, fit3_nwe_c)
 
 ```{r}
 # fit the model (group by gender)
-fit1_nwe_i <- cfa(m, data = df_nwe_i, 
+fit1_nwe_i <- sem(m, data = df_nwe_i, 
             std.lv = T, group = "Sex")
-fit2_nwe_i <- cfa(m, data = df_nwe_i, group = "Sex",
+fit2_nwe_i <- sem(m, data = df_nwe_i, 
+            std.lv = T, group = "Sex",
             group.equal = "loadings")
-fit3_nwe_i <- cfa(m, data = df_nwe_i, group = "Sex",
+fit3_nwe_i <- sem(m, data = df_nwe_i, group = "Sex",
             group.equal = c("intercepts", "loadings"))
 # display summary
 summary(fit1_nwe_i, fit.measures = T, standardized = T)
@@ -421,4 +425,3 @@ summary(fit3_nwe_i, fit.measures = T, standardized = T)
 # invariance check
 lavTestLRT(fit1_nwe_i, fit2_nwe_i, fit3_nwe_i)
 ```
-

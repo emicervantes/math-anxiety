@@ -1,0 +1,440 @@
+---
+title: "Modeling 5"
+format: html
+editor: visual
+---
+
+**Modeling Procedures**
+
+1) Fulfill the requirements to perform a path analysis: assumptions regarding sample size, multivariate normal distribution, and multicollinearity
+
+## Load Libraries
+
+```{r}
+library(tidyverse)
+library(lavaan)
+library(semPlot)
+```
+
+
+## Load Data
+
+```{r}
+df <- read_csv("../../../data/df_imputed.csv")
+head(df)
+```
+
+### Data Clearning
+
+We need to add average for situational interest and mind wandering
+
+```{r}
+# average for situational interest and mind wandering
+df <- df %>% mutate(SI_avg = rowMeans(df[12:25], na.rm=TRUE),
+              MW_avg = rowMeans(df[26:32], na.rm=TRUE))
+head(df[41:42])
+```
+
+```{r}
+# Standardize data
+df2 <- df %>% select(Sex, Condition, chicago,
+                           TMA_avg, SI_avg, MW_avg, Del_OverallAcc, Understand_avg)
+df2[4:8] <- df2[4:8] %>% mutate_all(~(scale(.) %>% as.vector))
+```
+
+
+```{r}
+# subgroup data
+df_we <-  df2 %>% filter(Condition == 1)
+# chicago
+df_we_c <-  df_we %>% filter(chicago == 1)
+df_we_i <-  df_we %>% filter(chicago == 0)
+# irvine
+df_nwe <-  df2 %>% filter(Condition == 0)
+# chicago
+df_nwe_c <-  df_nwe %>% filter(chicago == 1)
+# irvine
+df_nwe_i <-  df_nwe %>% filter(chicago == 0)
+```
+
+
+## Model
+
+**Hypotheses**
+
+$H1$: Trait math anxiety will have a direct positive effect on mind wandering and will have a direct negative effect on learning achievement 
+
+$H2$: Situational interest will have a direct positive effect on mind wandering, and will have a direct positive effect on learning achievement
+
+$H3$: Mind wandering has a direct negative effect on learning achievement
+
+$H4$: Trait math anxiety will have an indirect negative effect on learning achievement
+
+$H5$: Situational interest will have an indirect positive effect on learning achievement
+
+
+```{r}
+# covariance table
+df2[4:8] %>% cov(use = "complete.obs")
+```
+
+### Overall Accuracy Scores
+
+#### Model Definition
+
+```{r}
+# model definition
+m_acc <- '
+# regressions
+MW_avg ~ 1 + TMA_avg + SI_avg
+Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg
+'
+```
+
+#### Worked EX Group
+
+##### Full Sample
+
+```{r}
+fit1_we <- sem(m_acc, data = df_we, 
+            std.lv = T, group = "Sex")
+fit2_we <- sem(m_acc, data = df_we, group = "Sex",
+            group.equal = "intercepts")
+fit3_we <- sem(m_acc, data = df_we, group = "Sex",
+            group.equal = c("intercepts", "regressions"))
+summary(fit1_we)
+lavTestLRT(fit1_we, fit2_we, fit3_we)
+```
+
+Visualization:
+
+```{r}
+semPaths(fit1_we,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Accuracy",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+##### Chicago
+
+```{r}
+fit1_we_c <- sem(m_acc, data = df_we_c, 
+            std.lv = T, group = "Sex")
+fit2_we_c <- sem(m_acc, data = df_we_c, group = "Sex",
+            group.equal = "intercepts")
+fit3_we_c <- sem(m_acc, data = df_we_c, group = "Sex",
+            group.equal = c("intercepts", "regressions"))
+summary(fit1_we_c)
+lavTestLRT(fit1_we_c, fit2_we_c, fit3_we_c)
+```
+
+Visualization:
+
+```{r}
+semPaths(fit1_we_c,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Accuracy",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+##### Irvine
+
+```{r}
+fit1_we_i <- sem(m_acc, data = df_we_i, 
+            std.lv = T, group = "Sex")
+fit2_we_i <- sem(m_acc, data = df_we_i, group = "Sex",
+            group.equal = "intercepts")
+fit3_we_i <- sem(m_acc, data = df_we_i, group = "Sex",
+            group.equal = c("intercepts", "regressions"))
+summary(fit1_we_i)
+lavTestLRT(fit1_we_i, fit2_we_i, fit3_we_i)
+```
+
+Visualization:
+
+```{r}
+semPaths(fit1_we_c,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Accuracy",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+#### No Wokred EX Group
+
+##### Full Sample
+
+```{r}
+fit1_nwe <- sem(m_acc, data = df_nwe, group = "Sex")
+fit2_nwe <- sem(m_acc, data = df_nwe, group = "Sex",
+                group.equal = "intercepts")
+fit3_nwe <- sem(m_acc, data = df_nwe, group = "Sex",
+                group.equal = c("intercepts", "regressions"))
+summary(fit1_nwe)
+lavTestLRT(fit1_nwe, fit2_nwe, fit3_nwe)
+```
+
+Visualization:
+
+```{r}
+semPaths(fit1_nwe,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Accuracy",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+
+##### Chicago
+
+```{r}
+fit1_nwe_c <- sem(m_acc, data = df_nwe_c, 
+            std.lv = T, group = "Sex")
+fit2_nwe_c <- sem(m_acc, data = df_nwe_c, group = "Sex",
+            group.equal = "intercepts")
+fit3_nwe_c <- sem(m_acc, data = df_nwe_c, group = "Sex",
+            group.equal = c("intercepts", "regressions"))
+summary(fit1_nwe_c)
+lavTestLRT(fit1_nwe_c, fit2_nwe_c, fit3_nwe_c)
+```
+
+Visualize Results:
+
+Visualization:
+
+```{r}
+semPaths(fit1_nwe_c,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Accuracy",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+##### Irvine
+
+```{r}
+fit1_nwe_i <- sem(m_acc, data = df_nwe_i, 
+            std.lv = T, group = "Sex")
+fit2_nwe_i <- sem(m_acc, data = df_nwe_i, group = "Sex",
+            group.equal = "intercepts")
+fit3_nwe_i <- sem(m_acc, data = df_nwe_i, group = "Sex",
+            group.equal = c("intercepts", "regressions"))
+summary(fit1_nwe_i)
+lavTestLRT(fit1_nwe_i, fit2_nwe_i, fit3_nwe_i)
+```
+
+Visualizations:
+
+```{r}
+semPaths(fit1_nwe_i,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Accuracy",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+### Perceived Understanding
+
+#### Model Definition
+
+```{r}
+# model definition
+m_und <- '
+# regressions
+MW_avg ~ 1 + TMA_avg + SI_avg
+Understand_avg ~ 1 + TMA_avg + MW_avg + SI_avg
+'
+```
+
+#### Worked EX Group
+
+##### Full Sample
+
+```{r}
+fit1_we <- sem(m_und, data = df_we, 
+            std.lv = T, group = "Sex")
+fit2_we <- sem(m_und, data = df_we, group = "Sex",
+            group.equal = "intercepts")
+fit3_we <- sem(m_und, data = df_we, group = "Sex",
+            group.equal = c("intercepts", "regressions"))
+summary(fit1_we)
+lavTestLRT(fit1_we, fit2_we, fit3_we)
+```
+
+Visualization:
+
+```{r}
+semPaths(fit1_we,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Understanding",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+##### Chicago
+
+```{r}
+fit1_we_c <- sem(m_und, data = df_we_c, 
+            std.lv = T, group = "Sex")
+fit2_we_c <- sem(m_und, data = df_we_c, group = "Sex",
+            group.equal = "intercepts")
+fit3_we_c <- sem(m_und, data = df_we_c, group = "Sex",
+            group.equal = c("intercepts", "regressions"))
+summary(fit1_we_c)
+lavTestLRT(fit1_we_c, fit2_we_c, fit3_we_c)
+```
+
+Visualizations:
+
+```{r}
+semPaths(fit1_we_c,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Understanding",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+
+##### Irvine
+
+```{r}
+fit1_we_i <- sem(m_und, data = df_we_i, 
+            std.lv = T, group = "Sex")
+fit2_we_i <- sem(m_und, data = df_we_i, group = "Sex",
+            group.equal = "intercepts")
+fit3_we_i <- sem(m_und, data = df_we_i, group = "Sex",
+            group.equal = c("intercepts", "regressions"))
+summary(fit1_we_i)
+lavTestLRT(fit1_we_i, fit2_we_i, fit3_we_i)
+```
+
+Visualizations:
+
+```{r}
+semPaths(fit1_we_i,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Understanding",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+#### No Wokred EX Group
+
+##### Full Sample
+
+```{r}
+fit1_nwe <- sem(m_und, data = df_nwe, group = "Sex")
+fit2_nwe <- sem(m_und, data = df_nwe, group = "Sex",
+                group.equal = "intercepts")
+fit3_nwe <- sem(m_und, data = df_nwe, group = "Sex",
+                group.equal = c("intercepts", "regressions"))
+summary(fit1_nwe)
+lavTestLRT(fit1_nwe, fit2_nwe, fit3_nwe)
+```
+
+Visualizations:
+
+```{r}
+semPaths(fit1_nwe,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Understanding",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+##### Chicago
+
+```{r}
+fit1_nwe_c <- sem(m_acc, data = df_nwe_c, 
+            std.lv = T, group = "Sex")
+fit2_nwe_c <- sem(m_und, data = df_nwe_c, group = "Sex",
+            group.equal = "intercepts")
+fit3_nwe_c <- sem(m_und, data = df_nwe_c, group = "Sex",
+            group.equal = c("intercepts", "regressions"))
+summary(fit1_nwe_c)
+lavTestLRT(fit1_nwe_c, fit2_nwe_c, fit3_nwe_c)
+```
+
+Visualizations:
+
+```{r}
+semPaths(fit1_nwe_c,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Understanding",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
+##### Irvine
+
+```{r}
+fit1_nwe_i <- sem(m_acc, data = df_nwe_i, 
+            std.lv = T, group = "Sex")
+fit2_nwe_i <- sem(m_und, data = df_nwe_i, group = "Sex",
+            group.equal = "intercepts")
+fit3_nwe_i <- sem(m_und, data = df_nwe_i, group = "Sex",
+            group.equal = c("intercepts", "regressions"))
+summary(fit1_nwe_i)
+lavTestLRT(fit1_nwe_i, fit2_nwe_i, fit3_nwe_i)
+```
+
+Visualizations:
+
+```{r}
+semPaths(fit1_nwe_i,
+         whatLabels = "est",
+         sizeMan = 10,
+         edge.label.cex = 1.15,
+         style = "ram",
+         nCharNodes = 0, nCharEdges = 0,
+         nodeLabels = c("MW", "Understanding",
+                        "TMA","SI"),
+         intercepts = FALSE)
+```
+
