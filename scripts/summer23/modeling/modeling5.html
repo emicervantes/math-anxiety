@@ -1467,7 +1467,7 @@ fit3_nwe  7 605.34 635.04 4.6866     4.2329     0       5     0.5164</code></pre
 <section id="chicago-3" class="level5" data-number="3.3.3.2">
 <h5 data-number="3.3.3.2" class="anchored" data-anchor-id="chicago-3"><span class="header-section-number">3.3.3.2</span> Chicago</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>fit1_nwe_c <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_nwe_c, </span>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>fit1_nwe_c <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_nwe_c, </span>
 <span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
 <span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>fit2_nwe_c <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_nwe_c, <span class="at">group =</span> <span class="st">"Sex"</span>,</span>
 <span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">group.equal =</span> <span class="st">"intercepts"</span>)</span>
@@ -1507,20 +1507,20 @@ Regressions:
   MW_avg ~                                            
     TMA_avg           0.190    0.489    0.389    0.697
     SI_avg           -0.231    0.252   -0.916    0.360
-  Del_OverallAcc ~                                    
-    TMA_avg          -0.562    0.456   -1.232    0.218
-    MW_avg            0.021    0.248    0.084    0.933
-    SI_avg           -0.224    0.241   -0.929    0.353
+  Understand_avg ~                                    
+    TMA_avg          -0.804    0.586   -1.372    0.170
+    MW_avg            0.226    0.319    0.708    0.479
+    SI_avg           -0.220    0.309   -0.711    0.477
 
 Intercepts:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
    .MW_avg           -0.013    0.263   -0.049    0.961
-   .Del_OverallAcc   -1.264    0.245   -5.166    0.000
+   .Understand_avg   -0.722    0.314   -2.300    0.021
 
 Variances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
    .MW_avg            0.726    0.274    2.646    0.008
-   .Del_OverallAcc    0.626    0.237    2.646    0.008
+   .Understand_avg    1.031    0.390    2.646    0.008
 
 
 Group 2 [0]:
@@ -1530,47 +1530,43 @@ Regressions:
   MW_avg ~                                            
     TMA_avg           0.419    0.164    2.552    0.011
     SI_avg            0.487    0.209    2.325    0.020
-  Del_OverallAcc ~                                    
-    TMA_avg          -0.580    0.283   -2.049    0.040
-    MW_avg            0.261    0.413    0.633    0.527
-    SI_avg           -0.410    0.350   -1.171    0.241
+  Understand_avg ~                                    
+    TMA_avg          -0.110    0.327   -0.336    0.737
+    MW_avg           -0.249    0.476   -0.522    0.601
+    SI_avg            0.281    0.404    0.696    0.487
 
 Intercepts:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
    .MW_avg           -0.198    0.158   -1.248    0.212
-   .Del_OverallAcc   -0.345    0.231   -1.488    0.137
+   .Understand_avg   -0.045    0.267   -0.170    0.865
 
 Variances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
    .MW_avg            0.275    0.117    2.345    0.019
-   .Del_OverallAcc    0.516    0.220    2.345    0.019</code></pre>
+   .Understand_avg    0.686    0.293    2.345    0.019</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lavTestLRT</span>(fit1_nwe_c, fit2_nwe_c, fit3_nwe_c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in lavTestLRT(fit1_nwe_c, fit2_nwe_c, fit3_nwe_c): lavaan WARNING: some
-models are based on a different set of observed variables</code></pre>
-</div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Chi-Squared Difference Test
 
            Df    AIC    BIC  Chisq Chisq diff   RMSEA Df diff Pr(&gt;Chisq)
-fit1_nwe_c  0 145.38 167.32 0.0000                                      
+fit1_nwe_c  0 155.50 177.44 0.0000                                      
 fit2_nwe_c  2 154.42 173.93 2.9198     2.9198 0.19182       2     0.2323
 fit3_nwe_c  7 150.63 164.03 9.1236     6.2038 0.13878       5     0.2869</code></pre>
 </div>
 </div>
 <p>Visualizations:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">semPaths</span>(fit1_nwe_c,</span>
-<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">whatLabels =</span> <span class="st">"est"</span>,</span>
-<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">sizeMan =</span> <span class="dv">10</span>,</span>
-<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">edge.label.cex =</span> <span class="fl">1.15</span>,</span>
-<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">style =</span> <span class="st">"ram"</span>,</span>
-<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">nCharNodes =</span> <span class="dv">0</span>, <span class="at">nCharEdges =</span> <span class="dv">0</span>,</span>
-<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">nodeLabels =</span> <span class="fu">c</span>(<span class="st">"MW"</span>, <span class="st">"Understanding"</span>,</span>
-<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"TMA"</span>,<span class="st">"SI"</span>),</span>
-<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">intercepts =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">semPaths</span>(fit1_nwe_c,</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">whatLabels =</span> <span class="st">"est"</span>,</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">sizeMan =</span> <span class="dv">10</span>,</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">edge.label.cex =</span> <span class="fl">1.15</span>,</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">style =</span> <span class="st">"ram"</span>,</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">nCharNodes =</span> <span class="dv">0</span>, <span class="at">nCharEdges =</span> <span class="dv">0</span>,</span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">nodeLabels =</span> <span class="fu">c</span>(<span class="st">"MW"</span>, <span class="st">"Understanding"</span>,</span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"TMA"</span>,<span class="st">"SI"</span>),</span>
+<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">intercepts =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="modeling5_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -1585,13 +1581,13 @@ fit3_nwe_c  7 150.63 164.03 9.1236     6.2038 0.13878       5     0.2869</code><
 <section id="irvine-3" class="level5" data-number="3.3.3.3">
 <h5 data-number="3.3.3.3" class="anchored" data-anchor-id="irvine-3"><span class="header-section-number">3.3.3.3</span> Irvine</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>fit1_nwe_i <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_nwe_i, </span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
-<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>fit2_nwe_i <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_nwe_i, <span class="at">group =</span> <span class="st">"Sex"</span>,</span>
-<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">group.equal =</span> <span class="st">"intercepts"</span>)</span>
-<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>fit3_nwe_i <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_nwe_i, <span class="at">group =</span> <span class="st">"Sex"</span>,</span>
-<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">group.equal =</span> <span class="fu">c</span>(<span class="st">"intercepts"</span>, <span class="st">"regressions"</span>))</span>
-<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit1_nwe_i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>fit1_nwe_i <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_nwe_i, </span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Sex"</span>)</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>fit2_nwe_i <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_nwe_i, <span class="at">group =</span> <span class="st">"Sex"</span>,</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">group.equal =</span> <span class="st">"intercepts"</span>)</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>fit3_nwe_i <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_nwe_i, <span class="at">group =</span> <span class="st">"Sex"</span>,</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">group.equal =</span> <span class="fu">c</span>(<span class="st">"intercepts"</span>, <span class="st">"regressions"</span>))</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit1_nwe_i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>lavaan 0.6.16 ended normally after 1 iteration
 
@@ -1625,20 +1621,20 @@ Regressions:
   MW_avg ~                                            
     TMA_avg           0.096    0.192    0.502    0.616
     SI_avg           -0.166    0.174   -0.952    0.341
-  Del_OverallAcc ~                                    
-    TMA_avg          -0.189    0.157   -1.204    0.228
-    MW_avg           -0.253    0.139   -1.815    0.070
-    SI_avg           -0.205    0.144   -1.425    0.154
+  Understand_avg ~                                    
+    TMA_avg           0.011    0.161    0.065    0.948
+    MW_avg           -0.364    0.143   -2.540    0.011
+    SI_avg            0.223    0.148    1.510    0.131
 
 Intercepts:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
    .MW_avg            0.038    0.182    0.211    0.833
-   .Del_OverallAcc    0.180    0.148    1.213    0.225
+   .Understand_avg    0.054    0.152    0.355    0.723
 
 Variances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
    .MW_avg            1.063    0.258    4.123    0.000
-   .Del_OverallAcc    0.703    0.171    4.123    0.000
+   .Understand_avg    0.742    0.180    4.123    0.000
 
 
 Group 2 [1]:
@@ -1648,47 +1644,43 @@ Regressions:
   MW_avg ~                                            
     TMA_avg           0.390    0.104    3.770    0.000
     SI_avg            0.062    0.114    0.543    0.587
-  Del_OverallAcc ~                                    
-    TMA_avg          -0.381    0.129   -2.945    0.003
-    MW_avg            0.082    0.155    0.531    0.595
-    SI_avg            0.204    0.126    1.622    0.105
+  Understand_avg ~                                    
+    TMA_avg          -0.209    0.142   -1.475    0.140
+    MW_avg           -0.263    0.170   -1.551    0.121
+    SI_avg            0.308    0.138    2.231    0.026
 
 Intercepts:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
    .MW_avg            0.115    0.106    1.079    0.281
-   .Del_OverallAcc    0.304    0.119    2.562    0.010
+   .Understand_avg    0.157    0.130    1.202    0.230
 
 Variances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
    .MW_avg            0.558    0.110    5.050    0.000
-   .Del_OverallAcc    0.680    0.135    5.050    0.000</code></pre>
+   .Understand_avg    0.819    0.162    5.050    0.000</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lavTestLRT</span>(fit1_nwe_i, fit2_nwe_i, fit3_nwe_i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in lavTestLRT(fit1_nwe_i, fit2_nwe_i, fit3_nwe_i): lavaan WARNING: some
-models are based on a different set of observed variables</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lavTestLRT</span>(fit1_nwe_i, fit2_nwe_i, fit3_nwe_i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Chi-Squared Difference Test
 
            Df    AIC    BIC  Chisq Chisq diff RMSEA Df diff Pr(&gt;Chisq)
-fit1_nwe_i  0 459.13 503.09 0.0000                                    
+fit1_nwe_i  0 470.40 514.36 0.0000                                    
 fit2_nwe_i  2 466.79 505.87 0.3939     0.3939     0       2     0.8212
 fit3_nwe_i  7 460.57 487.44 4.1713     3.7775     0       5     0.5819</code></pre>
 </div>
 </div>
 <p>Visualizations:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">semPaths</span>(fit1_nwe_i,</span>
-<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">whatLabels =</span> <span class="st">"est"</span>,</span>
-<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">sizeMan =</span> <span class="dv">10</span>,</span>
-<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">edge.label.cex =</span> <span class="fl">1.15</span>,</span>
-<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">style =</span> <span class="st">"ram"</span>,</span>
-<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">nCharNodes =</span> <span class="dv">0</span>, <span class="at">nCharEdges =</span> <span class="dv">0</span>,</span>
-<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">nodeLabels =</span> <span class="fu">c</span>(<span class="st">"MW"</span>, <span class="st">"Understanding"</span>,</span>
-<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"TMA"</span>,<span class="st">"SI"</span>),</span>
-<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">intercepts =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">semPaths</span>(fit1_nwe_i,</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">whatLabels =</span> <span class="st">"est"</span>,</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">sizeMan =</span> <span class="dv">10</span>,</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">edge.label.cex =</span> <span class="fl">1.15</span>,</span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">style =</span> <span class="st">"ram"</span>,</span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">nCharNodes =</span> <span class="dv">0</span>, <span class="at">nCharEdges =</span> <span class="dv">0</span>,</span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">nodeLabels =</span> <span class="fu">c</span>(<span class="st">"MW"</span>, <span class="st">"Understanding"</span>,</span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"TMA"</span>,<span class="st">"SI"</span>),</span>
+<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">intercepts =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="modeling5_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -1699,29 +1691,6 @@ fit3_nwe_i  7 460.57 487.44 4.1713     3.7775     0       5     0.5819</code></p
 <p><strong>Results</strong></p>
 <p>Girls had no direct effect on mind wandering. Boys had a positive direct effect on mind wandering by trait math anxiety (<span class="math inline">\beta = 0.390, p = 0.000</span>).</p>
 <p>Girls had no direct/indirect effect on perceived understanding. Boys had a negative direct effect on perceived understanding by trait math anxiety (<span class="math inline">\beta = -0.381, p = 0.003</span>).</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit1_we)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                         MW_avg~1                    MW_avg~TMA_avg 
-                           -0.019                             0.597 
-                    MW_avg~SI_avg                  Understand_avg~1 
-                            0.268                            -0.064 
-           Understand_avg~TMA_avg             Understand_avg~MW_avg 
-                           -0.043                            -0.129 
-            Understand_avg~SI_avg                    MW_avg~~MW_avg 
-                            0.184                             1.258 
-   Understand_avg~~Understand_avg                       MW_avg~1.g2 
-                            0.961                            -0.121 
-                MW_avg~TMA_avg.g2                  MW_avg~SI_avg.g2 
-                            0.033                             0.116 
-              Understand_avg~1.g2         Understand_avg~TMA_avg.g2 
-                            0.146                            -0.143 
-         Understand_avg~MW_avg.g2          Understand_avg~SI_avg.g2 
-                           -0.137                             0.351 
-                MW_avg~~MW_avg.g2 Understand_avg~~Understand_avg.g2 
-                            0.624                             0.576 </code></pre>
-</div>
-</div>
 </section>
 </section>
 </section>

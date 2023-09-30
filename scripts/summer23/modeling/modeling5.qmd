@@ -27,7 +27,7 @@ format:
 
 **Modeling Procedures**
 
-1) Fulfill the requirements to perform a path analysis: assumptions regarding sample size, multivariate normal distribution, and multicollinearity
+1)  Fulfill the requirements to perform a path analysis: assumptions regarding sample size, multivariate normal distribution, and multicollinearity
 
 ## Load Libraries
 
@@ -36,7 +36,6 @@ library(tidyverse)
 library(lavaan)
 library(semPlot)
 ```
-
 
 ## Load Data
 
@@ -63,7 +62,6 @@ df2 <- df %>% select(Sex, Condition, chicago,
 df2[4:8] <- df2[4:8] %>% mutate_all(~(scale(.) %>% as.vector))
 ```
 
-
 ```{r}
 # subgroup data
 df_we <-  df2 %>% filter(Condition == 1)
@@ -78,12 +76,11 @@ df_nwe_c <-  df_nwe %>% filter(chicago == 1)
 df_nwe_i <-  df_nwe %>% filter(chicago == 0)
 ```
 
-
 ## Model
 
 ### Hypotheses
 
-$H1$: Trait math anxiety will have a direct positive effect on mind wandering and will have a direct negative effect on learning achievement 
+$H1$: Trait math anxiety will have a direct positive effect on mind wandering and will have a direct negative effect on learning achievement
 
 $H2$: Situational interest will have a direct positive effect on mind wandering, and will have a direct positive effect on learning achievement
 
@@ -92,7 +89,6 @@ $H3$: Mind wandering has a direct negative effect on learning achievement
 $H4$: Trait math anxiety will have an indirect negative effect on learning achievement
 
 $H5$: Situational interest will have an indirect positive effect on learning achievement
-
 
 ```{r}
 # covariance table
@@ -278,7 +274,7 @@ semPaths(fit1_nwe_c,
 
 **Results**
 
-Girls did not have any direct effects on mind wandering. Boys had direct positive effects on mind wandering by both trait math anxiety ($\beta = 0.419, p = 0.011$) and situational interest ($\beta = 0.487, p = 0.020$). 
+Girls did not have any direct effects on mind wandering. Boys had direct positive effects on mind wandering by both trait math anxiety ($\beta = 0.419, p = 0.011$) and situational interest ($\beta = 0.487, p = 0.020$).
 
 Girls did not have any direct effects on accuracy scores. Boys had significant negative direct effect on accuracy scores by trait math anxiety ($\beta = -0.580, p = 0.040$).
 
@@ -423,7 +419,7 @@ semPaths(fit1_we_i,
          intercepts = FALSE)
 ```
 
-**Results** 
+**Results**
 
 Girls did not have any direct effect on mind wandering. Boys had a positive direct effect on mind wandering by trait math anxiety ($\beta = 0.338, p = 0.021$).
 
@@ -468,7 +464,7 @@ Girls did not have any direct effects on perceived understanding. Boys had a neg
 ##### Chicago
 
 ```{r}
-fit1_nwe_c <- sem(m_acc, data = df_nwe_c, 
+fit1_nwe_c <- sem(m_und, data = df_nwe_c, 
             std.lv = T, group = "Sex")
 fit2_nwe_c <- sem(m_und, data = df_nwe_c, group = "Sex",
             group.equal = "intercepts")
@@ -496,12 +492,12 @@ semPaths(fit1_nwe_c,
 
 Girls did not have any direct effect on mind wandering. Boys had positive effects on perceived understanding by both trait math anxiety ($\beta = 0.419, p = 0.011$) and situational interest ($\beta = 0.487, p = 0.020$).
 
-Girls did not have any direct effect on perceived understanding. Boys had a negative direct effect on perceived understanding by trait math anxiety ($\beta = -0.580, p = 0.040$). 
+Girls did not have any direct effect on perceived understanding. Boys had a negative direct effect on perceived understanding by trait math anxiety ($\beta = -0.580, p = 0.040$).
 
 ##### Irvine
 
 ```{r}
-fit1_nwe_i <- sem(m_acc, data = df_nwe_i, 
+fit1_nwe_i <- sem(m_und, data = df_nwe_i, 
             std.lv = T, group = "Sex")
 fit2_nwe_i <- sem(m_und, data = df_nwe_i, group = "Sex",
             group.equal = "intercepts")
@@ -530,5 +526,3 @@ semPaths(fit1_nwe_i,
 Girls had no direct effect on mind wandering. Boys had a positive direct effect on mind wandering by trait math anxiety ($\beta = 0.390, p = 0.000$).
 
 Girls had no direct/indirect effect on perceived understanding. Boys had a negative direct effect on perceived understanding by trait math anxiety ($\beta = -0.381, p = 0.003$).
-
-
