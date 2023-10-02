@@ -116,12 +116,68 @@ fit_und2 <- sem(m_und, data = df2, std.lv = T, group = "Condition")
 summary(fit_und2)
 ```
 
+## Modeling w/ Imputed Data
 
+### Load Dataset
 
+```{r}
+df_imput <- read_csv("../../../data/df_imputed.csv")
+head(df_imput)
+```
 
+Clean Data
 
+```{r}
+# average for situational interest and mind wandering
+df_imput <- df_imput %>% 
+  mutate(SI_avg = rowMeans(df_imput[12:25], na.rm=TRUE),
+              MW_avg = rowMeans(df_imput[26:32], na.rm=TRUE))
+head(df_imput[41:42])
+```
 
+```{r}
+# Standardize data
+df_imput <- df_imput %>% select(Sex, Condition, chicago,
+                           TMA_avg, SI_avg, MW_avg, Del_OverallAcc, Understand_avg)
+df_imput[4:8] <- df_imput[4:8] %>% mutate_all(~(scale(.) %>% as.vector))
+```
 
+### Modeling
 
+#### Overall Accuracy
 
+**Implement model**
 
+Fitting the model to entire dataset:
+
+```{r}
+fit_acc1_2 <- sem(m_acc, data = df_imput, std.lv = T)
+summary(fit_acc1_2)
+```
+
+Multigroup analysis with condition:
+
+```{r}
+fit_acc2_2 <- sem(m_acc, data = df_imput, std.lv = T, 
+                  group = "Condition")
+summary(fit_acc2_2)
+```
+
+#### Perceived Understanding
+
+**Implement model**
+
+Fitting the model to entire dataset:
+
+```{r}
+fit_und2_1 <- sem(m_und, data = df_imput, std.lv = T)
+summary(fit_und2_1)
+```
+
+Multigroup analysis with condition:
+
+```{r}
+fit_und2_2 <- sem(m_und, data = df_imput, std.lv = T, 
+                  group = "Condition")
+summary(fit_und2_2)
+```

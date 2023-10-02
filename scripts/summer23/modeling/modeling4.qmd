@@ -232,7 +232,6 @@ for (i in 1:nrow(df3)){
 write.csv(df3, file = "../../../data/df_imputed.csv")
 ```
 
-
 # Modeling
 
 We will be using structural equation model to do a multigroup confirmatory factor analysis (MGCFA). Confirmatory factor analysis (CFA) is a multivariate procedure that is used to test how well the measured variables represent the number of constructs.Moreover, it is used to test whether measures of construct are consistent with a researcher's understanding of the nature of that construct.
