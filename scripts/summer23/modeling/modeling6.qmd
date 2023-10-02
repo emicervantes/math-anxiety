@@ -17,38 +17,111 @@ library(semPlot)
 ## Load Data
 
 ```{r}
-df <- read_csv("../../../data/df_imputed.csv")
+df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx')
 head(df)
 ```
 
 ### Data Clearning
 
-We need to add average for situational interest and mind wandering
-
 ```{r}
-# average for situational interest and mind wandering
-df <- df %>% mutate(SI_avg = rowMeans(df[12:25], na.rm=TRUE),
-              MW_avg = rowMeans(df[26:32], na.rm=TRUE))
-head(df[41:42])
+tma_lst <- c("TMA_1", "TMA_2", "TMA_3","TMA_4", "TMA_5", "TMA_6",
+             "TMA_sum", "TMA_avg")
+df2 <- df %>% select(Condition, Sex, chicago, nonwhite, pretest,
+              MW_day1_avg, MW_day2_avg, SI_avg, tma_lst,
+              Understand_avg, Del_OverallAcc)
+# Get rid of row that has NA values in Condition and/or Sex
+df2 <- df2 %>% filter(Condition == 1 | Condition == 2)
+df2 <- df2 %>% filter(!is.na(Sex))
+df2$Condition[df2$Condition == 2] <- 0
+# Assign 0 for "boy" and 1 for "girl"
+df2$Sex[df2$Sex == 1] <- 0
+df2$Sex[df2$Sex == 2] <- 1
+# Make sure variable is categorical
+df2$chicago <- as.numeric(df2$chicago)
+df2$Sex <- as.numeric(df2$Sex)
+df2$nonwhite <- as.numeric(df2$nonwhite)
+df2$Condition <- as.numeric(df2$Condition)
 ```
 
+Add MW average
+
 ```{r}
-# Standardize data
-df2 <- df %>% select(Sex, Condition, chicago,
+df2 <- df2 %>% mutate(MW_avg = rowMeans(df2[6:7], na.rm=TRUE))
+head(df2[19])
+```
+
+Standardize data
+
+```{r}
+df2 <- df2 %>% select(Sex, Condition, chicago,
                            TMA_avg, SI_avg, MW_avg, Del_OverallAcc, Understand_avg)
 df2[4:8] <- df2[4:8] %>% mutate_all(~(scale(.) %>% as.vector))
 ```
 
+## Modeling
+
+### Overall Accuracy
+
+**Model definition**
+
 ```{r}
-# subgroup data
-df_we <-  df2 %>% filter(Condition == 1)
-# chicago
-df_we_c <-  df_we %>% filter(chicago == 1)
-df_we_i <-  df_we %>% filter(chicago == 0)
-# irvine
-df_nwe <-  df2 %>% filter(Condition == 0)
-# chicago
-df_nwe_c <-  df_nwe %>% filter(chicago == 1)
-# irvine
-df_nwe_i <-  df_nwe %>% filter(chicago == 0)
+m_acc <- '
+# regressions
+MW_avg ~ 1 + TMA_avg + SI_avg + Sex + TMA_avg:Sex
+Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + Sex + MW_avg:Sex + TMA_avg:Sex
+'
 ```
+
+**Implement model**
+
+Fitting the model to entire dataset:
+
+```{r}
+fit_acc1 <- sem(m_acc, data = df2, std.lv = T)
+summary(fit_acc1)
+```
+
+Multigroup analysis with condition:
+
+```{r}
+fit_acc2 <- sem(m_acc, data = df2, std.lv = T, group = "Condition")
+summary(fit_acc2)
+```
+
+### Perceived Understanding
+
+**Model definition**
+
+```{r}
+m_und <- '
+# regressions
+MW_avg ~ 1 + TMA_avg + SI_avg + Sex + TMA_avg:Sex
+Understand_avg ~ 1 + TMA_avg + MW_avg + SI_avg + Sex + MW_avg:Sex + TMA_avg:Sex
+'
+```
+
+**Implement model**
+
+Fitting the model to entire dataset:
+
+```{r}
+fit_und1 <- sem(m_und, data = df2, std.lv = T)
+summary(fit_und1)
+```
+
+Multigroup analysis with condition:
+
+```{r}
+fit_und2 <- sem(m_und, data = df2, std.lv = T, group = "Condition")
+summary(fit_und2)
+```
+
+
+
+
+
+
+
+
+
+
