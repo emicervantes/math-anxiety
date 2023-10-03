@@ -88,6 +88,30 @@ fit_acc2 <- sem(m_acc, data = df2, std.lv = T, group = "Condition")
 summary(fit_acc2)
 ```
 
+Looking closely at the differences in groups
+
+```{r}
+fit_acc2.constrained <- sem(m_acc, df2, group = "Condition", 
+    group.equal = c("intercepts", "regressions"))
+anova(fit_acc2, fit_acc2.constrained)
+```
+
+Some paths in the model are different among groups -\> Looking closely at the differences in the effect of math anxiety on mind wandering between groups
+
+```{r}
+# redefine model
+m_acc.constrained <- '
+# regressions
+MW_avg ~ 1 + c("b1", "b1") * TMA_avg + SI_avg + Sex +  TMA_avg:Sex
+Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + Sex + MW_avg:Sex +  TMA_avg:Sex
+'
+# fit model
+fit_acc2.constrained2 <- sem(m_acc.constrained, df2, group = "Condition")
+anova(fit_acc2, fit_acc2.constrained2)
+```
+
+No significant difference between worked ex groups vs no worked ex groups on the effect of math anxiety on mind wandering.
+
 ### Perceived Understanding
 
 **Model definition**
@@ -115,6 +139,30 @@ Multigroup analysis with condition:
 fit_und2 <- sem(m_und, data = df2, std.lv = T, group = "Condition")
 summary(fit_und2)
 ```
+
+Finding model difference between groups:\
+
+```{r}
+fit_und2.constrained <- sem(m_und, df2, group = "Condition", 
+    group.equal = c("intercepts", "regressions"))
+anova(fit_und2, fit_und2.constrained)
+```
+
+Some paths in the model may vary among groups -\> Looking at the effect of mind wandering on perceived understanding
+
+```{r}
+# redefine model
+m_und.constrained <- '
+# regressions
+MW_avg ~ 1 + TMA_avg + SI_avg + Sex +  TMA_avg:Sex
+Understand_avg ~ 1 + TMA_avg + c("b1", "b1") * MW_avg + SI_avg + Sex + MW_avg:Sex +  TMA_avg:Sex
+'
+# fit model
+fit_und2.constrained2 <- sem(m_und.constrained, df2, group = "Condition")
+anova(fit_und2, fit_und2.constrained2)
+```
+
+No significant difference was observed on the effect of mind wandering on perceived understanding.
 
 ## Modeling w/ Imputed Data
 
