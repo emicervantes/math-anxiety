@@ -1,0 +1,125 @@
+---
+title: "CDS Abstract Visual"
+format: html
+editor: visual
+---
+
+# Load Libraries
+
+```{r}
+library(tidyverse)
+```
+
+# Load Dataset
+
+```{r}
+df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx')
+```
+
+# Data Cleaning
+
+```{r}
+tma_lst <- c("TMA_1", "TMA_2", "TMA_3","TMA_4", "TMA_5", "TMA_6",
+             "TMA_avg")
+df1 <- df %>% select(Condition, Sex, chicago, race_rv, pretest,
+              MW_day1_avg, MW_day2_avg, SI_avg, tma_lst,
+              Understand_avg, Del_OverallAcc)
+# Get rid of row that has NA values in Condition and/or Sex
+df1 <- df1 %>% filter(Condition == 1 | Condition == 2)
+df1 <- df1 %>% filter(!is.na(Sex))
+# Assign "no worked ex" group 0
+df1$Condition[df1$Condition == 2] <- 0
+# Assign 0 for "boy" and 1 for "girl"
+df1$Sex[df1$Sex == 1] <- 0
+df1$Sex[df1$Sex == 2] <- 1
+# Make sure variable is categorical
+df1$chicago <- as.factor(df1$chicago)
+df1$Sex <- as.factor(df1$Sex)
+df1$race_rv <- as.factor(df1$race_rv)
+```
+
+Mind wandeirng average (day 1 + day 2)
+
+```{r}
+df1 <- df1 %>% mutate(MW_avg = rowMeans(df1[6:7], na.rm=TRUE))
+head(df1)
+```
+
+# Visualizations
+
+```{r}
+# condition labels
+cond <- c("No Worked EX", "Worked EX")
+names(cond) <- c(0, 1)
+```
+
+
+Mind wandering and trait math anxiety
+
+```{r}
+# accuracy scores
+df1 %>% ggplot(aes(x = TMA_avg, y = MW_avg,
+                   color = Sex)) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  facet_grid(.~ Condition, 
+             labeller = labeller(Condition = cond)) +
+  labs(x = "Trait Math Anxiety", y = "Mind Wandering",
+       color = "Gender") +
+  theme_bw()
+```
+
+Mind wandering and learning achievements
+
+```{r}
+df1 %>% ggplot(aes(x = MW_avg, y = Del_OverallAcc,
+                   color = Sex)) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  facet_grid(.~ Condition, 
+             labeller = labeller(Condition = cond)) +
+  labs(x = "Mind Wandering", y = "Accuracy Scores",
+       color = "Gender") +
+  theme_bw()
+```
+
+```{r}
+df1 %>% ggplot(aes(x = MW_avg, y = Understand_avg,
+                   color = Sex)) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  facet_grid(.~ Condition, 
+             labeller = labeller(Condition = cond)) +
+  labs(x = "Mind Wandering", 
+       y = "Perceived Understanding",
+       color = "Gender") +
+  theme_bw()
+```
+
+```{r}
+# calculate average
+mu <- df1 %>% group_by(Condition, Sex) %>% summarize(mean = mean(MW_avg))
+# plot density plots of mind wandering
+df1 %>% ggplot(aes(x = MW_avg, 
+                   fill = Sex, color = Sex)) +
+  geom_density(alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  scale_fill_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  geom_vline(data=mu, aes(xintercept=mean, color=Sex),
+           linetype="dashed") +
+  facet_grid(.~ Condition, 
+             labeller = labeller(Condition = cond)) +
+  labs(x = "Mind Wandering",
+       fill = "Gender", color = "Gender") +
+  theme_bw()
+```
+
+
