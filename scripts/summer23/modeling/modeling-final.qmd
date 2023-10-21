@@ -76,14 +76,13 @@ df1 %>% group_by(chicago) %>% summarize(pre_avg = mean(pretest, na.rm = TRUE)) %
   theme_light()
 ```
 
-
 In the previous analysis, we saw that more student in Irvine already knew how to use ratio tactics before the study than students in Chicago. We want to check if the pretest score difference is significant across the sites by using student's t-test:
 
 ```{r}
 t.test(pretest ~ chicago, data = df1)
 ```
 
-The result shows that the difference is significant (p-value = 0.03). Since both sites are significantly different, we will treat each site as separate data. 
+The result shows that the difference is significant (p-value = 0.03). Since both sites are significantly different, we will treat each site as separate data.
 
 ## Split data into Chicago and Irvine
 
@@ -185,7 +184,7 @@ summary(fit2_c)
 
 -   `pretest` (p = 3.79e-07)
 -   `SI_avg` (p = 0.0154): While controlling for other predictors, every one unit increse in `SI_avg` results in 0.04 increase in `Del_OverallAcc`
--  `TMA_avg:Condition` (p = 0.0133): Students who received worked examples, while controlling for other predictors, had increase in `Del_OverallAcc` by 0.07 for every 1 unit increase in `TMA_avg`, while students who received worked examples had decrease in `Del_OverallAcc`.
+-   `TMA_avg:Condition` (p = 0.0133): Students who received worked examples, while controlling for other predictors, had increase in `Del_OverallAcc` by 0.07 for every 1 unit increase in `TMA_avg`, while students who received worked examples had decrease in `Del_OverallAcc`.
 
 ### Irvine Data
 
@@ -312,7 +311,6 @@ fit_ia_c <- sem(m_acc, data = df_i, group = "Sex",
 summary(fit_ia)
 ```
 
-
 ```{r}
 # check if the constrained and free models are significantly diff
 anova(fit_ia, fit_ia_c)
@@ -332,7 +330,7 @@ fit_ia2 <- sem(m_a2, df_i, group = "Sex")
 anova(fit_ia2, fit_ia)
 ```
 
-We find that the models are still significantly different, implying that the path between `TMA_avg` -> `Del_OverallAcc` should not be constrained and instead that it should be left to vary among gender.
+We find that the models are still significantly different, implying that the path between `TMA_avg` -\> `Del_OverallAcc` should not be constrained and instead that it should be left to vary among gender.
 
 ### Visualize Results
 
@@ -359,7 +357,6 @@ semPaths(fit_ia,
                         "MW 1","MW 2", "SI", "Condition"),
          intercepts = FALSE)
 ```
-
 
 ## Perceived Understanding
 
@@ -444,9 +441,3 @@ semPaths(fit_iu,
                         "MW 1","MW 2", "SI", "Condition"),
          intercepts = FALSE)
 ```
-
-
-
-
-
-

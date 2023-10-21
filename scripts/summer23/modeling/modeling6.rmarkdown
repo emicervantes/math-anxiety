@@ -4,9 +4,11 @@ format: html
 editor: visual
 ---
 
+
 # Path Analysis w/ Moderation Effect
 
 ## Load Libraries
+
 
 ```{r}
 library(tidyverse)
@@ -14,7 +16,9 @@ library(lavaan)
 library(semPlot)
 ```
 
+
 ## Load Data
+
 
 ```{r}
 df <- readxl::read_xlsx('../../../data/math-anxiety-raw-data.xlsx')
@@ -23,12 +27,14 @@ head(df)
 head(df_clean)
 ```
 
+
 ### Data Clearning (raw data)
+
 
 ```{r}
 tma_lst <- c("TMA_1", "TMA_2", "TMA_3","TMA_4", "TMA_5", "TMA_6",
              "TMA_sum", "TMA_avg")
-df2 <- df %>% select(9,Condition, Sex, chicago, nonwhite, pretest,
+df2 <- df %>% select(Condition, Sex, chicago, nonwhite, pretest,
               MW_day1_avg, MW_day2_avg, SI_avg, tma_lst,
               Understand_avg, Del_OverallAcc)
 # Get rid of row that has NA values in Condition and/or Sex
@@ -45,20 +51,25 @@ df2$nonwhite <- as.numeric(df2$nonwhite)
 df2$Condition <- as.numeric(df2$Condition)
 ```
 
+
 Add MW average
+
 
 ```{r}
 df2 <- df2 %>% mutate(MW_avg = rowMeans(df2[6:7], na.rm=TRUE))
 head(df2[19])
 ```
 
+
 Standardize data
+
 
 ```{r}
 df2 <- df2 %>% select(Sex, Condition, chicago,
                            TMA_avg, SI_avg, MW_avg, Del_OverallAcc, Understand_avg)
 df2[4:8] <- df2[4:8] %>% mutate_all(~(scale(.) %>% as.vector))
 ```
+
 
 ### Data Cleaning (clean data)
 
@@ -70,49 +81,14 @@ The clean, imputed data provided contains `_sum` variable only for both `TMA`, `
 
 -   Situational interest: 14 questions
 
-```{r}
-df_clean <- df_clean %>% mutate(
-  # average trait math anxiety
-  TMA_avg = tma_sum_rv / 6,
-  # average mind wandering
-  MW_avg = ( mw_day1_sum + mw_day2_sum ) / 12,
-  # average situational interest
-  SI_avg = si_sum / 14
-)
-```
-
-We also need to add students' accuracy scores to this dataset:
 
 ```{r}
-colnames(df2)[1] <- "subjectid"
-df3 <- df2 %>% select(1,19)
-df_clean2 <- left_join(df_clean, df3, by = "subjectid") %>% 
-  filter(!is.na(Del_OverallAcc)
+# average trait math anxiety
+df_clean 
+# average mind wandering
+# average situational interest
 ```
 
-```{r}
-# standarize data
-df_clean2[6:20] <- df_clean2[6:20] %>% mutate_all(~(scale(.) %>% as.vector))
-head(df_clean2)
-```
-
-### Final Sample Size for Data Analysis/Modeling
-
-#### Ethnicity Descriptives
-
-```{r}
-# ethnicity descriptives
-df_clean2 %>% group_by(race_rv) %>% count() %>% 
-  mutate(p = n / nrow(df_clean2))
-```
-
-Summary:
-
--   21% white (48)
--   3% black (7)
--   18% Asian/Pacific Islander (41)
--   18% Hispanic/Latinx (41)
--   39% Mixed race/other (87)
 
 ## Modeling
 
@@ -120,31 +96,38 @@ Summary:
 
 **Model definition**
 
+
 ```{r}
 m_acc <- '
 # regressions
-MW_avg ~ 1 + TMA_avg + SI_avg + gender + TMA_avg:gender
-Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + gender + MW_avg:gender + TMA_avg:gender
+MW_avg ~ 1 + TMA_avg + SI_avg + Sex + TMA_avg:Sex
+Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + Sex + MW_avg:Sex + TMA_avg:Sex
 '
 ```
+
 
 **Implement model**
 
 Fitting the model to entire dataset:
 
+
 ```{r}
-fit_acc1 <- sem(m_acc, data = df_clean, std.lv = T)
+fit_acc1 <- sem(m_acc, data = df2, std.lv = T)
 summary(fit_acc1)
 ```
 
+
 Multigroup analysis with condition:
+
 
 ```{r}
 fit_acc2 <- sem(m_acc, data = df2, std.lv = T, group = "Condition")
 summary(fit_acc2)
 ```
 
+
 Looking closely at the differences in groups
+
 
 ```{r}
 fit_acc2.constrained <- sem(m_acc, df2, group = "Condition", 
@@ -152,7 +135,9 @@ fit_acc2.constrained <- sem(m_acc, df2, group = "Condition",
 anova(fit_acc2, fit_acc2.constrained)
 ```
 
+
 Some paths in the model are different among groups -\> Looking closely at the differences in the effect of math anxiety on mind wandering between groups
+
 
 ```{r}
 # redefine model
@@ -166,11 +151,13 @@ fit_acc2.constrained2 <- sem(m_acc.constrained, df2, group = "Condition")
 anova(fit_acc2, fit_acc2.constrained2)
 ```
 
+
 No significant difference between worked ex groups vs no worked ex groups on the effect of math anxiety on mind wandering.
 
 ### Perceived Understanding
 
 **Model definition**
+
 
 ```{r}
 m_und <- '
@@ -180,23 +167,29 @@ Understand_avg ~ 1 + TMA_avg + MW_avg + SI_avg + Sex + MW_avg:Sex + TMA_avg:Sex
 '
 ```
 
+
 **Implement model**
 
 Fitting the model to entire dataset:
+
 
 ```{r}
 fit_und1 <- sem(m_und, data = df2, std.lv = T)
 summary(fit_und1)
 ```
 
+
 Multigroup analysis with condition:
+
 
 ```{r}
 fit_und2 <- sem(m_und, data = df2, std.lv = T, group = "Condition")
 summary(fit_und2)
 ```
 
+
 Finding model difference between groups:\
+
 
 ```{r}
 fit_und2.constrained <- sem(m_und, df2, group = "Condition", 
@@ -204,7 +197,9 @@ fit_und2.constrained <- sem(m_und, df2, group = "Condition",
 anova(fit_und2, fit_und2.constrained)
 ```
 
+
 Some paths in the model may vary among groups -\> Looking at the effect of mind wandering on perceived understanding
+
 
 ```{r}
 # redefine model
@@ -218,18 +213,22 @@ fit_und2.constrained2 <- sem(m_und.constrained, df2, group = "Condition")
 anova(fit_und2, fit_und2.constrained2)
 ```
 
+
 No significant difference was observed on the effect of mind wandering on perceived understanding.
 
 ## Modeling w/ Imputed Data
 
 ### Load Dataset
 
+
 ```{r}
 df_imput <- read_csv("../../../data/df_imputed.csv")
 head(df_imput)
 ```
 
+
 Clean Data
+
 
 ```{r}
 # average for situational interest and mind wandering
@@ -246,6 +245,7 @@ df_imput <- df_imput %>% select(Sex, Condition, chicago,
 df_imput[4:8] <- df_imput[4:8] %>% mutate_all(~(scale(.) %>% as.vector))
 ```
 
+
 ### Modeling
 
 #### Overall Accuracy
@@ -254,12 +254,15 @@ df_imput[4:8] <- df_imput[4:8] %>% mutate_all(~(scale(.) %>% as.vector))
 
 Fitting the model to entire dataset:
 
+
 ```{r}
 fit_acc1_2 <- sem(m_acc, data = df_imput, std.lv = T)
 summary(fit_acc1_2)
 ```
 
+
 Multigroup analysis with condition:
+
 
 ```{r}
 fit_acc2_2 <- sem(m_acc, data = df_imput, std.lv = T, 
@@ -267,21 +270,26 @@ fit_acc2_2 <- sem(m_acc, data = df_imput, std.lv = T,
 summary(fit_acc2_2)
 ```
 
+
 #### Perceived Understanding
 
 **Implement model**
 
 Fitting the model to entire dataset:
 
+
 ```{r}
 fit_und2_1 <- sem(m_und, data = df_imput, std.lv = T)
 summary(fit_und2_1)
 ```
 
+
 Multigroup analysis with condition:
+
 
 ```{r}
 fit_und2_2 <- sem(m_und, data = df_imput, std.lv = T, 
                   group = "Condition")
 summary(fit_und2_2)
 ```
+
