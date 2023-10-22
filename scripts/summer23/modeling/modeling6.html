@@ -105,10 +105,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#data-cleaning-clean-data" id="toc-data-cleaning-clean-data" class="nav-link" data-scroll-target="#data-cleaning-clean-data"><span class="header-section-number">1.2.2</span> Data Cleaning (clean data)</a></li>
   <li><a href="#final-sample-size-for-data-analysismodeling" id="toc-final-sample-size-for-data-analysismodeling" class="nav-link" data-scroll-target="#final-sample-size-for-data-analysismodeling"><span class="header-section-number">1.2.3</span> Final Sample Size for Data Analysis/Modeling</a></li>
   </ul></li>
-  <li><a href="#modeling" id="toc-modeling" class="nav-link" data-scroll-target="#modeling"><span class="header-section-number">1.3</span> Modeling</a>
+  <li><a href="#gender-differences-in-tma-and-mw" id="toc-gender-differences-in-tma-and-mw" class="nav-link" data-scroll-target="#gender-differences-in-tma-and-mw"><span class="header-section-number">1.3</span> Gender Differences in TMA and MW</a>
   <ul class="collapse">
-  <li><a href="#overall-accuracy" id="toc-overall-accuracy" class="nav-link" data-scroll-target="#overall-accuracy"><span class="header-section-number">1.3.1</span> Overall Accuracy</a></li>
-  <li><a href="#perceived-understanding" id="toc-perceived-understanding" class="nav-link" data-scroll-target="#perceived-understanding"><span class="header-section-number">1.3.2</span> Perceived Understanding</a></li>
+  <li><a href="#trait-math-anxiety" id="toc-trait-math-anxiety" class="nav-link" data-scroll-target="#trait-math-anxiety"><span class="header-section-number">1.3.1</span> Trait Math Anxiety</a></li>
+  <li><a href="#mind-wandering" id="toc-mind-wandering" class="nav-link" data-scroll-target="#mind-wandering"><span class="header-section-number">1.3.2</span> Mind Wandering</a></li>
+  </ul></li>
+  <li><a href="#modeling" id="toc-modeling" class="nav-link" data-scroll-target="#modeling"><span class="header-section-number">1.4</span> Modeling</a>
+  <ul class="collapse">
+  <li><a href="#overall-accuracy" id="toc-overall-accuracy" class="nav-link" data-scroll-target="#overall-accuracy"><span class="header-section-number">1.4.1</span> Overall Accuracy</a></li>
+  <li><a href="#perceived-understanding" id="toc-perceived-understanding" class="nav-link" data-scroll-target="#perceived-understanding"><span class="header-section-number">1.4.2</span> Perceived Understanding</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -340,9 +345,10 @@ See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.</co
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>df_clean2 <span class="ot">&lt;-</span> <span class="fu">left_join</span>(df_clean, df3, <span class="at">by =</span> <span class="st">"subjectid"</span>) <span class="sc">%&gt;%</span>   <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Del_OverallAcc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standarize data</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>df_clean2[<span class="dv">6</span><span class="sc">:</span><span class="dv">21</span>] <span class="ot">&lt;-</span> df_clean2[<span class="dv">6</span><span class="sc">:</span><span class="dv">21</span>] <span class="sc">%&gt;%</span> <span class="fu">mutate_all</span>(<span class="sc">~</span>(<span class="fu">scale</span>(.) <span class="sc">%&gt;%</span> as.vector))</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df_clean2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df_clean2n <span class="ot">&lt;-</span> df_clean2</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># standarize data</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>df_clean2[<span class="dv">6</span><span class="sc">:</span><span class="dv">21</span>] <span class="ot">&lt;-</span> df_clean2[<span class="dv">6</span><span class="sc">:</span><span class="dv">21</span>] <span class="sc">%&gt;%</span> <span class="fu">mutate_all</span>(<span class="sc">~</span>(<span class="fu">scale</span>(.) <span class="sc">%&gt;%</span> as.vector))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df_clean2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  X subjectid race_rv gender chicago base_enjoy base_worry  tma_sum_rv
 1 2    Aq002a       4      0       1  0.3134152  0.1901180  0.05565683
@@ -831,23 +837,152 @@ See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.</co
 </section>
 </section>
 </section>
-<section id="modeling" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="modeling"><span class="header-section-number">1.3</span> Modeling</h2>
-<section id="overall-accuracy" class="level3" data-number="1.3.1">
-<h3 data-number="1.3.1" class="anchored" data-anchor-id="overall-accuracy"><span class="header-section-number">1.3.1</span> Overall Accuracy</h3>
+<section id="gender-differences-in-tma-and-mw" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="gender-differences-in-tma-and-mw"><span class="header-section-number">1.3</span> Gender Differences in TMA and MW</h2>
+<section id="trait-math-anxiety" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="trait-math-anxiety"><span class="header-section-number">1.3.1</span> Trait Math Anxiety</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>cond <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"No Worked EX"</span>, <span class="st">"Worked EX"</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cond) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>location <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Irvine"</span>, <span class="st">"Chicago"</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(location) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># TMA mean by site, condition, and gender</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> df_clean2n <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(chicago, Condition,gender) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(TMA_avg))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'chicago', 'Condition'. You can override
+using the `.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># math anxiety density plot</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>df_clean2n <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> TMA_avg, <span class="at">fill =</span> <span class="fu">as.factor</span>(gender),</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="fu">as.factor</span>(gender))) <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data=</span>mu, <span class="fu">aes</span>(<span class="at">xintercept=</span>mean, <span class="at">color=</span>as.factor</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>                          (gender)),<span class="at">linetype=</span><span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">rows =</span> <span class="fu">vars</span>(Condition),</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">cols =</span> <span class="fu">vars</span>(chicago),</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">labeller =</span> <span class="fu">labeller</span>(<span class="at">Condition =</span> cond,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">chicago =</span> location)) <span class="sc">+</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#FFC20A"</span>, <span class="st">"#0C7BDC"</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Boy"</span>, <span class="st">"Girl"</span>)) <span class="sc">+</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#FFC20A"</span>, <span class="st">"#0C7BDC"</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Boy"</span>, <span class="st">"Girl"</span>)) <span class="sc">+</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Math Anxiety"</span>, <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Gender"</span>, <span class="at">color =</span> <span class="st">"Gender"</span>) <span class="sc">+</span><span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="modeling6_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Overall, all students seemed to have a low average math anxiety (1 ~ 2). In Irvine, girls seemed to have higher math average than boys in both condition. However, in Chicago, boys seemed to have higher average than girls.</p>
+<p>Girls seemed to have a higher math anxiety compared to boys overall. Check if the difference is significant in each site by using ANOVA test:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span>  <span class="fu">aov</span>(TMA_avg <span class="sc">~</span> Condition <span class="sc">+</span> gender <span class="sc">+</span> chicago <span class="sc">+</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>             Condition<span class="sc">*</span>gender <span class="sc">+</span> Condition<span class="sc">*</span>gender<span class="sc">*</span>chicago,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> df_clean2)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                          Df Sum Sq Mean Sq F value Pr(&gt;F)
+Condition                  1   0.60  0.6047   0.596  0.441
+gender                     1   0.29  0.2865   0.283  0.596
+chicago                    1   0.37  0.3670   0.362  0.548
+Condition:gender           1   0.01  0.0051   0.005  0.943
+Condition:chicago          1   0.47  0.4705   0.464  0.496
+gender:chicago             1   2.18  2.1788   2.149  0.144
+Condition:gender:chicago   1   0.11  0.1053   0.104  0.748
+Residuals                216 218.98  1.0138               </code></pre>
+</div>
+</div>
+<p>No significant difference between gender on math anxiety was found by gender.</p>
+</section>
+<section id="mind-wandering" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="mind-wandering"><span class="header-section-number">1.3.2</span> Mind Wandering</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># TMA mean by site, condition, and gender</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> df_clean2n <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(chicago, Condition,gender) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(MW_avg))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'chicago', 'Condition'. You can override
+using the `.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># math anxiety density plot</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>df_clean2n <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> MW_avg, <span class="at">fill =</span> <span class="fu">as.factor</span>(gender),</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="fu">as.factor</span>(gender))) <span class="sc">+</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data=</span>mu, <span class="fu">aes</span>(<span class="at">xintercept=</span>mean, <span class="at">color=</span>as.factor</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>                          (gender)),<span class="at">linetype=</span><span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">rows =</span> <span class="fu">vars</span>(Condition),</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">cols =</span> <span class="fu">vars</span>(chicago),</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">labeller =</span> <span class="fu">labeller</span>(<span class="at">Condition =</span> cond,</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">chicago =</span> location)) <span class="sc">+</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#FFC20A"</span>, <span class="st">"#0C7BDC"</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Boy"</span>, <span class="st">"Girl"</span>)) <span class="sc">+</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#FFC20A"</span>, <span class="st">"#0C7BDC"</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Boy"</span>, <span class="st">"Girl"</span>)) <span class="sc">+</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Mind Wandering"</span>, <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Gender"</span>, <span class="at">color =</span> <span class="st">"Gender"</span>) <span class="sc">+</span><span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="modeling6_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>In Irvine, both girls and boys seemed to have similar low average mind wandering (1~2); worked example group showing somewhat higher mind wandering average than the worked example students in Irvine. On the other hand, in Chicago, boys had higher mind wandering than boys in both groups.</p>
+<p>Check if the difference is significant in each site by using ANOVA test:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span>  <span class="fu">aov</span>(MW_avg <span class="sc">~</span> Condition <span class="sc">+</span> gender <span class="sc">+</span> chicago <span class="sc">+</span> </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>             Condition<span class="sc">*</span>gender <span class="sc">+</span> Condition<span class="sc">*</span>gender<span class="sc">*</span>chicago,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> df_clean2)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                          Df Sum Sq Mean Sq F value Pr(&gt;F)  
+Condition                  1   5.24   5.241   5.335 0.0218 *
+gender                     1   1.53   1.531   1.559 0.2132  
+chicago                    1   0.43   0.432   0.440 0.5080  
+Condition:gender           1   0.01   0.013   0.014 0.9071  
+Condition:chicago          1   0.66   0.663   0.675 0.4121  
+gender:chicago             1   1.58   1.582   1.610 0.2058  
+Condition:gender:chicago   1   1.33   1.329   1.353 0.2461  
+Residuals                216 212.21   0.982                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>The results show that mind wandering was different between worked example and no worked example group, regardless of the cite location or gender. No gender difference was found in mind wandering.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the overall mind wandering average but by the condition</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>df_clean2n <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Condition) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(MW_avg)) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">as.factor</span>(Condition), <span class="at">y =</span> mean)) <span class="sc">+</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">stat =</span> <span class="st">"identity"</span>, </span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"#ef476f"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span><span class="fu">round</span>(mean,<span class="dv">2</span>)),  </span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">position=</span><span class="fu">position_dodge</span>(<span class="at">width=</span><span class="fl">0.9</span>), </span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">vjust=</span><span class="sc">-</span><span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Mind Wandering by Condition"</span>,</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Condition"</span>, <span class="at">y =</span> <span class="st">"Mind Wandeirng"</span>) <span class="sc">+</span> </span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">labels=</span><span class="fu">c</span>(<span class="st">"No WE Group"</span>, <span class="st">"WE Group"</span>)) <span class="sc">+</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="modeling6_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>WE group had a lower average mind wandering than no WE group.</p>
+</section>
+</section>
+<section id="modeling" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="modeling"><span class="header-section-number">1.4</span> Modeling</h2>
+<section id="overall-accuracy" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="overall-accuracy"><span class="header-section-number">1.4.1</span> Overall Accuracy</h3>
 <p><strong>Model definition</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>m_acc <span class="ot">&lt;-</span> <span class="st">'</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="st"># regressions</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="st">MW_avg ~ 1 + TMA_avg + SI_avg + gender + TMA_avg:gender</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="st">Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + gender + MW_avg:gender + TMA_avg:gender</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>m_acc <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="st"># regressions</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="st">MW_avg ~ 1 + TMA_avg + SI_avg + gender + TMA_avg:gender</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="st">Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + gender + MW_avg:gender + TMA_avg:gender</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Implement model</strong></p>
 <p>Fitting the model to entire dataset:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fit_acc1 <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_clean2, <span class="at">std.lv =</span> T)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_acc1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>fit_acc1 <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_clean2, <span class="at">std.lv =</span> T)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_acc1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>lavaan 0.6.16 ended normally after 6 iterations
 
@@ -899,8 +1034,8 @@ Variances:
 </div>
 <p>Multigroup analysis with condition:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fit_acc2 <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_clean2, <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Condition"</span>)</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_acc2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fit_acc2 <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, <span class="at">data =</span> df_clean2, <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Condition"</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_acc2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>lavaan 0.6.16 ended normally after 12 iterations
 
@@ -1000,8 +1135,8 @@ Variances:
 </ul>
 <p>Looking closely at the differences in groups</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>fit_acc2.constrained <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, df_clean2, <span class="at">group =</span> <span class="st">"Condition"</span>, <span class="at">group.equal =</span> <span class="fu">c</span>(<span class="st">"intercepts"</span>, <span class="st">"regressions"</span>))</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_acc2, fit_acc2.constrained)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>fit_acc2.constrained <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_acc, df_clean2, <span class="at">group =</span> <span class="st">"Condition"</span>, <span class="at">group.equal =</span> <span class="fu">c</span>(<span class="st">"intercepts"</span>, <span class="st">"regressions"</span>))</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_acc2, fit_acc2.constrained)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Chi-Squared Difference Test
@@ -1018,16 +1153,16 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p>Some paths in the model are different among groups -&gt; Looking closely at the differences in the effect of math anxiety on mind wandering between groups</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># redefine model</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>m_acc.constrained <span class="ot">&lt;-</span> <span class="st">'</span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="st"># regressions</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="st">MW_avg ~ 1 + c("b1", "b1") * TMA_avg + SI_avg + gender +  TMA_avg:gender</span></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="st">Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + gender + MW_avg:gender +  TMA_avg:gender</span></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fit model</span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>fit_acc2.constrained2 <span class="ot">&lt;-</span> </span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sem</span>(m_acc.constrained, df_clean2, <span class="at">group =</span> <span class="st">"Condition"</span>)</span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_acc2, fit_acc2.constrained2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># redefine model</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>m_acc.constrained <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="st"># regressions</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="st">MW_avg ~ 1 + c("b1", "b1") * TMA_avg + SI_avg + gender +  TMA_avg:gender</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="st">Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + gender + MW_avg:gender +  TMA_avg:gender</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fit model</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>fit_acc2.constrained2 <span class="ot">&lt;-</span> </span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sem</span>(m_acc.constrained, df_clean2, <span class="at">group =</span> <span class="st">"Condition"</span>)</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_acc2, fit_acc2.constrained2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Chi-Squared Difference Test
@@ -1042,21 +1177,21 @@ fit_acc2.constrained2     0.9734</code></pre>
 </div>
 <p>No significant difference between worked ex groups vs no worked ex groups on the effect of math anxiety on mind wandering.</p>
 </section>
-<section id="perceived-understanding" class="level3" data-number="1.3.2">
-<h3 data-number="1.3.2" class="anchored" data-anchor-id="perceived-understanding"><span class="header-section-number">1.3.2</span> Perceived Understanding</h3>
+<section id="perceived-understanding" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="perceived-understanding"><span class="header-section-number">1.4.2</span> Perceived Understanding</h3>
 <p><strong>Model definition</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>m_und <span class="ot">&lt;-</span> <span class="st">'</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="st"># regressions</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="st">MW_avg ~ 1 + TMA_avg + SI_avg + gender + TMA_avg:gender</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="st">understand_avg ~ 1 + TMA_avg + MW_avg + SI_avg + gender + MW_avg:gender + TMA_avg:gender</span></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>m_und <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="st"># regressions</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="st">MW_avg ~ 1 + TMA_avg + SI_avg + gender + TMA_avg:gender</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="st">understand_avg ~ 1 + TMA_avg + MW_avg + SI_avg + gender + MW_avg:gender + TMA_avg:gender</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Implement model</strong></p>
 <p>Fitting the model to entire dataset:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>fit_und1 <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_clean2, <span class="at">std.lv =</span> T)</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_und1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>fit_und1 <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_clean2, <span class="at">std.lv =</span> T)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_und1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>lavaan 0.6.16 ended normally after 6 iterations
 
@@ -1108,8 +1243,8 @@ Variances:
 </div>
 <p>Multigroup analysis with condition:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>fit_und2 <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_clean2, <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Condition"</span>)</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_und2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>fit_und2 <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, <span class="at">data =</span> df_clean2, <span class="at">std.lv =</span> T, <span class="at">group =</span> <span class="st">"Condition"</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_und2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>lavaan 0.6.16 ended normally after 12 iterations
 
@@ -1217,9 +1352,9 @@ Variances:
 </ul>
 <p>Finding model difference between groups:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>fit_und2.constrained <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, df_clean2, <span class="at">group =</span> <span class="st">"Condition"</span>, </span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">group.equal =</span> <span class="fu">c</span>(<span class="st">"intercepts"</span>, <span class="st">"regressions"</span>))</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_und2, fit_und2.constrained)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>fit_und2.constrained <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und, df_clean2, <span class="at">group =</span> <span class="st">"Condition"</span>, </span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">group.equal =</span> <span class="fu">c</span>(<span class="st">"intercepts"</span>, <span class="st">"regressions"</span>))</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_und2, fit_und2.constrained)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Chi-Squared Difference Test
@@ -1236,15 +1371,15 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p>Some paths in the model may vary among groups -&gt; Looking at the effect of mind wandering on perceived understanding</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># redefine model</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>m_und.constrained <span class="ot">&lt;-</span> <span class="st">'</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="st"># regressions</span></span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="st">MW_avg ~ 1 + TMA_avg + SI_avg + gender +  TMA_avg:gender</span></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="st">understand_avg ~ 1 + TMA_avg + c("b1", "b1") * MW_avg + SI_avg + gender + MW_avg:gender +  TMA_avg:gender</span></span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fit model</span></span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>fit_und2.constrained2 <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und.constrained, df_clean2, <span class="at">group =</span> <span class="st">"Condition"</span>)</span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_und2, fit_und2.constrained2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># redefine model</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>m_und.constrained <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="st"># regressions</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="st">MW_avg ~ 1 + TMA_avg + SI_avg + gender +  TMA_avg:gender</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="st">understand_avg ~ 1 + TMA_avg + c("b1", "b1") * MW_avg + SI_avg + gender + MW_avg:gender +  TMA_avg:gender</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fit model</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>fit_und2.constrained2 <span class="ot">&lt;-</span> <span class="fu">sem</span>(m_und.constrained, df_clean2, <span class="at">group =</span> <span class="st">"Condition"</span>)</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_und2, fit_und2.constrained2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Chi-Squared Difference Test

@@ -105,6 +105,7 @@ df_clean2 <- left_join(df_clean, df3, by = "subjectid") %>%   filter(!is.na(Del_
 ```
 
 ```{r}
+df_clean2n <- df_clean2
 # standarize data
 df_clean2[6:21] <- df_clean2[6:21] %>% mutate_all(~(scale(.) %>% as.vector))
 head(df_clean2)
@@ -158,6 +159,104 @@ Summary:
 -   18% Asian/Pacific Islander (41)
 -   18% Hispanic/Latinx (41)
 -   39% Mixed race/other (87)
+
+## Gender Differences in TMA and MW
+
+### Trait Math Anxiety
+
+```{r}
+cond <- c("No Worked EX", "Worked EX")
+names(cond) <- c(0, 1)
+location <- c("Irvine", "Chicago")
+names(location) <- c(0, 1)
+```
+
+```{r}
+# TMA mean by site, condition, and gender
+mu <- df_clean2n %>% group_by(chicago, Condition,gender) %>% summarize(mean = mean(TMA_avg))
+# math anxiety density plot
+df_clean2n %>% ggplot(aes(x = TMA_avg, fill = as.factor(gender),
+                   color = as.factor(gender))) +
+  geom_density(alpha = 0.2) +
+  theme_light() +
+  geom_vline(data=mu, aes(xintercept=mean, color=as.factor
+                          (gender)),linetype="dashed") +
+  facet_grid(rows = vars(Condition),
+             cols = vars(chicago),
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  scale_fill_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(x = "Math Anxiety", y = "Density",
+       fill = "Gender", color = "Gender") +theme(legend.position="bottom")
+```
+
+Overall, all students seemed to have a low average math anxiety (1 \~ 2). In Irvine, girls seemed to have higher math average than boys in both condition. However, in Chicago, boys seemed to have higher average than girls.
+
+Girls seemed to have a higher math anxiety compared to boys overall. Check if the difference is significant in each site by using ANOVA test:
+
+```{r}
+m1 <-  aov(TMA_avg ~ Condition + gender + chicago + 
+             Condition*gender + Condition*gender*chicago,
+           data = df_clean2)
+summary(m1)
+```
+
+No significant difference between gender on math anxiety was found by gender.
+
+### Mind Wandering
+
+```{r}
+# TMA mean by site, condition, and gender
+mu <- df_clean2n %>% group_by(chicago, Condition,gender) %>% summarize(mean = mean(MW_avg))
+# math anxiety density plot
+df_clean2n %>% ggplot(aes(x = MW_avg, fill = as.factor(gender),
+                   color = as.factor(gender))) +
+  geom_density(alpha = 0.2) +
+  theme_light() +
+  geom_vline(data=mu, aes(xintercept=mean, color=as.factor
+                          (gender)),linetype="dashed") +
+  facet_grid(rows = vars(Condition),
+             cols = vars(chicago),
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  scale_fill_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), labels = c("Boy", "Girl")) +
+  labs(x = "Mind Wandering", y = "Density",
+       fill = "Gender", color = "Gender") +theme(legend.position="bottom")
+```
+
+In Irvine, both girls and boys seemed to have similar low average mind wandering (1\~2); worked example group showing somewhat higher mind wandering average than the worked example students in Irvine. On the other hand, in Chicago, boys had higher mind wandering than boys in both groups.
+
+Check if the difference is significant in each site by using ANOVA test:
+
+```{r}
+m1 <-  aov(MW_avg ~ Condition + gender + chicago + 
+             Condition*gender + Condition*gender*chicago,
+           data = df_clean2)
+summary(m1)
+```
+
+The results show that mind wandering was different between worked example and no worked example group, regardless of the cite location or gender. No gender difference was found in mind wandering.
+
+```{r}
+# plot the overall mind wandering average but by the condition
+df_clean2n %>% group_by(Condition) %>% 
+  summarize(mean = mean(MW_avg)) %>% 
+  ggplot(aes(x = as.factor(Condition), y = mean)) +
+  geom_bar(position = "dodge", stat = "identity", 
+           color = "black", fill = "#ef476f", alpha = 0.5) +
+  geom_text(aes(label=round(mean,2)),  
+            position=position_dodge(width=0.9), 
+            vjust=-0.25) +
+  ylim(0,6) +
+  labs(title = "Average Mind Wandering by Condition",
+    x = "Condition", y = "Mind Wandeirng") + 
+  scale_x_discrete(labels=c("No WE Group", "WE Group")) +
+  theme_light()
+```
+
+WE group had a lower average mind wandering than no WE group.
 
 ## Modeling
 
