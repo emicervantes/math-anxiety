@@ -1,7 +1,28 @@
 ---
 title: "Path Analysis w/ Moderation Effect"
-format: html
 editor: visual
+author: Emi Cervantes
+toc: true
+date: ""
+number-sections: true
+highlight-style: pygments
+format: 
+  html: 
+    code-fold: false
+    html-math-method: katex
+    fig-width: 7
+    fig-height: 4
+  pdf:
+    toc: true
+    number-sections: true
+    geometry:
+      - top=30mm
+      - left=20mm
+    fig-width: 7
+    fig-height: 4
+  docx: 
+    fig-width: 10
+    fig-height: 5
 ---
 
 # Path Analysis w/ Moderation Effect
@@ -12,6 +33,8 @@ editor: visual
 library(tidyverse)
 library(lavaan)
 library(semPlot)
+library(skimr)
+library(janitor)
 ```
 
 ## Load Data
@@ -52,14 +75,6 @@ df2 <- df2 %>% mutate(MW_avg = rowMeans(df2[6:7], na.rm=TRUE))
 head(df2[19])
 ```
 
-Standardize data
-
-```{r}
-df2 <- df2 %>% select(Sex, Condition, chicago,
-                           TMA_avg, SI_avg, MW_avg, Del_OverallAcc, Understand_avg)
-df2[4:8] <- df2[4:8] %>% mutate_all(~(scale(.) %>% as.vector))
-```
-
 ### Data Cleaning (clean data)
 
 The clean, imputed data provided contains `_sum` variable only for both `TMA`, `MW`, and `SI`. We want avaerage values for both math anxiety, mind wandering, and situational interest.
@@ -85,20 +100,50 @@ We also need to add students' accuracy scores to this dataset:
 
 ```{r}
 colnames(df2)[1] <- "subjectid"
-df3 <- df2 %>% select(1,19)
-df_clean2 <- left_join(df_clean, df3, by = "subjectid") %>% 
-  filter(!is.na(Del_OverallAcc)
+df3 <- df2 %>% select(1,19,2)
+df_clean2 <- left_join(df_clean, df3, by = "subjectid") %>%   filter(!is.na(Del_OverallAcc))
 ```
 
 ```{r}
 # standarize data
-df_clean2[6:20] <- df_clean2[6:20] %>% mutate_all(~(scale(.) %>% as.vector))
+df_clean2[6:21] <- df_clean2[6:21] %>% mutate_all(~(scale(.) %>% as.vector))
 head(df_clean2)
 ```
 
 ### Final Sample Size for Data Analysis/Modeling
 
-#### Ethnicity Descriptives
+#### Overall Descriptive
+
+```{r}
+skim(df_clean2)
+```
+
+Full sample size after preprocessing: $n = 224$
+
+```{r}
+control_n <- df_clean2 %>% 
+  filter(Condition == 0) %>% group_by(chicago, gender) %>% count()
+exp_n <- df_clean2 %>% 
+  filter(Condition == 1) %>% group_by(chicago, gender) %>% count()
+  
+sample_size <- data.frame(rbind(t(control_n[3]),t(exp_n[3]))) %>% remove_rownames 
+sample_size <- cbind(c("No Worked EX", "Worked EX"), sample_size)
+sample_size <- sample_size %>% mutate(Total =  rowSums(sample_size[2:5])) %>% 
+  adorn_totals("row") %>% data.frame()
+colnames(sample_size) <- c("Condition", "Boy-I", "Girl-I", "Boy-C", "Girl-C", "Total")
+sample_size
+```
+
+Total number of samples in data: $n = 224$
+
+-   Number of samples in No Worked EX group: $n_{c} = 109$
+    -   Girls: $n_{c,g} = 65$
+    -   Boys: $n_{c,b} = 44$
+-   Number of samples in Worked EX group: $n_{ex} = 115$
+    -   Girls: $n_{c,g} = 64$
+    -   Boys: $n_{c,b} = 51$
+
+#### Ethnicity Descriptive
 
 ```{r}
 # ethnicity descriptives
@@ -133,22 +178,33 @@ Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + gender + MW_avg:gender + TMA_av
 Fitting the model to entire dataset:
 
 ```{r}
-fit_acc1 <- sem(m_acc, data = df_clean, std.lv = T)
+fit_acc1 <- sem(m_acc, data = df_clean2, std.lv = T)
 summary(fit_acc1)
 ```
 
 Multigroup analysis with condition:
 
 ```{r}
-fit_acc2 <- sem(m_acc, data = df2, std.lv = T, group = "Condition")
+fit_acc2 <- sem(m_acc, data = df_clean2, std.lv = T, group = "Condition")
 summary(fit_acc2)
 ```
+
+**WE group:**
+
+-   Math anxiety had a significant positive effect on mind wandering
+
+**No WE group:**
+
+-   Math anxiety had a significant positive effect on mind wandering
+
+-   Situational interest had a negative effect on mind wandering
+
+-   Mind wandering had a significant negative effect on accuracy scores
 
 Looking closely at the differences in groups
 
 ```{r}
-fit_acc2.constrained <- sem(m_acc, df2, group = "Condition", 
-    group.equal = c("intercepts", "regressions"))
+fit_acc2.constrained <- sem(m_acc, df_clean2, group = "Condition", group.equal = c("intercepts", "regressions"))
 anova(fit_acc2, fit_acc2.constrained)
 ```
 
@@ -158,11 +214,12 @@ Some paths in the model are different among groups -\> Looking closely at the di
 # redefine model
 m_acc.constrained <- '
 # regressions
-MW_avg ~ 1 + c("b1", "b1") * TMA_avg + SI_avg + Sex +  TMA_avg:Sex
-Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + Sex + MW_avg:Sex +  TMA_avg:Sex
+MW_avg ~ 1 + c("b1", "b1") * TMA_avg + SI_avg + gender +  TMA_avg:gender
+Del_OverallAcc ~ 1 + TMA_avg + MW_avg + SI_avg + gender + MW_avg:gender +  TMA_avg:gender
 '
 # fit model
-fit_acc2.constrained2 <- sem(m_acc.constrained, df2, group = "Condition")
+fit_acc2.constrained2 <- 
+  sem(m_acc.constrained, df_clean2, group = "Condition")
 anova(fit_acc2, fit_acc2.constrained2)
 ```
 
@@ -175,8 +232,8 @@ No significant difference between worked ex groups vs no worked ex groups on the
 ```{r}
 m_und <- '
 # regressions
-MW_avg ~ 1 + TMA_avg + SI_avg + Sex + TMA_avg:Sex
-Understand_avg ~ 1 + TMA_avg + MW_avg + SI_avg + Sex + MW_avg:Sex + TMA_avg:Sex
+MW_avg ~ 1 + TMA_avg + SI_avg + gender + TMA_avg:gender
+understand_avg ~ 1 + TMA_avg + MW_avg + SI_avg + gender + MW_avg:gender + TMA_avg:gender
 '
 ```
 
@@ -185,21 +242,45 @@ Understand_avg ~ 1 + TMA_avg + MW_avg + SI_avg + Sex + MW_avg:Sex + TMA_avg:Sex
 Fitting the model to entire dataset:
 
 ```{r}
-fit_und1 <- sem(m_und, data = df2, std.lv = T)
+fit_und1 <- sem(m_und, data = df_clean2, std.lv = T)
 summary(fit_und1)
 ```
 
 Multigroup analysis with condition:
 
 ```{r}
-fit_und2 <- sem(m_und, data = df2, std.lv = T, group = "Condition")
+fit_und2 <- sem(m_und, data = df_clean2, std.lv = T, group = "Condition")
 summary(fit_und2)
 ```
 
-Finding model difference between groups:\
+**WE group:**
+
+-   Math anxiety had significant positive effect on mind wandering
+
+-   Mind wandering had a significant negative effect on perceived understanding
+
+-   Situational interest had a significant positive effect on perceived understanding
+
+-   Interaction effect between mind wandering and gender was significant
+
+    -   Boys: $\beta_{mw} = -0.537$
+
+    -   Girls: $\beta_{mw} = -0.101$
+
+    -\> Mind wandering impacted boys more than girls on their perceived understanding (girls pay attention more?)
+
+**No WE group:**
+
+-   Math anxiety had a significant positive effect on mind wandering
+
+-   Situational interest had a significant negative effect on mind wandering
+
+-   Mind wandering had a significant negative effect on perceived understanding
+
+Finding model difference between groups:
 
 ```{r}
-fit_und2.constrained <- sem(m_und, df2, group = "Condition", 
+fit_und2.constrained <- sem(m_und, df_clean2, group = "Condition", 
     group.equal = c("intercepts", "regressions"))
 anova(fit_und2, fit_und2.constrained)
 ```
@@ -210,78 +291,12 @@ Some paths in the model may vary among groups -\> Looking at the effect of mind 
 # redefine model
 m_und.constrained <- '
 # regressions
-MW_avg ~ 1 + TMA_avg + SI_avg + Sex +  TMA_avg:Sex
-Understand_avg ~ 1 + TMA_avg + c("b1", "b1") * MW_avg + SI_avg + Sex + MW_avg:Sex +  TMA_avg:Sex
+MW_avg ~ 1 + TMA_avg + SI_avg + gender +  TMA_avg:gender
+understand_avg ~ 1 + TMA_avg + c("b1", "b1") * MW_avg + SI_avg + gender + MW_avg:gender +  TMA_avg:gender
 '
 # fit model
-fit_und2.constrained2 <- sem(m_und.constrained, df2, group = "Condition")
+fit_und2.constrained2 <- sem(m_und.constrained, df_clean2, group = "Condition")
 anova(fit_und2, fit_und2.constrained2)
 ```
 
 No significant difference was observed on the effect of mind wandering on perceived understanding.
-
-## Modeling w/ Imputed Data
-
-### Load Dataset
-
-```{r}
-df_imput <- read_csv("../../../data/df_imputed.csv")
-head(df_imput)
-```
-
-Clean Data
-
-```{r}
-# average for situational interest and mind wandering
-df_imput <- df_imput %>% 
-  mutate(SI_avg = rowMeans(df_imput[12:25], na.rm=TRUE),
-              MW_avg = rowMeans(df_imput[26:32], na.rm=TRUE))
-head(df_imput[41:42])
-```
-
-```{r}
-# Standardize data
-df_imput <- df_imput %>% select(Sex, Condition, chicago,
-                           TMA_avg, SI_avg, MW_avg, Del_OverallAcc, Understand_avg)
-df_imput[4:8] <- df_imput[4:8] %>% mutate_all(~(scale(.) %>% as.vector))
-```
-
-### Modeling
-
-#### Overall Accuracy
-
-**Implement model**
-
-Fitting the model to entire dataset:
-
-```{r}
-fit_acc1_2 <- sem(m_acc, data = df_imput, std.lv = T)
-summary(fit_acc1_2)
-```
-
-Multigroup analysis with condition:
-
-```{r}
-fit_acc2_2 <- sem(m_acc, data = df_imput, std.lv = T, 
-                  group = "Condition")
-summary(fit_acc2_2)
-```
-
-#### Perceived Understanding
-
-**Implement model**
-
-Fitting the model to entire dataset:
-
-```{r}
-fit_und2_1 <- sem(m_und, data = df_imput, std.lv = T)
-summary(fit_und2_1)
-```
-
-Multigroup analysis with condition:
-
-```{r}
-fit_und2_2 <- sem(m_und, data = df_imput, std.lv = T, 
-                  group = "Condition")
-summary(fit_und2_2)
-```
