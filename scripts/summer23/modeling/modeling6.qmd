@@ -258,6 +258,93 @@ df_clean2n %>% group_by(Condition) %>%
 
 WE group had a lower average mind wandering than no WE group.
 
+#### Data Visualization
+
+TMA vs Accuarcay Scores
+
+```{r}
+df_clean2n %>% ggplot(aes(x = TMA_avg, 
+                                  y = Del_OverallAcc, 
+                   color = as.factor(gender))) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  facet_grid(~Condition, 
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  theme_light() +
+  labs(title = "Math Anxiety vs Posttest Accuracy Score", 
+       x = "Math Anxiety", y = "Overall Accuracy", color = "Gender") 
+```
+
+TMA vs Perceived Understanding
+
+```{r}
+df_clean2n %>% ggplot(aes(x = TMA_avg, 
+                                  y = understand_avg, 
+                   color = as.factor(gender))) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  facet_grid(~Condition, 
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  theme_light() +
+  labs(title = "Math Anxiety vs Perceived Understanding", 
+       x = "Math Anxiety", y = "Perceived Understanding", color = "Gender") 
+```
+
+MW vs Posttest Accuracy
+
+```{r}
+df_clean2n %>% ggplot(aes(x = MW_avg, 
+                                  y = Del_OverallAcc, 
+                   color = as.factor(gender))) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  facet_grid(~Condition, 
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  theme_light() +
+  labs(title = "Mind Wandering vs Posttest Accuracy Score", 
+       x = "Mind Wandering", y = "Overall Accuracy", color = "Gender") 
+```
+
+MW vs Perceived Understanding
+
+```{r}
+df_clean2n %>% ggplot(aes(x = MW_avg, 
+                                  y = understand_avg, 
+                   color = as.factor(gender))) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  facet_grid(~Condition, 
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  theme_light() +
+  labs(title = "Mind Wandering vs Perceived Understanding", 
+       x = "Mind Wandering", y = "Perceived Understanding", color = "Gender") 
+```
+
+TMA vs MW
+
+```{r}
+df_clean2 %>% ggplot(aes(x = TMA_avg, 
+                                  y = MW_avg, 
+                   color = as.factor(gender))) +
+  geom_point() + geom_smooth(method = "lm", alpha = 0.2) +
+  scale_color_manual(values = c("#FFC20A", "#0C7BDC"), 
+                     labels = c("Boy", "Girl")) +
+  facet_grid(~Condition, 
+             labeller = labeller(Condition = cond,
+                                 chicago = location)) +
+  theme_light() +
+  labs(title = "Math Anxiety vs Mind Wandering", 
+       x = "Math Anxiety", y = "Mind Wandering", color = "Gender") 
+```
+
 ## Modeling
 
 ### Overall Accuracy
