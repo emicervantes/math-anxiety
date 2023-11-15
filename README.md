@@ -1,6 +1,10 @@
-# The Effectiveness of Worked Examples on Reducing Mathematical Anxiety
+# Math Anxiety, Mind Wandering, and Learning
 
-The project focuses on the effect of worked examples in mitigating math anxiety in elementary school students learning math. The data comes from the experimental study in 2021 that looked at the effects of worked examples on students' math education and engagement during the COVID-19 pandemic. 
+Author: Emi Cervantes
+
+The project focuses on the effect of worked examples in mitigating math anxiety in elementary school students learning math. The data comes from the experimental study in 2021 that looked at the effects of work examples on students' math education and engagement during the COVID-19 pandemic. 
+
+Study: https://psycnet.apa.org/record/2023-75203-001
 
 # Study 1: Effectiveness of Worked Examples on Reducing Math Anxiety
 
